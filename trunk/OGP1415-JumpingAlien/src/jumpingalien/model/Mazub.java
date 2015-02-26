@@ -248,7 +248,7 @@ public class Mazub {
 	 * is set to DUCKED_VELOCITY_LIMIT.
 	 */
 	public void startDuck() {
-		setPreviousXVelocityLimit(getXVelocityLimit());
+		setPreviousXVelocityLimit(abs(getXVelocityLimit())); //ABS, want getXVelocityLimit > 0 (!)
 		setXVelocityLimit(DUCKED_VELOCITY_LIMIT) ;
 		if(abs(getXVelocity()) > abs(DUCKED_VELOCITY_LIMIT))
 			setXVelocity(signum(getXVelocity())*DUCKED_VELOCITY_LIMIT);
@@ -332,15 +332,16 @@ public class Mazub {
 		double xCurrent = getX();
 		double vCurrent = getXVelocity();
 		
-		double xNew;
+		double xNew = xCurrent;
 		double vNew = vCurrent+duration*getXAcceleration();
-		
 		if(abs(vNew) > abs(getXVelocityLimit())) {
-			double timeBeforeVelocityLimit = (getXVelocityLimit() - vCurrent)/getXAcceleration();
-			moveX(timeBeforeVelocityLimit); //Stack Overflow
-			setXVelocity(getXVelocityLimit());
+			double timeBeforeVelocityLimit = (getXVelocityLimit()/getXAcceleration() - vCurrent/getXAcceleration());
+			//assert (timeBeforeVelocityLimit >= 0);
+			//moveX(timeBeforeVelocityLimit); //Stack Overflow
+			xNew += getXVelocity()*timeBeforeVelocityLimit+0.5*getXAcceleration()*pow(duration,2);
+			//setXVelocity(getXVelocityLimit()); overbodig
 			vNew = getXVelocityLimit();
-			xNew = getX() + vNew*(duration - timeBeforeVelocityLimit);
+			xNew += vNew*(duration - timeBeforeVelocityLimit);
 			
 		}
 		else {
