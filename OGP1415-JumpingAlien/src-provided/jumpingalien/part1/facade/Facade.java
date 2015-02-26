@@ -54,7 +54,7 @@ public class Facade implements IFacade {
 	 *         velocity, in units of m/s.
 	 */
 	public double[] getVelocity(Mazub alien){
-		return new double[] {alien.getXVelocity(),alien.getYVelocity()};
+		return new double[] {alien.getXVelocity()/100,alien.getYVelocity()/100};
 	}
 
 	/**
@@ -68,7 +68,7 @@ public class Facade implements IFacade {
 	 *         acceleration, in units of m/s^2.
 	 */
 	public double[] getAcceleration(Mazub alien) {
-		return new double[] {alien.getXAcceleration(),alien.getYAcceleration()};
+		return new double[] {alien.getXAcceleration()/100,alien.getYAcceleration()/100};
 	}
 
 	/**
@@ -136,7 +136,7 @@ public class Facade implements IFacade {
 	 *            The alien that has to start moving left.
 	 */
 	public void startMoveLeft(Mazub alien) {
-		alien.startMove(Mazub.LEFT);
+		alien.startMove(Mazub.Direction.LEFT);
 	}
 
 	/**
@@ -156,7 +156,7 @@ public class Facade implements IFacade {
 	 *            The alien that has to start moving right.
 	 */
 	public void startMoveRight(Mazub alien) {
-		alien.startMove(Mazub.RIGHT);
+		alien.startMove(Mazub.Direction.RIGHT);
 	}
 
 	/**

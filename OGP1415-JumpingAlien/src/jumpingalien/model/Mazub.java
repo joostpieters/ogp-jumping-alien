@@ -2,8 +2,20 @@ package jumpingalien.model;
 import jumpingalien.util.Sprite;
 import be.kuleuven.cs.som.annotate.*;
 import static java.lang.Math.pow;
+import static java.lang.Math.abs;
+import static java.lang.Math.signum;
 
 /**
+ * TAKEN
+ * 
+ * StackOverflow
+ * JumpingExcepton
+ * Teleportatie (floating point)
+ * Tests
+ * Documentatie
+ * Totaal/nominaal/defensief
+ * Opmaak
+ * 
  * 
  */
 
@@ -47,8 +59,9 @@ public class Mazub {
 		this.setYVelocity(0);
 		this.setDucked(false);
 		this.setTimeSinceLastMove(2); // > 1
-		this.setXDirection(RIGHT);
+		this.setXDirection(Direction.RIGHT);
 		
+	
 		
 	}
 	
@@ -89,7 +102,7 @@ public class Mazub {
 	 *		  |   && (xVelocity <= getXVelocityLimit()) )
 	 */
 	public boolean canHaveAsXVelocity(double xVelocity) {
-		return (xVelocity >= X_INITIAL_VELOCITY && xVelocity <= getXVelocityLimit());
+		return (abs(xVelocity) >= X_INITIAL_VELOCITY && abs(xVelocity) <= getXVelocityLimit());
 	}
 	
 	/**
@@ -104,7 +117,7 @@ public class Mazub {
 	 * 		  |   && (xInitialVelocity >= 1) )
 	 */
 	public boolean canHaveAsXInitalVelocity(double xInitialVelocity) {
-		return (xInitialVelocity <= getXVelocityLimit()) && (xInitialVelocity >= 1);
+		return (abs(xInitialVelocity) <= getXVelocityLimit()) && (abs(xInitialVelocity) >= 1);
 	}
 	
 	/**
@@ -116,8 +129,8 @@ public class Mazub {
 	 * 		  | result ==
 	 * 		  |    (xAcceleration >= 0)
 	 */
-	public static boolean isValidXAcceleration(double xAcceleration) {
-		return (xAcceleration >= 0) ;
+	public boolean isValidXAcceleration(double xAcceleration) {
+		return (signum(xAcceleration) == signum(getXVelocity())) ;
 	}
 	
 	/**
@@ -163,7 +176,7 @@ public class Mazub {
 	/**
 	 * Variable registering the acceleration in the y direction that applies to all Mazub characters.
 	 */
-	private static final double Y_ACCELERATION = -1000; //in pixels per seconde kwadraat
+	private static final double Y_ACCELERATION = 1000; //in pixels per seconde kwadraat
 	
 	
 	/**
@@ -173,9 +186,13 @@ public class Mazub {
 	 * @pre		The given direction should be Mazub.LEFT or Mazub.RIGHT.
 	 * 		  | (direction == Mazub.LEFT) || (direction == Mazub.RIGHT)
 	 */
-	public void startMove(int direction) {
+	public void startMove(Direction direction) {
 		setXDirection(direction);
-		setXVelocity(X_INITIAL_VELOCITY);
+		
+		if (direction == Direction.RIGHT)
+			setXVelocity(X_INITIAL_VELOCITY);
+		else
+			setXVelocity(-X_INITIAL_VELOCITY);
 	}
 	
 	/**
@@ -186,7 +203,7 @@ public class Mazub {
 		setXVelocity(0);
 	}
 	
-	/**
+	/**kan ook met illegalstateexception
 	 * 
 	 * @throws 	JumpingException
 	 * 			This Mazub character cannot start jumping because it is already jumping.
@@ -207,13 +224,15 @@ public class Mazub {
 	public void endJump() throws JumpingException {
 		if (!isJumping())
 			throw new JumpingException("Not yet jumping!", this);
-		setYVelocity(0);
+		if (getYVelocity() > 0)
+			setYVelocity(0);
 	}
 	
 	public void startDuck() {
-		setPreviousXVelocityLimit(getXVelocity());
-		setXVelocityLimit(100) ;
-		//  hoogte aanpassen
+		setPreviousXVelocityLimit(getXVelocityLimit());
+		setXVelocityLimit(DUCKED_VELOCITY_LIMIT) ;
+		if(abs(getXVelocity()) > abs(DUCKED_VELOCITY_LIMIT))
+			setXVelocity(signum(getXVelocity())*DUCKED_VELOCITY_LIMIT);
 		setDucked(true);
 	}
 	
@@ -221,6 +240,8 @@ public class Mazub {
 		setXVelocityLimit(getPreviousXVelocityLimit());
 		setDucked(false);
 	}
+	
+	private final int DUCKED_VELOCITY_LIMIT = 100;
 	
 	
 	/**
@@ -238,7 +259,7 @@ public class Mazub {
 			throw new IllegalArgumentException("Illegal time duration!");
 		moveX(duration);
 		moveY(duration);
-		if(getXVelocity() > 0)
+		if(getXVelocity() != 0)
 			setTimeSinceLastMove(0);
 		else
 			setTimeSinceLastMove(getTimeSinceLastMove()+duration);
@@ -285,24 +306,19 @@ public class Mazub {
 		double xCurrent = getX();
 		double vCurrent = getXVelocity();
 		
-		if (getXAcceleration() == 0) {
-			return;
-		}
-		
 		double xNew;
 		double vNew = vCurrent+duration*getXAcceleration();
 		
-		if(vNew > getXVelocityLimit()) {
+		if(abs(vNew) > abs(getXVelocityLimit())) {
 			double timeBeforeVelocityLimit = (getXVelocityLimit() - vCurrent)/getXAcceleration();
-			moveX(timeBeforeVelocityLimit);
+			moveX(timeBeforeVelocityLimit); //Stack Overflow
 			setXVelocity(getXVelocityLimit());
 			vNew = getXVelocityLimit();
-			xNew = getX() + getXDirection()*vNew*(duration - timeBeforeVelocityLimit);
+			xNew = getX() + vNew*(duration - timeBeforeVelocityLimit);
 			
 		}
 		else {
-			xNew = xCurrent + getXDirection()*
-									(getXVelocity()*duration + 0.5*getXAcceleration()*pow(duration,2.0));
+			xNew = xCurrent + (getXVelocity()*duration + 0.5*getXAcceleration()*pow(duration,2));
 		}
 		
 		if(! isValidX((int) xNew)) {
@@ -389,29 +405,7 @@ public class Mazub {
 	private void setY(double y) {
 		this.y = y;
 	}
-	
 
-	/**
-	 * Return the xDirection of this Mazub character.
-	 */
-	@Basic
-	public int getXDirection() {
-		return this.xDirection;
-	}
-	
-	/**
-	 * 
-	 * @param 	xDirection
-	 * 			The new xDirection for this Mazub character.
-	 * @pre		The given direction should be Mazub.LEFT or Mazub.RIGHT.
-	 * 		  | (direction == Mazub.LEFT) || (direction == Mazub.RIGHT)
-	 * @post	The new xDirection of this Mazub character is equal to
-	 * 			the given xDirection.
-	 * 		  | new.getXDirection() == xDirection
-	 */
-	private void setXDirection(int xDirection) {
-		this.xDirection = xDirection;
-	}
 	
 	
 	/**
@@ -464,7 +458,10 @@ public class Mazub {
 	 */
 	@Basic
 	private double getXVelocityLimit() {
-		return xVelocityLimit;
+		if (getXDirection() == Direction.RIGHT)
+			return xVelocityLimit;
+		else
+			return -xVelocityLimit;
 	}
 	
 	/**
@@ -488,10 +485,14 @@ public class Mazub {
 	 * Return the X_ACCELERATION of this Mazub character.
 	 */
 	public double getXAcceleration() {
-		if (getXVelocity() == 0)
+		if ( (getXVelocity() == 0) || (getXVelocity() == getXVelocityLimit()) )
 			return 0;
-		else
-			return X_ACCELERATION;
+		else {
+			if (getXDirection() == Direction.RIGHT)
+				return X_ACCELERATION;
+			else
+				return -X_ACCELERATION;
+		}
 	}
 	
 	@Basic
@@ -500,7 +501,7 @@ public class Mazub {
 	 */
 	public double getYAcceleration() {
 		if (getY() > 0)
-			return Y_ACCELERATION;
+			return -Y_ACCELERATION;
 		else
 			return 0;
 	}
@@ -515,20 +516,20 @@ public class Mazub {
 	 */
 	private double y;
 	
-	/**
-	 * Variable registering the xDirection of this Mazub character.
-	 */
-	private int xDirection;
+//	/**
+//	 * Variable registering the xDirection of this Mazub character.
+//	 */
+//	private int xDirection;
 	
-	/**
-	 * Variable registering the value of LEFT that applies to all Mazub characters.
-	 */
-	public static final int LEFT = -1;
-	
-	/**
-	 * Variable registering the value of RIGHT that applies to all Mazub characters.
-	 */
-	public static final int RIGHT = 1;
+//	/**
+//	 * Variable registering the value of LEFT that applies to all Mazub characters.
+//	 */
+//	public static final int LEFT = -1;
+//	
+//	/**
+//	 * Variable registering the value of RIGHT that applies to all Mazub characters.
+//	 */
+//	public static final int RIGHT = 1;
 	
 	/**
 	 * Variable registering the xVelocity of this Mazub character.
@@ -567,6 +568,11 @@ public class Mazub {
 	}
 	
 	
+	/**
+	 * 
+	 * @param 	flag
+	 * 			
+	 */
 	public void setDucked(boolean flag) {
 		ducked = flag;
 	}
@@ -597,7 +603,7 @@ public class Mazub {
 		
 		
 		if ((getXVelocity() == 0) && (getTimeSinceLastMove() <= 1) && (! getDucked())) {
-			if (getXDirection() == 1) 
+			if (getXDirection() == Direction.RIGHT) 
 				return this.getSprites()[2];
 			else
 				return this.getSprites()[3];
@@ -605,8 +611,8 @@ public class Mazub {
 			
 		
 		
-		if ((getXVelocity() > 0) && (isJumping()) && (! getDucked())) {
-			if (getXDirection() == 1)
+		if ((getXVelocity() != 0) && (isJumping()) && (! getDucked())) {
+			if (getXDirection() == Direction.RIGHT)
 				return this.getSprites()[4];
 			else
 				return this.getSprites()[5];
@@ -614,7 +620,7 @@ public class Mazub {
 		
 		
 		if ((getDucked()) && ((getXVelocity() > 0) || (getTimeSinceLastMove() <= 1))) {
-			if (getXDirection() == 1)
+			if (getXDirection() == Direction.RIGHT)
 				return this.getSprites()[6];
 			else
 				return this.getSprites()[7];
@@ -622,7 +628,7 @@ public class Mazub {
 		
 		if (isRunningNormally()) {
 			int index = ((int)(getTimeSinceLastRunningImage()/0.075))%(getM()+1);
-			if(getXDirection() == 1)
+			if(getXDirection() == Direction.RIGHT)
 				return getSprites()[8+index];
 			else
 				return getSprites()[9+getM()+index];
@@ -647,7 +653,7 @@ public class Mazub {
 	Sprite[] sprites;
 	
 	public boolean isRunningNormally() {
-		return ((getDucked()) && (getXVelocity() > 0) && (! isJumping()));
+		return ((! getDucked()) && (abs(getXVelocity()) > 0) && (! isJumping()));
 	}
 	
 	
@@ -668,6 +674,38 @@ public class Mazub {
 	
 	private double timeSinceLastRunningImage = 0;
 	
+	
+
+	/**
+	 * Return the xDirection of this Mazub character.
+	 */
+	@Basic
+	public Direction getXDirection() {
+		return this.xDirection;
+	}
+	
+	/**
+	 * 
+	 * @param 	xDirection
+	 * 			The new xDirection for this Mazub character.
+	 * @pre		The given direction should be Mazub.LEFT or Mazub.RIGHT.
+	 * 		  | (direction == Mazub.LEFT) || (direction == Mazub.RIGHT)
+	 * @post	The new xDirection of this Mazub character is equal to
+	 * 			the given xDirection.
+	 * 		  | new.getXDirection() == xDirection
+	 */
+	private void setXDirection(Direction xDirection) {
+		this.xDirection = xDirection;
+	}
+
+
+	
+	private Direction xDirection;
+	
+
+	public static enum Direction {
+		LEFT, RIGHT;
+	}
 	
 	
 }
