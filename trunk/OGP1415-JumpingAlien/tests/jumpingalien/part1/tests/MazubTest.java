@@ -1,8 +1,12 @@
 /**
+ * Tests for the Mazub class.
  * 
+ * @author Jonathan Oostvogels & Andreas Schryvers
+ * @version 1.0
  */
 package jumpingalien.part1.tests;
 import jumpingalien.common.sprites.JumpingAlienSprites;
+import jumpingalien.model.JumpingException;
 import jumpingalien.model.Mazub;
 import jumpingalien.util.Sprite;
 import static org.junit.Assert.*;
@@ -11,10 +15,6 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-/**
- * @author Jonathan
- *
- */
 public class MazubTest {
 
 	/**
@@ -26,7 +26,20 @@ public class MazubTest {
 
 	
 	Mazub normalMazub;
-	final double E = 1e-4;
+	
+	private final double E = 1e-4;
+	private final int X_LIMIT = 1023;
+	private final int Y_LIMIT = 767;
+	
+	//Default values
+	private static final double X_ACCELERATION = 90;
+	private final double X_INITIAL_VELOCITY = 100;
+	private final double X_VELOCITY_LIMIT = 300;
+	private final double Y_INITIAL_VELOCITY = 800;
+	private final double Y_ACCELERATION = 1000;
+	private final double DUCKED_VELOCITY_LIMIT = 100;
+	
+	private final Sprite[] sprites = JumpingAlienSprites.ALIEN_SPRITESET;
 	
 	/**
 	 * @throws java.lang.Exception
@@ -46,12 +59,250 @@ public class MazubTest {
 		assertEquals(0,normalMazub.getYVelocity(),E);
 		assertEquals(0,normalMazub.getXAcceleration(),E);
 		assertEquals(0,normalMazub.getYAcceleration(),E);
+		
+		assertEquals(X_VELOCITY_LIMIT,normalMazub.getXVelocityLimit(),E);
+	}
+	
+	@Test
+	public void isValidXTest() {
+		assertFalse(Mazub.isValidX(-1));
+		assertFalse(Mazub.isValidX(X_LIMIT+1));
+		assertTrue(Mazub.isValidX(0));
+		assertTrue(Mazub.isValidX(X_LIMIT));
+	}
+	
+	
+
+	@Test
+	public void canHaveAsXVelocityTest() {
+		assertTrue(normalMazub.canHaveAsXVelocity(0));
+		assertTrue(normalMazub.canHaveAsXVelocity(X_INITIAL_VELOCITY));
+		assertTrue(normalMazub.canHaveAsXVelocity(X_VELOCITY_LIMIT));
+		assertFalse(normalMazub.canHaveAsXVelocity(0.01));
+		assertFalse(normalMazub.canHaveAsXVelocity(X_VELOCITY_LIMIT+0.1));
+	}
+	
+	
+	@Test
+	public void canHaveAsXInitialVelocityTest() {
+		assertFalse(normalMazub.canHaveAsXInitialVelocity(1-E));
+		assertFalse(normalMazub.canHaveAsXInitialVelocity(X_VELOCITY_LIMIT+E));
+		assertTrue(normalMazub.canHaveAsXInitialVelocity(1+E));
+		assertTrue(normalMazub.canHaveAsXInitialVelocity(X_VELOCITY_LIMIT-E));
+	}
+	
+	@Test
+	public void canHaveAsXAccelerationTest() {
+		assertTrue(normalMazub.canHaveAsXAcceleration(0));
+		normalMazub.startMove(Mazub.Direction.LEFT);
+		assertTrue(normalMazub.canHaveAsXAcceleration(-1));
+		normalMazub.startMove(Mazub.Direction.RIGHT);
+		assertTrue(normalMazub.canHaveAsXAcceleration(1));
+	}
+	
+	@Test
+	public void startMoveTest() {
+		normalMazub.startMove(Mazub.Direction.RIGHT);
+		assertEquals(normalMazub.getXDirection(),Mazub.Direction.RIGHT);
+		assertEquals(normalMazub.getXVelocity(),X_INITIAL_VELOCITY,E);
+		normalMazub.startMove(Mazub.Direction.LEFT);
+		assertEquals(normalMazub.getXDirection(),Mazub.Direction.LEFT);
+		assertEquals(normalMazub.getXVelocity(),-X_INITIAL_VELOCITY,E);
+	}
+	
+	@Test
+	public void endMoveTest() {
+		normalMazub.startMove(Mazub.Direction.LEFT);
+		normalMazub.endMove();
+		assertEquals(0,normalMazub.getXVelocity(),E);
+		assertEquals(Mazub.Direction.LEFT,normalMazub.getXDirection());
+		
+	}
+	
+	@Test
+	public void isValidYTest() {
+		assertFalse(Mazub.isValidY(-1));
+		assertFalse(Mazub.isValidY(Y_LIMIT+1));
+		assertTrue(Mazub.isValidY(0));
+		assertTrue(Mazub.isValidY(Y_LIMIT));
+	}
+	
+	@Test
+	public void startJumpTest() {
+		normalMazub.startJump();
+		assertEquals(Y_INITIAL_VELOCITY,normalMazub.getYVelocity(),E);
+		normalMazub.advanceTime(0.1);
+		assertTrue(normalMazub.isJumping());
+	}
+	
+	@Test(expected=JumpingException.class)
+	public void startJumpExceptionTest() {
+		for(int i = 0; i < 5; i++) {
+			normalMazub.startJump();
+			normalMazub.advanceTime(0.19);
+		}
+	}
+	
+	@Test
+	public void endJumpTest() {
+		normalMazub.startJump();
+		normalMazub.advanceTime(0.19);
+		normalMazub.endJump();
+		assertEquals(0,normalMazub.getYVelocity(),E);
+		assertTrue(normalMazub.isJumping());
+	}
+	
+	@Test(expected=JumpingException.class)
+	public void endJumpExceptionTest() {
+		normalMazub.endJump();
+	}
+	
+	@Test
+	public void startDuckRightTest() {
+		normalMazub.startMove(Mazub.Direction.RIGHT);
+		for(int i = 0; i < 5; i++) {
+			normalMazub.advanceTime(0.19);
+		}
+		normalMazub.startDuck();
+		assertTrue(normalMazub.getDucked());
+		assertEquals(normalMazub.getXVelocityLimit(),DUCKED_VELOCITY_LIMIT,E);
+		assertEquals(DUCKED_VELOCITY_LIMIT,normalMazub.getXVelocity(),E);
+		normalMazub.advanceTime(0.1);
+		assertEquals(DUCKED_VELOCITY_LIMIT,normalMazub.getXVelocity(),E);
+	}
+	
+	@Test
+	public void startDuckLeftTest() {
+		normalMazub.startMove(Mazub.Direction.LEFT);
+		normalMazub.advanceTime(0.19);
+		normalMazub.startDuck();
+		assertTrue(normalMazub.getDucked());
+		assertEquals(normalMazub.getXVelocityLimit(),-DUCKED_VELOCITY_LIMIT,E);
 	}
 
+	@Test(expected=IllegalStateException.class)
+	public void startDuckExceptionTest() {
+		normalMazub.startDuck();
+		normalMazub.startDuck();
+	}
+	
+	@Test
+	public void endDuckTest() {
+		startDuckRightTest();
+		normalMazub.endDuck();
+		startDuckLeftTest();
+		normalMazub.endDuck();
+		assertEquals(normalMazub.getXVelocityLimit(),-X_VELOCITY_LIMIT,E);
+		assertFalse(normalMazub.getDucked());
+	}
+	
+	@Test(expected=IllegalStateException.class)
+	public void endDuckExceptionTest() {
+		normalMazub.endDuck();
+	}
+	
+	@Test(expected=IllegalArgumentException.class)
+	public void advanceTimeNegativeDurationTest() {
+		normalMazub.advanceTime(-0.01);
+	}
+	
+	@Test(expected=IllegalArgumentException.class)
+	public void advanceTimeDurationTooLargeTest() {
+		normalMazub.advanceTime(0.2);
+	}
+	
+	@Test
+	public void timeSinceLastMoveTest() {
+		normalMazub.startMove(Mazub.Direction.RIGHT);
+		normalMazub.advanceTime(0.1);
+		assertEquals(0,normalMazub.getTimeSinceLastMove(),E);
+		normalMazub.endMove();
+		normalMazub.advanceTime(0.1);
+		assertEquals(0.1,normalMazub.getTimeSinceLastMove(),E);
+	}
+	
+	@Test
+	public void getXVelocityLimitTest() {
+		normalMazub.startMove(Mazub.Direction.RIGHT);
+		assertEquals(X_VELOCITY_LIMIT,normalMazub.getXVelocityLimit(),E);
+		normalMazub.startMove(Mazub.Direction.LEFT);
+		assertEquals(-X_VELOCITY_LIMIT,normalMazub.getXVelocityLimit(),E);
+	}
+	
+	
+	@Test
+	public void getXAccelerationTest() {
+		//Standing at (0,0)
+		assertEquals(0,normalMazub.getXAcceleration(),E);
+		normalMazub.startMove(Mazub.Direction.RIGHT);
+		assertEquals(X_ACCELERATION,normalMazub.getXAcceleration(),E);
+		normalMazub.advanceTime(0.125);
+		normalMazub.endMove();
+
+		normalMazub.startMove(Mazub.Direction.LEFT);
+		assertEquals(-X_ACCELERATION,normalMazub.getXAcceleration(),E);
+		normalMazub.advanceTime(0.19);
+		assertEquals(0,normalMazub.getXAcceleration(),E);
+	}
+	
+	@Test
+	public void getYAccelerationTest() {
+		assertEquals(0,normalMazub.getYAcceleration(),E);
+		normalMazub.startJump();
+		normalMazub.advanceTime(0.01);
+		assertEquals(-Y_ACCELERATION,normalMazub.getYAcceleration(),E);
+		normalMazub.endJump();
+		normalMazub.advanceTime(0.19);
+		assertEquals(0,normalMazub.getYAcceleration(),E);
+	}
+	
+	//getWidth, getHeight and getCurrentSprite() should be verified visually
+	
+	@Test
+	public void getCurrentSpriteTest() {
+		assertEquals(sprites[0],normalMazub.getCurrentSprite());
+		normalMazub.startMove(Mazub.Direction.RIGHT);
+		normalMazub.advanceTime(0.01);
+		assertEquals(sprites[8],normalMazub.getCurrentSprite());
+		normalMazub.advanceTime(0.07);
+		assertEquals(sprites[9],normalMazub.getCurrentSprite());
+		normalMazub.endMove();
+		normalMazub.advanceTime(0.01);
+		assertEquals(sprites[2],normalMazub.getCurrentSprite());
+		normalMazub.startMove(Mazub.Direction.LEFT);
+		normalMazub.startJump();
+		normalMazub.advanceTime(0.01);
+		assertEquals(sprites[5],normalMazub.getCurrentSprite());
+		normalMazub.endMove();
+		normalMazub.startDuck();
+		assertEquals(sprites[7],normalMazub.getCurrentSprite());
+	}
+	
+	@Test
+	public void isRunningNormallyTest() {
+		assertFalse(normalMazub.isRunningNormally());
+		normalMazub.startMove(Mazub.Direction.LEFT);
+		normalMazub.advanceTime(0.1);
+		assertFalse(normalMazub.isRunningNormally());
+		normalMazub.startMove(Mazub.Direction.RIGHT);
+		normalMazub.advanceTime(0.1);
+		assertTrue(normalMazub.isRunningNormally());
+		normalMazub.startDuck();
+		normalMazub.advanceTime(0.1);
+		assertFalse(normalMazub.isRunningNormally());
+		normalMazub.endDuck();
+		normalMazub.startJump();
+		normalMazub.advanceTime(0.1);
+		assertFalse(normalMazub.isRunningNormally());
+	}
+	
+	
+	//additional tests
+	
 	@Test
 	public void normalMazubRunningRightTest() {
 		normalMazub.startMove(Mazub.Direction.RIGHT);
-		assertEquals(100,normalMazub.getXVelocity(),E); //Is die 100 ok? Via getter? Maar dan ook elders gebruiken?
+		assertEquals(100,normalMazub.getXVelocity(),E);
 		assertEquals(0,normalMazub.getY(),E);
 		assertEquals(normalMazub.getXDirection(),Mazub.Direction.RIGHT);
 		
@@ -59,6 +310,7 @@ public class MazubTest {
 		assertEquals(10.45,normalMazub.getX(),E);
 		assertEquals(0,normalMazub.getY(),E);
 	}
+	
 	
 	@Test
 	public void normalMazubMaxSpeedRightTest() {
@@ -80,17 +332,23 @@ public class MazubTest {
 		
 		for(int i = 0; i < 100; i++)
 			normalMazub.advanceTime(1.0/9);
-		assertEquals((int) normalMazub.getX(),1023); //zelfde verhaal
+		assertEquals((int) normalMazub.getX(),1023);
 		assertEquals(normalMazub.getXVelocity(),0,E);
 		assertEquals(normalMazub.getXAcceleration(),0,E);
 		
 	}
 	
-	//...
-	
-	
+	@Test
 	public void NormalMazubRunningLeftTest() {
 		normalMazub.startMove(Mazub.Direction.RIGHT);
-		normalMazub.advanceTime(1.0/9);
+		normalMazub.advanceTime(0.1);
+		normalMazub.endMove();
+		normalMazub.startMove(Mazub.Direction.LEFT);
+		normalMazub.startJump();
+		normalMazub.advanceTime(0.09);
+		assertFalse(normalMazub.getX()==0);
+		normalMazub.advanceTime(0.01);
+		assertEquals(0,normalMazub.getX(),E);
 	}
+	
 }

@@ -661,7 +661,7 @@ public class Mazub {
 	 */
 	@Raw
 	private void setXVelocityLimit(double xVelocityLimit) {
-		assert canHaveAsXVelocityLimit(xVelocityLimit);
+//		assert canHaveAsXVelocityLimit(xVelocityLimit);
 		this.xVelocityLimit = xVelocityLimit;
 	}
 	
