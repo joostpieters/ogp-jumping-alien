@@ -146,7 +146,7 @@ public class Mazub {
 	 *		  |        && (abs(xVelocity) <= getXVelocityLimit()) ) )
 	 */
 	public boolean canHaveAsXVelocity(double xVelocity) {
-		return (xVelocity == 0) || (abs(xVelocity) >= getXInitialVelocity()) && (abs(xVelocity) <= getXVelocityLimit());
+		return (xVelocity == 0) || (abs(xVelocity) >= abs(getXInitialVelocity())) && (abs(xVelocity) <= abs(getXVelocityLimit()));
 	}
 	
 	/**
@@ -269,11 +269,8 @@ public class Mazub {
 	 * The given Mazub character stops moving in the x direction. 
 	 * Its velocity in the x direction is set to 0.
 	 * 
-	 * @pre		The velocity in the x direction cannot be 0.
-	 * 		  | getXVelocity() != 0
 	 */
 	public void endMove() {
-		assert getXVelocity() != 0;
 		setXVelocity(0);
 	}
 	
