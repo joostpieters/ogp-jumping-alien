@@ -50,9 +50,8 @@ public class Mazub {
 	 * @pre		The given series of sprites must be effective.
 	 * 		  | sprites != null
 	 * @pre		This new Mazub character can have the  given xInitialVelocity as its initial velocity in the x direction.
-	 * 		  | canHaveAsXInitialVelocity(xInitialVelocity)
-	 * @pre		This new Mazub character can have the  given xVelocityLimit as its velocity limit in the x direction.
-	 * 		  | canHaveAsXVelocityLimit(xVelocityLimit)
+	 * 			This new Mazub character can have the  given xVelocityLimit as its velocity limit in the x direction.
+	 * 		  | isValidXInitialVelocityAndXVelocityLimit(xInitialVelocity, xVelocityLimit)
 	 * @post	The new x position of this Mazub character is equal to the given x position.
 	 * 		  | new.getX() == x
 	 * @post	The new y position of this Mazub character is equal to the given y position.
@@ -72,9 +71,9 @@ public class Mazub {
 	
 		assert isValidX((int) x);
 		assert isValidY((int) y);
+		assert isValidXInitialVelocityAndXVelocityLimit(xInitialVelocity,xVelocityLimit);
 		assert sprites != null;
 				
-		
 		this.setX(x);
 		this.setY(y);
 		
@@ -150,20 +149,21 @@ public class Mazub {
 	}
 	
 	/**
-	 * Check whether this Mazub character can have the given xInitialVelocity as
-	 * its initial velocity in the x direction.
+	 * Check whether the given xInitialVelocity and xVelocityLimiy are valid for any Mazub character.
 	 *  
 	 * @param	xInitialVelocity
 	 * 			The initial velocity in the x direction to be checked.
-	 * @return	True if and only if the absolute value of the given initial velocity is 
-	 * 			smaller than or equal to the velocity limit in the x direction, and if
-	 * 			the absolute value of the given initial velocity is greater than or equal to 1.
+	 * @param	xVelocityLimit
+	 * 			The velocity limit in the x direction to be checked.
+	 * @return	True if and only if the given initial velocity is smaller than or equal to 
+	 * 			the velocity limit in the x direction, and if
+	 * 			the the given initial velocity is greater than or equal to 1.
 	 * 		  | result ==
-	 * 		  |    ( (abs(xInitialVelocity) <= getXVelocityLimit())
-	 * 		  |   && (abs(xInitialVelocity) >= 1) )
+	 * 		  |    ( (xInitialVelocity <= xVelocityLimit)
+	 * 		  |   && (xInitialVelocity >= 1) )
 	 */
-	public boolean canHaveAsXInitialVelocity(double xInitialVelocity) {
-		return (abs(xInitialVelocity) <= getXVelocityLimit()) && (abs(xInitialVelocity) >= 1);
+	public static boolean isValidXInitialVelocityAndXVelocityLimit(double xInitialVelocity, double xVelocityLimit) {
+		return (xInitialVelocity <= xVelocityLimit) && (xInitialVelocity >= 1);
 	}
 	
 	/**
@@ -179,19 +179,6 @@ public class Mazub {
 	 */
 	public boolean canHaveAsXAcceleration(double xAcceleration) {
 		return (signum(xAcceleration) == signum(getXVelocity())) ;
-	}
-	
-	/**
-	 * Check whether this Mazub character can have the given xVelocityLimit as its xVelocityLimit.
-	 * 
-	 * @param 	xVelocityLimit
-	 * 			The xVelocityLimit to be checked.
-	 * @return	True if and only if this Mazub character can have the given xVelocityLimit as its xVelocity
-	 * 			and if the given xVelocityLimit is positive.
-	 * 		  | result == ( (canHaveAsXVelocity(xVelocityLimit)) && (xVelocityLimit >= 0) )
-	 */
-	private boolean canHaveAsXVelocityLimit(double xVelocityLimit) {
-		return ((canHaveAsXVelocity(xVelocityLimit)) && (xVelocityLimit >= 0) );
 	}
 	
 	/**
@@ -239,6 +226,289 @@ public class Mazub {
 	 * Variable registering the acceleration in the y direction that applies to all Mazub characters.
 	 */
 	private static final double Y_ACCELERATION = 1000; //in pixels per seconde kwadraat
+	
+	/**
+	 * Return the x position of this Mazub character.
+	 */
+	@Basic
+	public double getX() {
+		return this.x;
+	}
+	
+	/**
+	 * Return the y position of this Mazub character.
+	 */
+	@Basic
+	public double getY() {
+		return this.y;
+	}
+	
+	/**
+	 * Set the x position of this Mazub character to the given x position.
+	 * 
+	 * @param 	x
+	 * 			The new x position for this Mazub character.
+	 * @pre		The given x position must be a valid x position for any Mazub character.
+	 * 		  | isValidX((int) x)
+	 * @post	The new x position of this Mazub character is equal to
+	 * 			the given position.
+	 * 		  | new.getX() == x
+	 */
+	@Raw
+	private void setX(double x) {
+		assert isValidX((int) x);
+		this.x = x;
+	}
+	
+	/**
+	 * Set the y position of this Mazub character to the given y position.
+	 * 
+	 * @param 	y
+	 * 			The new y position for this Mazub character.
+	 * @pre		The given y position must be a valid y position for any Mazub character.
+	 * 		  | isValidY((int) y)
+	 * @post	The new y position of this Mazub character is equal to
+	 * 			the given position.
+	 * 		  | new.getY() == y
+	 */
+	@Raw
+	private void setY(double y) {
+		assert isValidY((int) y);
+		this.y = y;
+	}
+	
+	/**
+	 * Return the xVelocity of this Mazub character.
+	 */
+	@Basic
+	public double getXVelocity() {
+		return this.xVelocity;
+	}
+	
+	/**
+	 * Return the yVelocity of this Mazub character.
+	 */
+	@Basic
+	public double getYVelocity() {
+		return this.yVelocity;
+	}
+	
+	/**
+	 * Set the xVelocity of this Mazub character to the given xVelocity.
+	 * 
+	 * @param 	xVelocity
+	 * 			The new xVelocity for this Mazub character.
+	 * @pre		The given xVelocity must be a valid xVelocity for this Mazub character.
+	 * 		  | canHaveAsXVelocity(xVelocity)
+	 * @post	The new xVelocity of this Mazub character is equal to
+	 * 			the given xVelocity.
+	 * 		  | new.getXVelocity() == xVelocity
+	 */
+	@Raw
+	private void setXVelocity(double xVelocity) {
+		assert canHaveAsXVelocity(xVelocity);
+		this.xVelocity = xVelocity;
+	}
+	
+	/**
+	 * Set the yVelocity of this Mazub character to the given yVelocity.
+	 * 
+	 * @param 	yVelocity
+	 * 			The new yVelocity for this Mazub character.
+	 * @post	The new yVelocity of this Mazub character is equal to
+	 * 			the given yVelocity.
+	 * 		  | new.getYVelocity() == yVelocity
+	 */
+	@Raw
+	private void setYVelocity(double yVelocity) {
+		this.yVelocity = yVelocity;
+	}
+	
+	/**
+	 * Return the xVelocityLimit of this Mazub character. 
+	 * The xVelocityLimit is positive if the direction of the Mazub is Direction.RIGHT
+	 * and negative if the direction of the Mazub is Direcion.LEFT.
+	 */
+	public double getXVelocityLimit() {
+		if (getXDirection() == Direction.RIGHT)
+			return xVelocityLimit;
+		else
+			return -xVelocityLimit;
+	}
+	
+	/**
+	 * Set the xVelocityLimit of this Mazub character to the given xVelocityLimit.
+	 * 
+	 * @param 	xVelocityLimit
+	 * 			The new xVelocityLimit for this Mazub character.
+	 * @pre		The given xVelocityLimit must be a valid xVelocityLimit for this Mazub character.
+	 * 		  | canHaveAsXVelocityLimit(xVelocityLimit)
+	 * @post	The new xVelocityLimit of this Mazub character is equal to
+	 * 			the given xVelocityLimit.
+	 * 		  | new.getXVelocityLimit() == xVelocityLimit
+	 */
+	@Raw
+	private void setXVelocityLimit(double xVelocityLimit) {
+//		assert canHaveAsXVelocityLimit(xVelocityLimit);
+		this.xVelocityLimit = xVelocityLimit;
+	}
+	
+	
+	/**
+	 * @return	0 if xVelocity is 0 or if xVelocity is equal to xVelocityLimit
+	 * 		  | if ( (getXVelocity() == 0) || (getXVelocity() == getXVelocityLimit()) )
+	 * 		  | 	then result == 0
+	 * 			Otherwise, X_ACCELERTATION if xDirection is equal to Direction.RIGHT
+	 * 		  | if (getXDirection() == Direction.RIGHT)
+	 * 		  | 	then result == X_ACCELERATION
+	 * 			Otherwise, -X_ACCELERTATION if xDirection is equal to Direction.LEFT
+	 * 		  | if (getXDirection() == Direction.LEFT)
+	 * 		  | 	then result == -X_ACCELERATION
+	 *
+	 * 
+	 */
+	public double getXAcceleration() {
+		if ( (getXVelocity() == 0) || (getXVelocity() == getXVelocityLimit()) )
+			return 0;
+		else {
+			if (getXDirection() == Direction.RIGHT)
+				return X_ACCELERATION;
+			else
+				return -X_ACCELERATION;
+		}
+	}
+	
+	/**
+	 * Return the acceleration in the y direction of this Mazub character.
+	 */
+	public double getYAcceleration() {
+		if (isJumping())
+			return -Y_ACCELERATION;
+		else
+			return 0;
+	}
+	
+	/**
+	 * Return the initial velocity in the x direction of this Mazub character.
+	 */
+	@Basic @Immutable
+	private double getXInitialVelocity() {
+		return X_INITIAL_VELOCITY;
+	}
+	
+	@Basic @Immutable
+	private static double getYInitialVelocity() {
+		return Y_INITIAL_VELOCITY;
+	}
+	
+	
+	
+	/**
+	 * Variable registering the x position of this Mazub character.
+	 */
+	private double x;
+	
+	/**
+	 * Variable registering the y position of this Mazub character.
+	 */
+	private double y;
+	
+	/**
+	 * Variable registering the xVelocity of this Mazub character.
+	 */
+	private double xVelocity;
+	
+	/**
+	 * Variable registering the yVelocity of this Mazub character.
+	 */
+	private double yVelocity;
+
+	
+	/**
+	 * Check whether this Mazub character is running normally. A Mazub character
+	 * is running normally if it is ducking nor jumping, and if its velocity is not equal to 0.
+	 * 
+	 * @return	True if and only if this Mazub character is ducking nor jumping, and if its velocity
+	 * 			is not equal to 0.
+	 * 		  | result ==
+	 * 		  |    ( ! getDucked())
+	 * 		  |   && (! isJumping())
+	 * 		  |   && (abs(getXVelocity()) > 0) )
+	 */
+	public boolean isRunningNormally() {
+		return ( (! getDucked()) && (! isJumping()) && (abs(getXVelocity()) > 0) );
+	}
+	
+
+	/**
+	 * Return the timeSinceLastRunningImage of this Mazub character.
+	 */
+	@Basic
+	private double getTimeSinceLastRunningImage() {
+		return timeSinceLastRunningImage;
+	}
+
+	/**
+	 * Set the timeSinceLastRunningImage of this Mazub character to the given timeSinceLastRunningImage.
+	 * 
+	 * @param 	timeSinceLastRunningImage 
+	 * 			The new timeSinceLastRunningImage for this Mazub character.
+	 * @pre		The given timeSinceLastRunningImage should be positive.
+	 * 		  | timeSinceLastRunningImage >= 0
+	 * @post	The new timeSinceLastRunningImage of this Mazub character is equal 
+	 * 			to the given timeSinceLastRunningImage.
+	 * 		  | new.getTimeSinceLastRunningImage() == timeSinceLastRunningImage	
+	 */
+	private void setTimeSinceLastRunningImage(double timeSinceLastRunningImage) {
+		assert timeSinceLastRunningImage >= 0;
+		this.timeSinceLastRunningImage = timeSinceLastRunningImage;
+	}
+	
+	/**
+	 * Variable registering the time since the last image for a running motion was used for this Mazub character.
+	 */
+	private double timeSinceLastRunningImage = 0;
+
+	/**
+	 * Return the xDirection of this Mazub character.
+	 */
+	@Basic
+	public Direction getXDirection() {
+		return this.xDirection;
+	}
+	
+	/**
+	 * Set the xDirection for this Mazub character to the given xDirection.
+	 * 
+	 * @param 	xDirection
+	 * 			The new xDirection for this Mazub character.
+	 * @pre		The given direction should be Direction.LEFT or Direction.RIGHT.
+	 * 		  | (xDirection == Direction.LEFT) || (xDirection == Direction.RIGHT)
+	 * @post	The new xDirection of this Mazub character is equal to
+	 * 			the given xDirection.
+	 * 		  | new.getXDirection() == xDirection
+	 */
+	@Raw
+	private void setXDirection(Direction xDirection) {
+		assert ((xDirection == Direction.LEFT) || (xDirection == Direction.RIGHT));
+		this.xDirection = xDirection;
+	}
+
+	/**
+	 * Variable registering the x direction of this Mazub character. The x direction
+	 * is Direction.LEFT or Direction.RIGHT.
+	 */
+	private Direction xDirection;
+	
+	/**
+	 * An enumeration introducing two directions used to express the x direction 
+	 * of a Mazub character.
+	 */
+	public static enum Direction {
+		LEFT, RIGHT;
+	}
+	
+	
 	
 	
 	/**
@@ -536,188 +806,7 @@ public class Mazub {
 		setYVelocity(vNew);
 	}
 	
-	/**
-	 * Return the x position of this Mazub character.
-	 */
-	@Basic
-	public double getX() {
-		return this.x;
-	}
 	
-	/**
-	 * Return the y position of this Mazub character.
-	 */
-	@Basic
-	public double getY() {
-		return this.y;
-	}
-	
-	/**
-	 * Set the x position of this Mazub character to the given x position.
-	 * 
-	 * @param 	x
-	 * 			The new x position for this Mazub character.
-	 * @pre		The given x position must be a valid x position for any Mazub character.
-	 * 		  | isValidX((int) x)
-	 * @post	The new x position of this Mazub character is equal to
-	 * 			the given position.
-	 * 		  | new.getX() == x
-	 */
-	@Raw
-	private void setX(double x) {
-		assert isValidX((int) x);
-		this.x = x;
-	}
-	
-	/**
-	 * Set the y position of this Mazub character to the given y position.
-	 * 
-	 * @param 	y
-	 * 			The new y position for this Mazub character.
-	 * @pre		The given y position must be a valid y position for any Mazub character.
-	 * 		  | isValidY((int) y)
-	 * @post	The new y position of this Mazub character is equal to
-	 * 			the given position.
-	 * 		  | new.getY() == y
-	 */
-	@Raw
-	private void setY(double y) {
-		assert isValidY((int) y);
-		this.y = y;
-	}
-	
-	/**
-	 * Return the xVelocity of this Mazub character.
-	 */
-	@Basic
-	public double getXVelocity() {
-		return this.xVelocity;
-	}
-	
-	/**
-	 * Return the yVelocity of this Mazub character.
-	 */
-	@Basic
-	public double getYVelocity() {
-		return this.yVelocity;
-	}
-	
-	/**
-	 * Set the xVelocity of this Mazub character to the given xVelocity.
-	 * 
-	 * @param 	xVelocity
-	 * 			The new xVelocity for this Mazub character.
-	 * @pre		The given xVelocity must be a valid xVelocity for this Mazub character.
-	 * 		  | canHaveAsXVelocity(xVelocity)
-	 * @post	The new xVelocity of this Mazub character is equal to
-	 * 			the given xVelocity.
-	 * 		  | new.getXVelocity() == xVelocity
-	 */
-	@Raw
-	private void setXVelocity(double xVelocity) {
-		assert canHaveAsXVelocity(xVelocity);
-		this.xVelocity = xVelocity;
-	}
-	
-	/**
-	 * Set the yVelocity of this Mazub character to the given yVelocity.
-	 * 
-	 * @param 	yVelocity
-	 * 			The new yVelocity for this Mazub character.
-	 * @post	The new yVelocity of this Mazub character is equal to
-	 * 			the given yVelocity.
-	 * 		  | new.getYVelocity() == yVelocity
-	 */
-	@Raw
-	private void setYVelocity(double yVelocity) {
-		this.yVelocity = yVelocity;
-	}
-	
-	/**
-	 * Return the xVelocityLimit of this Mazub character. 
-	 * The xVelocityLimit is positive if the direction of the Mazub is Direction.RIGHT
-	 * and negative if the direction of the Mazub is Direcion.LEFT.
-	 */
-	public double getXVelocityLimit() {
-		if (getXDirection() == Direction.RIGHT)
-			return xVelocityLimit;
-		else
-			return -xVelocityLimit;
-	}
-	
-	/**
-	 * Set the xVelocityLimit of this Mazub character to the given xVelocityLimit.
-	 * 
-	 * @param 	xVelocityLimit
-	 * 			The new xVelocityLimit for this Mazub character.
-	 * @pre		The given xVelocityLimit must be a valid xVelocityLimit for this Mazub character.
-	 * 		  | canHaveAsXVelocityLimit(xVelocityLimit)
-	 * @post	The new xVelocityLimit of this Mazub character is equal to
-	 * 			the given xVelocityLimit.
-	 * 		  | new.getXVelocityLimit() == xVelocityLimit
-	 */
-	@Raw
-	private void setXVelocityLimit(double xVelocityLimit) {
-//		assert canHaveAsXVelocityLimit(xVelocityLimit);
-		this.xVelocityLimit = xVelocityLimit;
-	}
-	
-
-	
-	/**
-	 * @return	0 if xVelocity is 0 or if xVelocity is equal to xVelocityLimit
-	 * 		  | if ( (getXVelocity() == 0) || (getXVelocity() == getXVelocityLimit()) )
-	 * 		  | 	then result == 0
-	 * 			Otherwise, X_ACCELERTATION if xDirection is equal to Direction.RIGHT
-	 * 		  | if (getXDirection() == Direction.RIGHT)
-	 * 		  | 	then result == X_ACCELERATION
-	 * 			Otherwise, -X_ACCELERTATION if xDirection is equal to Direction.LEFT
-	 * 		  | if (getXDirection() == Direction.LEFT)
-	 * 		  | 	then result == -X_ACCELERATION
-	 *
-	 * 
-	 */
-	public double getXAcceleration() {
-		if ( (getXVelocity() == 0) || (getXVelocity() == getXVelocityLimit()) )
-			return 0;
-		else {
-			if (getXDirection() == Direction.RIGHT)
-				return X_ACCELERATION;
-			else
-				return -X_ACCELERATION;
-		}
-	}
-	
-	/**
-	 * Return the acceleration in the y direction of this Mazub character.
-	 */
-	public double getYAcceleration() {
-		if (isJumping())
-			return -Y_ACCELERATION;
-		else
-			return 0;
-	}
-	
-	/**
-	 * Variable registering the x position of this Mazub character.
-	 */
-	private double x;
-	
-	/**
-	 * Variable registering the y position of this Mazub character.
-	 */
-	private double y;
-	
-	/**
-	 * Variable registering the xVelocity of this Mazub character.
-	 */
-	private double xVelocity;
-	
-	/**
-	 * Variable registering the yVelocity of this Mazub character.
-	 */
-	private double yVelocity;
-
 	/**
 	 * Variable registering the ducked state of this Mazub character.
 	 */
@@ -878,101 +967,8 @@ public class Mazub {
 	 */
 	private Sprite[] sprites;
 	
-	/**
-	 * Check whether this Mazub character is running normally. A Mazub character
-	 * is running normally if it is ducking nor jumping, and if its velocity is not equal to 0.
-	 * 
-	 * @return	True if and only if this Mazub character is ducking nor jumping, and if its velocity
-	 * 			is not equal to 0.
-	 * 		  | result ==
-	 * 		  |    ( ! getDucked())
-	 * 		  |   && (! isJumping())
-	 * 		  |   && (abs(getXVelocity()) > 0) )
-	 */
-	public boolean isRunningNormally() {
-		return ( (! getDucked()) && (! isJumping()) && (abs(getXVelocity()) > 0) );
-	}
+
 	
 
-	/**
-	 * Return the timeSinceLastRunningImage of this Mazub character.
-	 */
-	@Basic
-	private double getTimeSinceLastRunningImage() {
-		return timeSinceLastRunningImage;
-	}
-
-	/**
-	 * Set the timeSinceLastRunningImage of this Mazub character to the given timeSinceLastRunningImage.
-	 * 
-	 * @param 	timeSinceLastRunningImage 
-	 * 			The new timeSinceLastRunningImage for this Mazub character.
-	 * @pre		The given timeSinceLastRunningImage should be positive.
-	 * 		  | timeSinceLastRunningImage >= 0
-	 * @post	The new timeSinceLastRunningImage of this Mazub character is equal 
-	 * 			to the given timeSinceLastRunningImage.
-	 * 		  | new.getTimeSinceLastRunningImage() == timeSinceLastRunningImage	
-	 */
-	private void setTimeSinceLastRunningImage(double timeSinceLastRunningImage) {
-		assert timeSinceLastRunningImage >= 0;
-		this.timeSinceLastRunningImage = timeSinceLastRunningImage;
-	}
-	
-	/**
-	 * Variable registering the time since the last image for a running motion was used for this Mazub character.
-	 */
-	private double timeSinceLastRunningImage = 0;
-
-	/**
-	 * Return the xDirection of this Mazub character.
-	 */
-	@Basic
-	public Direction getXDirection() {
-		return this.xDirection;
-	}
-	
-	/**
-	 * Set the xDirection for this Mazub character to the given xDirection.
-	 * 
-	 * @param 	xDirection
-	 * 			The new xDirection for this Mazub character.
-	 * @pre		The given direction should be Direction.LEFT or Direction.RIGHT.
-	 * 		  | (xDirection == Direction.LEFT) || (xDirection == Direction.RIGHT)
-	 * @post	The new xDirection of this Mazub character is equal to
-	 * 			the given xDirection.
-	 * 		  | new.getXDirection() == xDirection
-	 */
-	@Raw
-	private void setXDirection(Direction xDirection) {
-		assert ((xDirection == Direction.LEFT) || (xDirection == Direction.RIGHT));
-		this.xDirection = xDirection;
-	}
-
-	/**
-	 * Variable registering the x direction of this Mazub character. The x direction
-	 * is Direction.LEFT or Direction.RIGHT.
-	 */
-	private Direction xDirection;
-	
-	/**
-	 * An enumeration introducing two directions used to express the x direction 
-	 * of a Mazub character.
-	 */
-	public static enum Direction {
-		LEFT, RIGHT;
-	}
-	
-	/**
-	 * Return the initial velocity in the x direction of this Mazub character.
-	 */
-	@Basic @Immutable
-	private double getXInitialVelocity() {
-		return X_INITIAL_VELOCITY;
-	}
-	
-	@Basic @Immutable
-	private static double getYInitialVelocity() {
-		return Y_INITIAL_VELOCITY;
-	}
 	
 }
