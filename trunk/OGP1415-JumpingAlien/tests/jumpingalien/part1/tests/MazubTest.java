@@ -84,11 +84,11 @@ public class MazubTest {
 	
 	
 	@Test
-	public void canHaveAsXInitialVelocityTest() {
-		assertFalse(normalMazub.canHaveAsXInitialVelocity(1-E));
-		assertFalse(normalMazub.canHaveAsXInitialVelocity(X_VELOCITY_LIMIT+E));
-		assertTrue(normalMazub.canHaveAsXInitialVelocity(1+E));
-		assertTrue(normalMazub.canHaveAsXInitialVelocity(X_VELOCITY_LIMIT-E));
+	public void isValidXInitialVelocityAndXVelocityLimitTest() {
+		assertFalse(Mazub.isValidXInitialVelocityAndXVelocityLimit(1-E,X_VELOCITY_LIMIT));
+		assertFalse(Mazub.isValidXInitialVelocityAndXVelocityLimit(X_VELOCITY_LIMIT+E,X_VELOCITY_LIMIT));
+		assertTrue(Mazub.isValidXInitialVelocityAndXVelocityLimit(1+E,X_VELOCITY_LIMIT));
+		assertTrue(Mazub.isValidXInitialVelocityAndXVelocityLimit(X_VELOCITY_LIMIT-E,X_VELOCITY_LIMIT));
 	}
 	
 	@Test

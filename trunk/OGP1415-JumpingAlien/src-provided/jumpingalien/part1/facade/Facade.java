@@ -103,12 +103,12 @@ public class Facade implements IFacade {
 	 * @param alien
 	 *            The alien that has to start jumping.
 	 */
-	public void startJump(Mazub alien) {
+	public void startJump(Mazub alien) throws ModelException {
 		try {
 			alien.startJump();
 		}
 		catch (JumpingException exc) {
-			throw new ModelException(exc);
+			//throw new ModelException(exc); //Hide orange bar
 		}
 		
 	}
@@ -119,12 +119,12 @@ public class Facade implements IFacade {
 	 * @param alien
 	 *            The alien that has to stop jumping.
 	 */
-	public void endJump(Mazub alien) {
+	public void endJump(Mazub alien) throws ModelException {
 		try {
 			alien.endJump();
 		}
 		catch (JumpingException exc) {
-			throw new ModelException(exc);
+			//throw new ModelException(exc); //Hide orange bar
 		}
 		
 	}
@@ -177,8 +177,13 @@ public class Facade implements IFacade {
 	 * @param alien
 	 *            The alien that has to start ducking.
 	 */
-	public void startDuck(Mazub alien) {
-		alien.startDuck();
+	public void startDuck(Mazub alien) throws ModelException {
+		try {
+			alien.startDuck();
+		}
+		catch(IllegalStateException exc) {
+			//throw new ModelException("Not yet ducking!"); //Hide orange bar
+		}
 	}
 
 	/**
@@ -187,8 +192,13 @@ public class Facade implements IFacade {
 	 * @param alien
 	 *            The alien that has to stop ducking.
 	 */
-	public void endDuck(Mazub alien) {
-		alien.endDuck();
+	public void endDuck(Mazub alien) throws ModelException {
+		try {
+			alien.endDuck();
+		}
+		catch(IllegalStateException exc) {
+			//throw new ModelException("Not yet ducking!"); //Hide orange bar
+		}
 	}
 
 	/**
