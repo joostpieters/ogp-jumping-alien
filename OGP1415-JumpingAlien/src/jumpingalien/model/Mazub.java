@@ -16,7 +16,7 @@ import static java.lang.Math.signum;
  * @invar	Each Mazub character can have its initial velocity as its initial velocity in the x direction.
  * 			Each Mazub character can have its velocity limit as its velocity limit in the x direction.
  * 		  | isValidXInitialVelocityAndXVelocityLimit(getXInitialVelocity(), getXVelocityLimit())
- * @invar	Each Mazub character can have its acceleration as its acceleration.
+ * @invar	Each Mazub character can have its acceleration as its acceleration in the x direction.
  * 		  | canHaveAsXAcceleration(getXAcceleration())
  * @invar	Each Mazub character has Direction.LEFT or Direction.RIGHT as its direction.
  * 		  | (getXDirection() == Direction.LEFT) || (getXDirection() == Direction.RIGHT)
@@ -30,6 +30,7 @@ public class Mazub {
 	/**
 	 * Initialize this new Mazub character with given x position, given y position, given
 	 * sprites, given initial velocity in the x direction and given velocity limit in the x direction.
+	 * 
 	 * @param 	x
 	 * 			The initial x position for this new Mazub character.
 	 * @param 	y
@@ -105,11 +106,11 @@ public class Mazub {
 	}
 	
 	/**
-	 * A variable registering a default initial velocity in the x direction.
+	 * Variable registering a default initial velocity in the x direction that applies to all Mazub characters.
 	 */
 	private final static double X_INITIAL_VELOCITY_DEFAULT = 100;
 	/**
-	 * A variable registering a default velocity limit in the x direction.
+	 * Variable registering a default velocity limit in the x direction that applies to all Mazub characters.
 	 */
 	private final static double X_VELOCITY_LIMIT_DEFAULT = 300;
 	
@@ -399,7 +400,7 @@ public class Mazub {
 	
 	/**
 	 * 
-	 * Return this Mazub character's current acceleration in the x-direction.
+	 * Return this Mazub character's current acceleration in the x direction.
 	 * 
 	 * @return	0 if xVelocity is 0 or if xVelocity is equal to xVelocityLimit
 	 * 		  | if ( (getXVelocity() == 0) || (getXVelocity() == getXVelocityLimit()) )
@@ -519,7 +520,6 @@ public class Mazub {
 	 * The given Mazub character stops moving in the x direction. 
 	 * Its velocity in the x direction is set to 0.
 	 * 
-	 * 
 	 * @post This Mazub character's velocity in the x direction is 0.
 	 * 		| new.getXVelocity() == 0
 	 */
@@ -533,7 +533,6 @@ public class Mazub {
 	 * 
 	 * @post	The new yVelocity of this mazub character is equal to Y_INITIAL_VELOCITY.
 	 * 		  | new.getYVelocity() == Y_INITIAL_VELOCITY
-	 * 
 	 * @throws 	JumpingException
 	 * 			This Mazub character cannot start jumping because it is already jumping.
 	 * 		  | isJumping()
@@ -550,7 +549,6 @@ public class Mazub {
 	 * @post	The new yVelocity of this Mazub character is equal to 0 if yVelocity is greater than 0.
 	 * 		  | if (getYVelocity() > 0)
 	 * 		  |		new.getYVelocity() == 0
-	 * 
 	 * @throws 	JumpingException
 	 * 			This Mazub charachter cannot stop jumping because it is not jumping.
 	 * 		  | ! isJumping()
@@ -654,6 +652,7 @@ public class Mazub {
 	/**
 	 * Set the previousXVelocityLimit of this Mazub character to the given
 	 * previousXVelocityLimit.
+	 * 
 	 * @param 	previousXVelocityLimit
 	 * 			The new previousXVelocityLimit for this Mazub character.
 	 * @pre		The given previousXVelocityLimit should be a valid xVelocityLimit for this Mazub character.
@@ -975,7 +974,7 @@ public class Mazub {
 	
 	/**
 	 * @return Return the width of this Mazub character's current sprite.
-	 * 		  | result == (this.getCurrentSprite().getWidth())
+	 * 		 | result == (this.getCurrentSprite().getWidth())
 	 */
 	public int getWidth() {
 		return this.getCurrentSprite().getWidth();
@@ -983,11 +982,10 @@ public class Mazub {
 	
 	/**
 	 * @return Return the height of this Mazub charachter's currect sprite.
-	 * 		  | result == (this.getCurrentSprite().getHeight())
+	 * 		 | result == (this.getCurrentSprite().getHeight())
 	 */
 	public int getHeight() {
 		return this.getCurrentSprite().getHeight();
 	}
 
-	
 }
