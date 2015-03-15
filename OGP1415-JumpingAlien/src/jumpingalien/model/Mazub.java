@@ -931,10 +931,10 @@ public class Mazub {
 			int index = ((int)(getTimeSinceLastRunningImage()/0.075))%(getM()+1);
 			if(getXDirection() == Direction.RIGHT)
 				return getSprites()[8+index];
-			else
-				return getSprites()[9+getM()+index];	
+				
 		}
-		return getSprites()[0];
+			//else
+		return getSprites()[9+getM()+index];
 	}
 	
 	/**
