@@ -899,6 +899,7 @@ public class Mazub {
 	 * Return the current sprite of this Mazub character.
 	 */
 	public Sprite getCurrentSprite() {
+		int index = ((int)(getTimeSinceLastRunningImage()/0.075))%(getM()+1);
 		if ((getXVelocity() == 0) && (getTimeSinceLastMove() > 1)) {
 			if (! getDucked())
 				return this.getSprites()[0];
@@ -928,7 +929,6 @@ public class Mazub {
 		}
 		
 		if (isRunningNormally()) {
-			int index = ((int)(getTimeSinceLastRunningImage()/0.075))%(getM()+1);
 			if(getXDirection() == Direction.RIGHT)
 				return getSprites()[8+index];
 				
