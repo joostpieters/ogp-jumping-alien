@@ -25,7 +25,7 @@ import static java.lang.Math.signum;
  * 			2e Bachelor ingenieurswetenschappen
  * 			Subversion repository: https://code.google.com/p/ogp-jumping-alien/
  */
-public class Mazub {
+public class Mazub extends GameObject {
 	
 	/**
 	 * Initialize this new Mazub character with given x position, given y position, given
@@ -64,9 +64,10 @@ public class Mazub {
 	 * 		  | new.getXVelocityLimit() == xVelocityLimit
 	 */
 	@Raw
-	public Mazub(double x, double y, Sprite[] sprites,
+	public Mazub(World world, double x, double y, Sprite[] sprites,
 			double xInitialVelocity, double xVelocityLimit) {
 	
+		super(world, x, y);
 		assert isValidX((int) x);
 		assert isValidY((int) y);
 		assert isValidXInitialVelocityAndXVelocityLimit(xInitialVelocity,xVelocityLimit);
@@ -101,8 +102,8 @@ public class Mazub {
 	 * 		  | this(x,y,sprites,X_INITIAL_VELOCITY_DEFAULT,X_VELOCITY_LIMIT_DEFAULT);
 	 */
 	@Raw
-	public Mazub(double x, double y, Sprite[] sprites) {
-		this(x,y,sprites,X_INITIAL_VELOCITY_DEFAULT,X_VELOCITY_LIMIT_DEFAULT);
+	public Mazub(World world, double x, double y, Sprite[] sprites) {
+		this(world, x,y,sprites,X_INITIAL_VELOCITY_DEFAULT,X_VELOCITY_LIMIT_DEFAULT);
 	}
 	
 	/**
@@ -126,9 +127,9 @@ public class Mazub {
 	 * 		  |    ( (x <= X_LIMIT) 
 	 * 		  |   && (x >= 0) )
 	 */
-	public static boolean isValidX(int x) {
-		return ( (x <= X_LIMIT) && (x >= 0) );
-	}
+//	public static boolean isValidX(int x) {
+//		return ( (x <= X_LIMIT) && (x >= 0) );
+//	}
 	
 	/**
 	 * Variable registering the maximum x position that applies to all Mazub characters.
@@ -146,64 +147,64 @@ public class Mazub {
 	 * 		  |	   ( (y <= Y_LIMIT) 
 	 * 		  |   && (y >= 0) )
 	 */
-	public static boolean isValidY(int y) {
-		return (y <= Y_LIMIT) && (y >= 0);
-	}
+//	public static boolean isValidY(int y) {
+//		return (y <= Y_LIMIT) && (y >= 0);
+//	}
 	
 	/**
 	 * Variable registering the maximum y position that applies to all Mazub characters.
 	 */
 	private static final int Y_LIMIT = 767; //in pixels
 	
-	/**
-	 * Return the x position of this Mazub character.
-	 */
-	@Basic
-	public double getX() {
-		return this.x;
-	}
-	
-	/**
-	 * Return the y position of this Mazub character.
-	 */
-	@Basic
-	public double getY() {
-		return this.y;
-	}
-	
-	/**
-	 * Set the x position of this Mazub character to the given x position.
-	 * 
-	 * @param 	x
-	 * 			The new x position for this Mazub character.
-	 * @pre		The given x position must be a valid x position for any Mazub character.
-	 * 		  | isValidX((int) x)
-	 * @post	The new x position of this Mazub character is equal to
-	 * 			the given position.
-	 * 		  | new.getX() == x
-	 */
-	@Raw
-	private void setX(double x) {
-		assert isValidX((int) x);
-		this.x = x;
-	}
-	
-	/**
-	 * Set the y position of this Mazub character to the given y position.
-	 * 
-	 * @param 	y
-	 * 			The new y position for this Mazub character.
-	 * @pre		The given y position must be a valid y position for any Mazub character.
-	 * 		  | isValidY((int) y)
-	 * @post	The new y position of this Mazub character is equal to
-	 * 			the given position.
-	 * 		  | new.getY() == y
-	 */
-	@Raw
-	private void setY(double y) {
-		assert isValidY((int) y);
-		this.y = y;
-	}
+//	/**
+//	 * Return the x position of this Mazub character.
+//	 */
+//	@Basic
+//	public double getX() {
+//		return this.x;
+//	}
+//	
+//	/**
+//	 * Return the y position of this Mazub character.
+//	 */
+//	@Basic
+//	public double getY() {
+//		return this.y;
+//	}
+//	
+//	/**
+//	 * Set the x position of this Mazub character to the given x position.
+//	 * 
+//	 * @param 	x
+//	 * 			The new x position for this Mazub character.
+//	 * @pre		The given x position must be a valid x position for any Mazub character.
+//	 * 		  | isValidX((int) x)
+//	 * @post	The new x position of this Mazub character is equal to
+//	 * 			the given position.
+//	 * 		  | new.getX() == x
+//	 */
+//	@Raw
+//	private void setX(double x) {
+//		assert isValidX((int) x);
+//		this.x = x;
+//	}
+//	
+//	/**
+//	 * Set the y position of this Mazub character to the given y position.
+//	 * 
+//	 * @param 	y
+//	 * 			The new y position for this Mazub character.
+//	 * @pre		The given y position must be a valid y position for any Mazub character.
+//	 * 		  | isValidY((int) y)
+//	 * @post	The new y position of this Mazub character is equal to
+//	 * 			the given position.
+//	 * 		  | new.getY() == y
+//	 */
+//	@Raw
+//	private void setY(double y) {
+//		assert isValidY((int) y);
+//		this.y = y;
+//	}
 	
 	/**
 	 * Variable registering the x position of this Mazub character.
