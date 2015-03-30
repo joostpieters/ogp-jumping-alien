@@ -13,7 +13,7 @@ public abstract class GameObject {
 
 	public abstract int getWidth();
 	public abstract int getHeight();
-	public abstract void advanceTime();
+
 	
 	public GameObject(World world, double x, double y) {
 		this.WORLD = world;
@@ -95,4 +95,35 @@ public abstract class GameObject {
 		int[] result = {(int) getX(), (int) getY()};
 		return result;
 	}
+	
+	private boolean isTerminated;
+	public boolean isTerminated() {
+		return this.isTerminated;
+	}
+	
+	public void terminate() {
+		this.isTerminated = true;
+		setTimeSinceTermination(0);
+	}
+	
+	private double timeSinceTermination;
+
+	public double getTimeSinceTermination() {
+		return timeSinceTermination;
+	}
+	public void setTimeSinceTermination(double timeSinceTermination) {
+		this.timeSinceTermination = timeSinceTermination;
+	}
+	
+	
+	
+	public void advanceTime(double duration) {
+		if (isTerminated())
+			setTimeSinceTermination(getTimeSinceTermination() + duration);
+		if (getTimeSinceTermination() > 0.6)
+			WORLD.removeObjectAt(getPosition()[0],getPosition()[1]);
+		
+		
+	}
+	
 }
