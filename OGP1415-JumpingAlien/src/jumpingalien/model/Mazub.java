@@ -68,23 +68,21 @@ public class Mazub extends GameObject {
 			double xInitialVelocity, double xVelocityLimit) {
 	
 		super(world, x, y);
-		assert isValidX((int) x);
-		assert isValidY((int) y);
+//		assert isValidX((int) x);
+//		assert isValidY((int) y);
+		assert isValidPosition((int) x,(int) y);
 		assert isValidXInitialVelocityAndXVelocityLimit(xInitialVelocity,xVelocityLimit);
 		assert sprites != null;
-				
-		this.setX(x);
-		this.setY(y);
-		
 		this.setSprites(sprites);
 		this.X_INITIAL_VELOCITY = xInitialVelocity;
 		this.setXVelocityLimit(xVelocityLimit);
 		this.setPreviousXVelocityLimit(xVelocityLimit);
 		this.setXVelocity(0);
 		this.setYVelocity(0);
-		this.setDucked(false);
+		this.setDucking(false);
 		this.setTimeSinceLastMove(2); // > 1
 		this.setXDirection(Direction.RIGHT);
+		this.setToEndDuck(false);
 	}
 	
 	/**
@@ -131,10 +129,10 @@ public class Mazub extends GameObject {
 //		return ( (x <= X_LIMIT) && (x >= 0) );
 //	}
 	
-	/**
-	 * Variable registering the maximum x position that applies to all Mazub characters.
-	 */
-	private static final int X_LIMIT = 1023; //in pixels
+//	/**
+//	 * Variable registering the maximum x position that applies to all Mazub characters.
+//	 */
+//	private static final int X_LIMIT = 1023; //in pixels
 	
 	/**
 	 * Check whether the given y position is a valid y position for any Mazub character.
@@ -151,10 +149,10 @@ public class Mazub extends GameObject {
 //		return (y <= Y_LIMIT) && (y >= 0);
 //	}
 	
-	/**
-	 * Variable registering the maximum y position that applies to all Mazub characters.
-	 */
-	private static final int Y_LIMIT = 767; //in pixels
+//	/**
+//	 * Variable registering the maximum y position that applies to all Mazub characters.
+//	 */
+//	private static final int Y_LIMIT = 767; //in pixels
 	
 //	/**
 //	 * Return the x position of this Mazub character.
@@ -205,16 +203,16 @@ public class Mazub extends GameObject {
 //		assert isValidY((int) y);
 //		this.y = y;
 //	}
-	
-	/**
-	 * Variable registering the x position of this Mazub character.
-	 */
-	private double x;
-	
-	/**
-	 * Variable registering the y position of this Mazub character.
-	 */
-	private double y;
+//	
+//	/**
+//	 * Variable registering the x position of this Mazub character.
+//	 */
+//	private double x;
+//	
+//	/**
+//	 * Variable registering the y position of this Mazub character.
+//	 */
+//	private double y;
 	
 	
 	
@@ -539,9 +537,14 @@ public class Mazub extends GameObject {
 	 * 		  | isJumping()
 	 */
 	public void startJump() throws JumpingException {
-		if (isJumping())
+		if (isJumping() || ! canJump())
 			throw new JumpingException("Already jumping!", this);
 		setYVelocity(getYInitialVelocity());
+	}
+	
+	public boolean canJump() {
+		return (getPosition()[1] == 0 ||
+				( !(isValidPosition(getPosition()[0],getPosition()[1]-1))));
 	}
 	
 	/**
@@ -568,8 +571,15 @@ public class Mazub extends GameObject {
 	 * 		  | result == (getY() > 0)
 	 */
 	public boolean isJumping() {
-		return (getY() > 0);
+		return isJumping;
+				
 	}
+	
+	private void setJumping(boolean status) {
+		this.isJumping = status;
+	}
+	
+	private boolean isJumping;
 	
 	/**
 	 * The given Mazub character starts ducking. Its velocity limit in the x direction
@@ -585,20 +595,20 @@ public class Mazub extends GameObject {
 	 * 		  | if (abs(this.getXVelocity()) > abs(new.getXVelocityLimit()))
 	 * 		  |		new.getXVelocity() == (signum(this.getXVelocity())) * (new.getXVelocityLimit())
 	 * @post	The new ducked state of this Mazub character is equal to true.
-	 * 		  | new.getDucked() == true
+	 * 		  | new.isDucking() == true
 	 * @throws	IllegalStateExpcetion
 	 * 			This Mazub character cannot start ducking because it is already ducking.
-	 * 		  | getDucked()
+	 * 		  | isDucking()
 	 * 
 	 */
 	public void startDuck() throws IllegalStateException {
-		if (getDucked())
+		if (isDucking())
 			throw new IllegalStateException("Already ducking!");
 		setPreviousXVelocityLimit(abs(getXVelocityLimit()));
 		setXVelocityLimit(DUCKED_VELOCITY_LIMIT);
 		if(abs(getXVelocity()) > abs(getXVelocityLimit()))
 			setXVelocity(signum(getXVelocity())*abs(getXVelocityLimit()));
-		setDucked(true);
+		setDucking(true);
 	}
 	
 	/**
@@ -608,24 +618,54 @@ public class Mazub extends GameObject {
 	 * @post	The new xVelocityLimit of this Mazub character is equal to the previousXVelocityLimit.
 	 * 		  | new.getXVelocityLimit() == this.getPreviousXVelocityLimit()
 	 * @post	The new ducked state of this Mazub character is equal to false.
-	 * 		  | new.getDucked() == false
+	 * 		  | new.isDucking() == false
 	 * @throws	IllegalStateException
 	 * 			This Mazub character cannot stop ducking because it is not ducking.
-	 * 		  | ! getDucked()
+	 * 		  | ! isDucking()
 	 */
 	public void endDuck() throws IllegalStateException {
-		if (! getDucked())
+		if (! isDucking())
 			throw new IllegalStateException("Not yet ducking!");
-		setXVelocityLimit(getPreviousXVelocityLimit());
-		setDucked(false);
+		if (canEndDuck()) {
+			setXVelocityLimit(getPreviousXVelocityLimit());
+			setDucking(false);
+			setToEndDuck(false);
+		}
+		else {
+			setToEndDuck(true);
+		}		
 	}
 	
+	private boolean toEndDuck;
+	
+	
+	public boolean getToEndDuck() {
+		return toEndDuck;
+	}
+
+	private void setToEndDuck(boolean toEndDuck) {
+		this.toEndDuck = toEndDuck;
+	}
+	
+	public boolean canEndDuck() {
+		boolean previous = isDucking();
+		setDucking(false);
+		if (isValidPosition(getPosition()[0],getPosition()[1])) {
+			setDucking(previous);
+			return true;
+		}
+		setDucking(previous);
+		return false;
+	}
+	
+	
+
 	/**
 	 * Return the ducked state of this Mazub character.
 	 */
 	@Basic
-	public boolean getDucked() {
-		return ducked;
+	public boolean isDucking() {
+		return isDucking;
 	}
 	
 	/**
@@ -635,11 +675,11 @@ public class Mazub extends GameObject {
 	 * 			The new state for this Mazub character.
 	 * @post	The new ducked state of this Mazub character is equal to
 	 * 			the given state.
-	 * 		  | new.getDucked() == state
+	 * 		  | new.isDucking() == state
 	 */
 	@Raw
-	private void setDucked(boolean state) {
-		ducked = state;
+	private void setDucking(boolean state) {
+		isDucking = state;
 	}
 	
 	/**
@@ -675,7 +715,7 @@ public class Mazub extends GameObject {
 	/**
 	 * Variable registering the ducked state of this Mazub character.
 	 */
-	private boolean ducked;
+	private boolean isDucking;
 	/**
 	 * Variable registering the velocity limit in the x direction while ducking.
 	 */
@@ -712,6 +752,7 @@ public class Mazub extends GameObject {
 	public void advanceTime(double duration) throws IllegalArgumentException {
 		if ((duration < 0) || (duration >= 0.2))
 			throw new IllegalArgumentException("Illegal time duration!");
+		super.advanceTime(duration);
 		moveX(duration);
 		moveY(duration);
 		if(getXVelocity() != 0)
@@ -722,6 +763,10 @@ public class Mazub extends GameObject {
 			setTimeSinceLastRunningImage(getTimeSinceLastRunningImage()+duration);
 		else
 			setTimeSinceLastRunningImage(0);
+
+		 setJumping(isValidPosition(getPosition()[0],getPosition()[1] - 1));
+		 if (getToEndDuck() == true)
+			 endDuck();
 	}
 
 	/**
@@ -792,12 +837,12 @@ public class Mazub extends GameObject {
 	 * @return	True if and only if this Mazub character is ducking nor jumping, and if its velocity
 	 * 			is not equal to 0.
 	 * 		  | result ==
-	 * 		  |    ( ! getDucked())
+	 * 		  |    ( ! isDucking())
 	 * 		  |   && (! isJumping())
 	 * 		  |   && (abs(getXVelocity()) > 0) )
 	 */
 	public boolean isRunningNormally() {
-		return ( (! getDucked()) && (! isJumping()) && (abs(getXVelocity()) > 0));
+		return ( (! isDucking()) && (! isJumping()) && (abs(getXVelocity()) > 0));
 	}
 
 	/**
@@ -845,14 +890,15 @@ public class Mazub extends GameObject {
 			xNew = xCurrent + (getXVelocity()*duration + 0.5*getXAcceleration()*pow(duration,2));
 		}
 		
-		if(! isValidX((int) xNew)) {
+		if(! isValidPosition((int) xNew,getPosition()[1])) {
 			vNew = 0;
-			if (xNew < 0)
-				xNew = 0;
-			else
-				xNew = X_LIMIT;
+			xNew = xCurrent;
+//			if (xNew < 0)
+//				xNew = 0;
+//			else
+//				xNew = X_LIMIT;
 			}
-		setX(xNew);
+		setPosition(xNew,getPosition()[1]);
 		setXVelocity(vNew);
 	}
 	
@@ -881,17 +927,20 @@ public class Mazub extends GameObject {
 		
 		yNew = yCurrent + vCurrent*duration + 0.5*getYAcceleration()*pow(duration,2.0);
 		
-		if(! isValidY((int) yNew)) {
-			if (yNew < 0) {
-				yNew = 0;
-				vNew = 0;
-			}
-			if (yNew > Y_LIMIT) {
-				yNew = Y_LIMIT;
-				vNew = 0;
-			}
+		if(! isValidPosition(getPosition()[0],(int) yNew)) {
+			yNew = yCurrent;
+			vNew = 0;
+			
+//			if (yNew < 0) {
+//				yNew = 0;
+//				vNew = 0;
+//			}
+//			if (yNew > Y_LIMIT) {
+//				yNew = Y_LIMIT;
+//				vNew = 0;
+//			}
 		}
-		setY(yNew);
+		setPosition(getPosition()[0],yNew);
 		setYVelocity(vNew);
 	}
 	
@@ -902,27 +951,27 @@ public class Mazub extends GameObject {
 	public Sprite getCurrentSprite() {
 		int index = ((int)(getTimeSinceLastRunningImage()/0.075))%(getM()+1);
 		if ((getXVelocity() == 0) && (getTimeSinceLastMove() > 1)) {
-			if (! getDucked())
+			if (! isDucking())
 				return this.getSprites()[0];
 			else
 				return this.getSprites()[1];
 		}
 		
-		if ((getXVelocity() == 0) && (getTimeSinceLastMove() <= 1) && (! getDucked())) {
+		if ((getXVelocity() == 0) && (getTimeSinceLastMove() <= 1) && (! isDucking())) {
 			if (getXDirection() == Direction.RIGHT) 
 				return this.getSprites()[2];
 			else
 				return this.getSprites()[3];
 		}
 			
-		if ((getXVelocity() != 0) && (isJumping()) && (! getDucked())) {
+		if ((getXVelocity() != 0) && (isJumping()) && (! isDucking())) {
 			if (getXDirection() == Direction.RIGHT)
 				return this.getSprites()[4];
 			else
 				return this.getSprites()[5];
 		}
 		
-		if ((getDucked()) && ((getXVelocity() > 0) || (getTimeSinceLastMove() <= 1))) {
+		if ((isDucking()) && ((getXVelocity() > 0) || (getTimeSinceLastMove() <= 1))) {
 			if (getXDirection() == Direction.RIGHT)
 				return this.getSprites()[6];
 			else

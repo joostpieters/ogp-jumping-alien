@@ -5,8 +5,11 @@ package jumpingalien.part1.facade;
 
 import jumpingalien.util.ModelException;
 import jumpingalien.util.Sprite;
+import jumpingalien.model.GameObject;
 import jumpingalien.model.JumpingException;
 import jumpingalien.model.Mazub;
+import jumpingalien.model.World;
+import jumpingalien.model.World.TerrainType;
 
 /**
  * @author Andreas Schrvyers & Jonathan Oostvogels
@@ -27,7 +30,15 @@ public class Facade implements IFacade {
 	 * @return
 	 */
 	public Mazub createMazub(int pixelLeftX, int pixelBottomY, Sprite[] sprites) {
-		return new Mazub((double) pixelLeftX, (double) pixelBottomY,sprites);
+		int[] windowSize = {1024,768};
+		int[][] terrainPos = {{200,80},{201,80},{202,80},{203,80},{204,80}};
+		TerrainType[] terrains = {TerrainType.SOLID_GROUND,TerrainType.SOLID_GROUND,TerrainType.SOLID_GROUND,TerrainType.SOLID_GROUND,TerrainType.SOLID_GROUND};
+		int[][] objectPos = {};
+		GameObject[] objects = {};
+		World myWorld = new World(1023,767,1, objects, objectPos, terrains, terrainPos, windowSize);
+		Mazub myMazub = new Mazub(myWorld,(double) pixelLeftX, (double) pixelBottomY,sprites);
+		myWorld.setObjectAt(pixelLeftX,pixelBottomY,myMazub);
+		return myMazub;
 	}
 
 	/**
