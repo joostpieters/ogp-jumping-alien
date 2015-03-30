@@ -14,7 +14,8 @@ public class World {
 	public World(int xLimit, int yLimit, int tileLength, 
 					GameObject[] objects, int[][]  objectPositions,
 						TerrainType[] terrain, int[][] terrainPositions) {
-		
+		//mazubposition moet geinitialiseerd worden
+		//windowsize
 	}
 
 	@Immutable
@@ -50,10 +51,10 @@ public class World {
 		assert (object.isValidX(x)) && (object.isValidY(y));
 		int width = object.getWidth();
 		int height = object.getHeight();
-		for (int i = 0; i<width; i++) {
+		for (int i = 1; i<width-1; i++) {
 			if (x+i > getXLimit())
 				break;
-			for (int j = 0; j<height; j++) {
+			for (int j = 1; j<height-1; j++) {
 				if (y+j > getYLimit())
 					break;
 				this.gameObjects[x + i][y + j] = object;
@@ -67,10 +68,10 @@ public class World {
 		int[] origin = object.getPosition();
 		int width = object.getWidth();
 		int height = object.getHeight();
-		for (int i = 0; i<width; i++) {
+		for (int i = 1; i<width-1; i++) {
 			if (origin[0]+i > getXLimit())
 				break;
-			for (int j = 0; j<height; j++) {
+			for (int j = 1; j<height-1; j++) {
 				if (origin[1]+j > getYLimit())
 					break;
 				this.gameObjects[origin[0] + i][origin[1] + j] = null;
@@ -78,34 +79,63 @@ public class World {
 		}
 	}
 	
-	
-	
 	private GameObject[][] gameObjects;
 	
 	//no documentation
-	public void advanceTime() {
-		Mazub myMazub = (Mazub) getObjectAt(mazubPosition[0],mazubPosition[1]);
-		removeObjectAt(mazubPosition[0],mazubPosition[1]);
-		myMazub.advanceTime();
-		int[] new_pos = myMazub.getPosition();
-		setObjectAt(new_pos[0],new_pos[1],myMazub);
-		mazubPosition = new_pos;
+	public void advanceTime(double duration) throws IllegalArgumentException {
+		if ((duration < 0) || (duration >= 0.2))
+			throw new IllegalArgumentException("Illegal time duration!");
+		Mazub myMazub = (Mazub) getObjectAt(getMazubPosition()[0],getMazubPosition()[1]);
+		removeObjectAt(getMazubPosition()[0],getMazubPosition()[1]);
+		myMazub.advanceTime(duration);
+		int[] new_pos1 = myMazub.getPosition();
+		setObjectAt(new_pos1[0],new_pos1[1],myMazub);
+		setMazubPosition(new_pos1);
 		
-		for(int i = 0; i < getXLimit(); i++) {
-			for(int j = 0; j < getYLimit(); j++) {
-				if(! (mazubPosition[0] == i && mazubPosition[1] == j)) {
+		
+		int[] pos = getMazubPosition();
+		if ((pos[0] - getWindowPosition()[0]) < 200)
+			if (canHaveAsWindowPosition(pos[0]-200, pos[1]))
+				setWindowPosition(pos[0]-200, pos[1]);
+		
+		if (((getWindowPosition()[0] + getWindowSize()[0]) - pos[0]) < 200)
+			if (canHaveAsWindowPosition(pos[0]+200, pos[1]))
+				setWindowPosition(pos[0]+200, pos[1]);
+		
+		if ((pos[1] - getWindowPosition()[1]) < 200)
+			if (canHaveAsWindowPosition(pos[0], pos[1]-200))
+				setWindowPosition(pos[0], pos[1]-200);
+		
+		if (((getWindowPosition()[1] + getWindowSize()[1]) - pos[1]) < 200)
+			if (canHaveAsWindowPosition(pos[0], pos[1] + 200))
+				setWindowPosition(pos[0], pos[1] + 200);
+		
+		for(int i = 0; i <= getXLimit(); i++) {
+			for(int j = 0; j <= getYLimit(); j++) {
+				if(! (getMazubPosition()[0] == i && getMazubPosition()[1] == j)) {
 					GameObject myObject = getObjectAt(i,j);
+					if (i == myObject.getX() && j == myObject.getY()) {
 					removeObjectAt(i,j);
-					myObject.advanceTime();
-					setObjectAt(i,j,myObject);
+					myObject.advanceTime(duration);
+					int[] new_pos2 = myObject.getPosition();
+					setObjectAt(new_pos2[0],new_pos2[1],myObject);
+					}
 				}
 					
 			}
 		}
 	}
 	
-	int[] mazubPosition;
+	private int[] mazubPosition;
 	
+	public int[] getMazubPosition() {
+		return mazubPosition;
+	}
+
+	private void setMazubPosition(int[] mazubPosition) {
+		this.mazubPosition = mazubPosition;
+	}
+
 	public int[] getWindowSize() {
 		return this.windowSize;
 	}
@@ -127,6 +157,14 @@ public class World {
 	}
 	
 	private int[] windowPosition;
+	
+	public boolean canHaveAsWindowPosition(int x, int y) {
+		return ( getWindowPosition()[0] >= 0 && 
+				 getWindowPosition()[0] <= (getXLimit() - getWindowSize()[0]) &&
+				 getWindowPosition()[1] >= 0 &&
+				 getWindowPosition()[1] <= (getYLimit() - getWindowSize()[1]) );
+				
+	}
 	
 	public TerrainType getTerrainAt(int x, int y) {
 		int[] location = getMatchingTile(x,y);
@@ -160,5 +198,10 @@ public class World {
 		
 		private final boolean passable;
 	}
+	
+	
+	
+
+	
 	
 }
