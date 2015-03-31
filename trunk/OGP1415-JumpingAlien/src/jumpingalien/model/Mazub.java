@@ -83,6 +83,7 @@ public class Mazub extends GameObject {
 		this.setTimeSinceLastMove(2); // > 1
 		this.setXDirection(Direction.RIGHT);
 		this.setToEndDuck(false);
+		this.setStillMoving(false);
 	}
 	
 	/**
@@ -507,6 +508,7 @@ public class Mazub extends GameObject {
 	 * 		  | abs(new.getXVelocity()) == getXInitialVelocity()
 	 */
 	public void startMove(Direction direction) {
+		setStillMoving(true);
 		assert (direction == Direction.LEFT) || (direction == Direction.RIGHT);
 		setXDirection(direction);
 		if (getXDirection() == Direction.RIGHT)
@@ -523,6 +525,7 @@ public class Mazub extends GameObject {
 	 * 		| new.getXVelocity() == 0
 	 */
 	public void endMove() {
+		setStillMoving(false);
 		setXVelocity(0);
 	}
 	
@@ -602,13 +605,16 @@ public class Mazub extends GameObject {
 	 * 
 	 */
 	public void startDuck() throws IllegalStateException {
-		if (isDucking())
+		if (isDucking() && getToEndDuck() == false)
 			throw new IllegalStateException("Already ducking!");
-		setPreviousXVelocityLimit(abs(getXVelocityLimit()));
-		setXVelocityLimit(DUCKED_VELOCITY_LIMIT);
+		if (getToEndDuck() == false) {
+			setPreviousXVelocityLimit(abs(getXVelocityLimit()));
+			setXVelocityLimit(DUCKED_VELOCITY_LIMIT);
+		}
 		if(abs(getXVelocity()) > abs(getXVelocityLimit()))
 			setXVelocity(signum(getXVelocity())*abs(getXVelocityLimit()));
 		setDucking(true);
+		setToEndDuck(false);
 	}
 	
 	/**
@@ -874,11 +880,13 @@ public class Mazub extends GameObject {
 	private void moveX(double duration) {
 		if (duration <= 0)
 			return;
+		if (isStillMoving() && getXVelocity() == 0)
+			startMove(getXDirection());
 		double xCurrent = getX();
 		double vCurrent = getXVelocity();
-	
 		double xNew = xCurrent;
 		double vNew = vCurrent+duration*getXAcceleration();
+		System.out.println(vNew);
 		if(abs(vNew) > abs(getXVelocityLimit())) {
 			double timeBeforeVelocityLimit = (getXVelocityLimit() - vCurrent)/getXAcceleration();
 			xNew += getXVelocity()*timeBeforeVelocityLimit+0.5*getXAcceleration()*pow(duration,2);
@@ -889,8 +897,11 @@ public class Mazub extends GameObject {
 		else {
 			xNew = xCurrent + (getXVelocity()*duration + 0.5*getXAcceleration()*pow(duration,2));
 		}
-		
+				
 		if(! isValidPosition((int) xNew,getPosition()[1])) {
+//			System.out.println(getWidth());
+//			System.out.println(getHeight());
+//			System.out.println(xNew);
 			vNew = 0;
 			xNew = xCurrent;
 //			if (xNew < 0)
@@ -902,6 +913,17 @@ public class Mazub extends GameObject {
 		setXVelocity(vNew);
 	}
 	
+	
+	private boolean isStillMoving;
+
+	public boolean isStillMoving() {
+		return isStillMoving;
+	}
+
+	public void setStillMoving(boolean isStillMoving) {
+		this.isStillMoving = isStillMoving;
+	}
+
 	/**
 	 * Move this Mazub character in the y direction for the given duration.
 	 * 
@@ -971,7 +993,7 @@ public class Mazub extends GameObject {
 				return this.getSprites()[5];
 		}
 		
-		if ((isDucking()) && ((getXVelocity() > 0) || (getTimeSinceLastMove() <= 1))) {
+		if ((isDucking()) && ((getXVelocity() != 0) || (getTimeSinceLastMove() <= 1))) {
 			if (getXDirection() == Direction.RIGHT)
 				return this.getSprites()[6];
 			else
