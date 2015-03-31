@@ -37,7 +37,7 @@ public class Facade implements IFacade {
 		GameObject[] objects = {};
 		World myWorld = new World(1023,767,1, objects, objectPos, terrains, terrainPos, windowSize);
 		Mazub myMazub = new Mazub(myWorld,(double) pixelLeftX, (double) pixelBottomY,sprites);
-		myWorld.setObjectAt(pixelLeftX,pixelBottomY,myMazub);
+		myWorld.setObjectAt(pixelLeftX,pixelBottomY,0,myMazub);
 		return myMazub;
 	}
 
@@ -119,7 +119,7 @@ public class Facade implements IFacade {
 			alien.startJump();
 		}
 		catch (JumpingException exc) {
-			//throw new ModelException(exc); //Hide orange bar
+			throw new ModelException(exc); //Hide orange bar
 		}
 		
 	}

@@ -14,19 +14,19 @@ public class World {
 	public World(int xLimit, int yLimit, int tileLength, 
 					GameObject[] objects, int[][]  objectPositions,
 						TerrainType[] terrains, int[][] terrainPositions,
-						int[] windowSize) {
+						int[] windowSize, int targetTileX, int targetTileY) {
 		X_LIMIT = xLimit;
 		Y_LIMIT = yLimit;
 		TILE_LENGTH = tileLength;
-		gameObjects = new GameObject[xLimit+1][yLimit+1];
+		gameObjects = new GameObject[xLimit+1][yLimit+1][2];
 		tiles = new TerrainType[(xLimit+1)/tileLength][(yLimit+1)/tileLength];
 		
 		for(int i = 0; i < (xLimit+1)/tileLength; i++)
 			for(int j = 0; j < (yLimit+1)/tileLength; j++)
 				setTerrainAt(i,j,TerrainType.AIR);
 		
-//		for (int i = 0; i < objects.length; i++) 
-//			setObjectAt(objectPositions[i][0],objectPositions[i][1],objects[i]);
+		for (int i = 0; i < objects.length; i++) 
+			setObjectAt(objectPositions[i][0],objectPositions[i][1],objectPositions[i][2],objects[i]);
 		
 		for (int i = 0; i < terrains.length; i++)
 			setTerrainAt(terrainPositions[i][0],terrainPositions[i][1],terrains[i]);
@@ -34,6 +34,10 @@ public class World {
 		setWindowSize(windowSize[0],windowSize[1]);
 		setWindowPosition(0,0);
 		adjustWindow();
+		setTargetTileX(targetTileX);
+		setTargetTileY(targetTileY);
+		setGameOver(false);
+		setDidPlayerWin(false);
 	}
 
 	@Immutable
@@ -61,11 +65,13 @@ public class World {
 	private final int TILE_LENGTH;
 	
 	
-	public GameObject getObjectAt(int x, int y) {
-		return gameObjects[x][y];
+	public GameObject getObjectAt(int x, int y, int z) {
+		if( (x > getXLimit()) || (x < 0) || (y > getYLimit()) || (y < 0))
+			return null;
+		return gameObjects[x][y][z];
 	}
 	
-	public void setObjectAt(int x, int y, GameObject object) {
+	public void setObjectAt(int x, int y, int z, GameObject object) {
 		assert (object.isValidPosition(x,y));
 		int width = object.getWidth();
 		int height = object.getHeight();
@@ -75,7 +81,7 @@ public class World {
 			for (int j = 1; j<height-1; j++) {
 				if ((y+j > getYLimit()) || (y+j < 0))
 					break;
-				this.gameObjects[x + i][y + j] = object;
+				this.gameObjects[x + i][y + j][z] = object;
 			}
 		}	
 		if (object instanceof Mazub) {
@@ -84,8 +90,8 @@ public class World {
 		}
 	}
 	
-	public void removeObjectAt(int x, int y) {
-		GameObject object = getObjectAt(x,y);
+	public void removeObjectAt(int x, int y, int z) {
+		GameObject object = getObjectAt(x,y,z);
 		if (object == null)
 				return;
 		int[] origin = object.getPosition();
@@ -97,42 +103,52 @@ public class World {
 			for (int j = 1; j<height-1; j++) {
 				if ((origin[1]+j > getYLimit()) || (origin[1]+j<0))
 					break;
-				this.gameObjects[origin[0] + i][origin[1] + j] = null;
+				this.gameObjects[origin[0] + i][origin[1] + j][z] = null;
 			}
 		}
 	}
 	
-	private GameObject[][] gameObjects;
+	private GameObject[][][] gameObjects;
 	
 	//no documentation
 	public void advanceTime(double duration) throws IllegalArgumentException {
 		if ((duration < 0) || (duration >= 0.2))
 			throw new IllegalArgumentException("Illegal time duration!");
-		Mazub myMazub = (Mazub) getObjectAt(getMazubPosition()[0],getMazubPosition()[1]);
-		removeObjectAt(getMazubPosition()[0],getMazubPosition()[1]);
+		Mazub myMazub = (Mazub) getObjectAt(getMazubPosition()[0],getMazubPosition()[1],0);
+		removeObjectAt(getMazubPosition()[0],getMazubPosition()[1],0);
 		myMazub.advanceTime(duration);
 		int[] new_pos1 = myMazub.getPosition();
-		setObjectAt(new_pos1[0],new_pos1[1],myMazub);
+		setObjectAt(new_pos1[0],new_pos1[1],0,myMazub);
 		setMazubPosition(new_pos1);
+		if ( !((new_pos1[0] <= getXLimit()) && (new_pos1[0] >= 0) ) ||
+				(! ((new_pos1[1] <= getYLimit()) && (new_pos1[1] >= 0))))
+			myMazub.terminate(true);
+
+		int[] tile = getMatchingTile(new_pos1[0],new_pos1[1]);
+		if (tile[0] == getTargetTileX() && tile[1] == getTargetTileY()) {
+			myMazub.terminate(true);
+			setDidPlayerWin(true);
+		}
 		
 		adjustWindow();
 		
-		for(int i = 0; i <= getXLimit(); i++) {
-			for(int j = 0; j <= getYLimit(); j++) {
-				if(! (getMazubPosition()[0] == i && getMazubPosition()[1] == j)) {
-					GameObject myObject = getObjectAt(i,j);
-					if (i == myObject.getX() && j == myObject.getY()) {
-					removeObjectAt(i,j);
-					myObject.advanceTime(duration);
-					int[] new_pos2 = myObject.getPosition();
-					setObjectAt(new_pos2[0],new_pos2[1],myObject);
-					if ( new_pos2[0] < 0 || new_pos2[0] > getXLimit() ||
-						 new_pos2[1] < 0 || new_pos2[0] > getYLimit() )
-						myObject.terminate(true);
-					
-					}
+		for(int k = 0; k<=1; k++) {
+			for(int i = 0; i <= getXLimit(); i++) {
+				for(int j = 0; j <= getYLimit(); j++) {
+					if(! (getMazubPosition()[0] == i && getMazubPosition()[1] == j)) {
+						GameObject myObject = getObjectAt(i,j,k);
+						if (i == myObject.getX() && j == myObject.getY()) {
+						removeObjectAt(i,j,k);
+						myObject.advanceTime(duration);
+						int[] new_pos2 = myObject.getPosition();
+						setObjectAt(new_pos2[0],new_pos2[1],k,myObject);
+						if ( new_pos2[0] < 0 || new_pos2[0] > getXLimit() ||
+							 new_pos2[1] < 0 || new_pos2[0] > getYLimit() )
+							myObject.terminate(true);
+						
+						}
+					}		
 				}
-					
 			}
 		}
 	}
@@ -178,6 +194,8 @@ public class World {
 	}
 	
 	public TerrainType getTerrainAt(int x, int y) {
+		if( (x > getXLimit()) || (x < 0) || (y > getYLimit()) || (y < 0))
+			return TerrainType.AIR;
 		int[] location = getMatchingTile(x,y);
 		return this.tiles[location[0]][location[1]];
 	}
@@ -212,6 +230,7 @@ public class World {
 	
 	
 	public void endGame() {
+		setGameOver(true);
 	}
 
 	public void adjustWindow() {
@@ -241,5 +260,40 @@ public class World {
 				setWindowPosition(getWindowPosition()[0], getYLimit() - getWindowSize()[1]);
 	}
 	
+	private int targetTileX;
+	public int getTargetTileX() {
+		return targetTileX;
+	}
+	public void setTargetTileX(int targetTileX) {
+		this.targetTileX = targetTileX;
+	}
+
+	private int targetTileY;
+	public int getTargetTileY() {
+		return targetTileY;
+	}
+	public void setTargetTileY(int targetTileY) {
+		this.targetTileY = targetTileY;
+	}
+
+	private boolean gameOver;
+
+	public boolean isGameOver() {
+		return gameOver;
+	}
+
+	private void setGameOver(boolean gameOver) {
+		this.gameOver = gameOver;
+	}
+	
+	private boolean didPlayerWin;
+
+	public boolean getDidPlayerWin() {
+		return didPlayerWin;
+	}
+
+	private void setDidPlayerWin(boolean didPlayerWin) {
+		this.didPlayerWin = didPlayerWin;
+	}
 	
 }
