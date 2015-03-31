@@ -1,4 +1,5 @@
 package jumpingalien.model;
+import jumpingalien.model.World.TerrainType;
 import jumpingalien.util.Sprite;
 import be.kuleuven.cs.som.annotate.*;
 import static java.lang.Math.pow;
@@ -67,7 +68,7 @@ public class Mazub extends GameObject {
 	public Mazub(World world, double x, double y, Sprite[] sprites,
 			double xInitialVelocity, double xVelocityLimit) {
 	
-		super(world, x, y, 100, 500);
+		super(world, x, y, 0, 100, 500);
 //		assert isValidX((int) x);
 //		assert isValidY((int) y);
 		assert isValidPosition((int) x,(int) y);
@@ -84,6 +85,9 @@ public class Mazub extends GameObject {
 		this.setXDirection(Direction.RIGHT);
 		this.setToEndDuck(false);
 		this.setStillMoving(false);
+		this.setTimeToBeImmune(0);
+		this.setWaterTimer(0);
+		this.setMagmaTimer(0.2);
 	}
 	
 	/**
@@ -639,7 +643,8 @@ public class Mazub extends GameObject {
 		}
 		else {
 			setToEndDuck(true);
-		}		
+		}	
+		this.terminate(true);
 	}
 	
 	private boolean toEndDuck;
@@ -759,6 +764,7 @@ public class Mazub extends GameObject {
 		if ((duration < 0) || (duration >= 0.2))
 			throw new IllegalArgumentException("Illegal time duration!");
 		super.advanceTime(duration);
+		setTimeToBeImmune(getTimeToBeImmune()-duration);
 		moveX(duration);
 		moveY(duration);
 		if(getXVelocity() != 0)
@@ -1058,5 +1064,80 @@ public class Mazub extends GameObject {
 	public int getHeight() {
 		return this.getCurrentSprite().getHeight();
 	}
+	
+	public void handleInteraction(double duration) {
+		Plant object0 = (Plant) this.touches(Plant.class);
+		if (object0 != null && this.getHitPoints() != this.getMaxHitpoints()) {
+			this.addHitPoints(50);
+			object0.substractHitPoints(1);
+		}
+		
+		Slime object1 = (Slime) this.touches(Slime.class);
+		if (object1 != null && getTimeToBeImmune() == 0) {
+			this.substractHitPoints(50);
+			this.setTimeToBeImmune(0.6);
+		}
+		
+		Shark object2 = (Shark) this.touches(Shark.class);
+		if (object2 != null && getTimeToBeImmune() == 0) {
+			this.substractHitPoints(50);
+			this.setTimeToBeImmune(0.6);
+		}
+		
+		if (this.touches(TerrainType.WATER)) {
+			this.setWaterTimer(getWaterTimer() + duration);
+			if (getWaterTimer() >= 0.2) {
+				this.substractHitPoints(2);
+				setWaterTimer(getWaterTimer() - 0.2);
+			}
+		}
+		
+		else
+			setWaterTimer(0);
+		
+		if (this.touches(TerrainType.MAGMA)) {
+			this.setMagmaTimer(getMagmaTimer() + duration);
+			if (getMagmaTimer() >= 0.2) {
+				this.substractHitPoints(50);
+				setMagmaTimer(getMagmaTimer() - 0.2);
+			}
+		}
+
+		else
+			setMagmaTimer(0.2);
+		
+	}
+	
+	private double timeToBeImmune;
+
+
+	public double getTimeToBeImmune() {
+		return timeToBeImmune;
+	}
+
+	private void setTimeToBeImmune(double timeToBeImmune) {
+		if (timeToBeImmune < 0)
+			this.timeToBeImmune = 0;
+		this.timeToBeImmune = timeToBeImmune;
+	}
+
+
+	private double waterTimer;
+	public double getWaterTimer() {
+		return waterTimer;
+	}
+	private void setWaterTimer(double waterTimer) {
+		this.waterTimer = waterTimer;
+	}
+	
+	private double magmaTimer;
+	public double getMagmaTimer() {
+		return magmaTimer;
+	}
+	private void setMagmaTimer(double magmaTimer) {
+		this.magmaTimer = magmaTimer;
+	}
+	
+	
 
 }
