@@ -67,7 +67,7 @@ public class Mazub extends GameObject {
 	public Mazub(World world, double x, double y, Sprite[] sprites,
 			double xInitialVelocity, double xVelocityLimit) {
 	
-		super(world, x, y);
+		super(world, x, y, 100, 500);
 //		assert isValidX((int) x);
 //		assert isValidY((int) y);
 		assert isValidPosition((int) x,(int) y);
@@ -886,7 +886,6 @@ public class Mazub extends GameObject {
 		double vCurrent = getXVelocity();
 		double xNew = xCurrent;
 		double vNew = vCurrent+duration*getXAcceleration();
-		System.out.println(vNew);
 		if(abs(vNew) > abs(getXVelocityLimit())) {
 			double timeBeforeVelocityLimit = (getXVelocityLimit() - vCurrent)/getXAcceleration();
 			xNew += getXVelocity()*timeBeforeVelocityLimit+0.5*getXAcceleration()*pow(duration,2);

@@ -14,13 +14,34 @@ public abstract class GameObject {
 	public abstract int getWidth();
 	public abstract int getHeight();
 
+
 	
-	public GameObject(World world, double x, double y) {
+	public GameObject(World world, double x, double y, int initialHitPoints, int maxHitPoints) {
 		this.WORLD = world;
 		setPosition(x,y);
+		MAX_HITPOINTS = maxHitPoints;
+		setHitPoints(initialHitPoints);
+		
 	}
 	
 	private final World WORLD;
+	
+	
+	
+	private int hitPoints;
+	private final int MAX_HITPOINTS;
+	
+	public int getHitPoints() {
+		return this.hitPoints;
+	}
+	protected void setHitPoints(int hitPoints) {
+		if (hitPoints < 0)
+			this.hitPoints = 0;
+		else if (hitPoints > MAX_HITPOINTS)
+			this.hitPoints = MAX_HITPOINTS;
+		else
+			this.hitPoints = hitPoints;
+	}
 	
 	public boolean isValidPosition(int x,int y) {
 		if (!( (x <= WORLD.getXLimit()) && (x >= 0) ))
@@ -185,6 +206,8 @@ public abstract class GameObject {
 	}
 	
 	public void advanceTime(double duration) {
+		if(getHitPoints() == 0)
+			this.terminate(false);
 		if (isTerminated()) {
 			setTimeSinceTermination(getTimeSinceTermination() + duration);
 			if (getTimeSinceTermination() > 0.6) {

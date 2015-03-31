@@ -70,10 +70,10 @@ public class World {
 		int width = object.getWidth();
 		int height = object.getHeight();
 		for (int i = 1; i<width-1; i++) {
-			if (x+i > getXLimit())
+			if ((x+i > getXLimit()) || (x+i < 0))
 				break;
 			for (int j = 1; j<height-1; j++) {
-				if (y+j > getYLimit())
+				if ((y+j > getYLimit()) || (y+j < 0))
 					break;
 				this.gameObjects[x + i][y + j] = object;
 			}
@@ -92,10 +92,10 @@ public class World {
 		int width = object.getWidth();
 		int height = object.getHeight();
 		for (int i = 1; i<width-1; i++) {
-			if (origin[0]+i > getXLimit())
+			if ((origin[0]+i > getXLimit()) || (origin[0]+i < 0))
 				break;
 			for (int j = 1; j<height-1; j++) {
-				if (origin[1]+j > getYLimit())
+				if ((origin[1]+j > getYLimit()) || (origin[1]+j<0))
 					break;
 				this.gameObjects[origin[0] + i][origin[1] + j] = null;
 			}
