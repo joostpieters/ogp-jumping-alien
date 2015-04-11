@@ -89,9 +89,12 @@ public class World {
 	
 	
 	public GameObject getObjectAt(int x, int y, int z) {
-		if( (x > getXLimit()) || (x < 0) || (y > getYLimit()) || (y < 0))
+		try {
+		return gameObjects[x+1][y+1][z]; //DE RAND STAAT _NIET_ GEMARKEERD!
+		}
+		catch(IndexOutOfBoundsException e) {
 			return null;
-		return gameObjects[x][y][z];
+		}
 	}
 	
 	public void setObjectAt(int x, int y, int z, GameObject object) {
@@ -160,6 +163,7 @@ public class World {
 				for(int j = 0; j <= getYLimit(); j++) {
 					if(! (getMazubPosition()[0] == i && getMazubPosition()[1] == j)) {
 						GameObject myObject = getObjectAt(i,j,k);
+						if(myObject == null) {continue;}
 						if (i == myObject.getX() && j == myObject.getY()) {
 						removeObjectAt(i,j,k);
 						myObject.advanceTime(duration);

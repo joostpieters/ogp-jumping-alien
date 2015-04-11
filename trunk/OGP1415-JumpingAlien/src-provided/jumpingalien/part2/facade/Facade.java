@@ -182,7 +182,24 @@ public class Facade implements IFacadePart2 {
 	@Override
 	public int[][] getTilePositionsIn(World world, int pixelLeft,
 			int pixelBottom, int pixelRight, int pixelTop) {
-		
+		int l = world.getTileLength();
+		int size = (((pixelRight+l)-(pixelLeft-l))/l) //HORIZONTAL
+							*(((pixelTop+l)-(pixelBottom-l))/l); //VERTICAL
+		int[][] result = new int[size][2];
+		int i = pixelLeft;
+		int j = pixelBottom;
+		int k = 0;
+		while(j<pixelTop+l) {
+			while(i<pixelRight+l) {
+				result[k][0] = i/l;
+				result[k][1] = j/l;
+				i += l;
+				k += 1;
+			}
+			i = pixelLeft;
+			j += l;
+		}
+		return result;
 	}
 
 	@Override
@@ -211,7 +228,6 @@ public class Facade implements IFacadePart2 {
 	@Override
 	public void setMazub(World world, Mazub alien) {
 		world.addObject(alien);
-
 	}
 
 	@Override
@@ -231,8 +247,7 @@ public class Facade implements IFacadePart2 {
 
 	@Override
 	public Collection<Plant> getPlants(World world) {
-		// TODO Auto-generated method stub
-		return null;
+		return world.getAllInstancesOf(Plant.class);
 	}
 
 	@Override
@@ -247,8 +262,7 @@ public class Facade implements IFacadePart2 {
 
 	@Override
 	public Shark createShark(int x, int y, Sprite[] sprites) {
-		// TODO Auto-generated method stub
-		return null;
+		return new Shark(null, x, y, sprites);
 	}
 
 	@Override
@@ -259,8 +273,7 @@ public class Facade implements IFacadePart2 {
 
 	@Override
 	public Collection<Shark> getSharks(World world) {
-		// TODO Auto-generated method stub
-		return null;
+		return world.getAllInstancesOf(Shark.class);
 	}
 
 	@Override
@@ -270,8 +283,7 @@ public class Facade implements IFacadePart2 {
 
 	@Override
 	public Sprite getCurrentSprite(Shark shark) {
-		// TODO Auto-generated method stub
-		return null;
+		return shark.getCurrentSprite();
 	}
 
 	@Override
@@ -286,13 +298,12 @@ public class Facade implements IFacadePart2 {
 
 	@Override
 	public void addSlime(World world, Slime slime) {
-		// TODO Auto-generated method stub
-
+		world.addObject(slime);
 	}
 
 	@Override
 	public Collection<Slime> getSlimes(World world) {
-		return (Collection<Slime>) world.getAllInstancesOf(Slime.class);
+		return world.getAllInstancesOf(Slime.class);
 	}
 
 	@Override
