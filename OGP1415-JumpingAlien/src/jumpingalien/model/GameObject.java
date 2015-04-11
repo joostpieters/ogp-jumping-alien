@@ -52,6 +52,7 @@ public abstract class GameObject {
 		this.setTimeToBeImmune(0);
 		this.setWaterTimer(0);
 		this.setMagmaTimer(0.2);
+		this.setAirTimer(0);
 	
 	}
 	
@@ -758,7 +759,7 @@ public abstract class GameObject {
 		else {
 			setToEndDuck(true);
 		}	
-		this.terminate(true);
+		//this.terminate(true); //Staat hier niks te doen?
 	}
 	
 	private boolean toEndDuck;
@@ -1055,6 +1056,14 @@ public abstract class GameObject {
 	}
 	protected void setMagmaTimer(double magmaTimer) {
 		this.magmaTimer = magmaTimer;
+	}
+	
+	private double airTimer;
+	public double getAirTimer() {
+		return airTimer;
+	}
+	protected void setAirTimer(double airTimer) {
+		this.airTimer = airTimer;
 	}
 	
 	
