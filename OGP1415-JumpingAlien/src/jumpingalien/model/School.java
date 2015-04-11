@@ -1,22 +1,39 @@
 package jumpingalien.model;
 
-public class School extends GameObject {
+import java.util.HashSet;
+import java.util.Set;
 
-	public School(World world, double x, double y) {
-		super(world, x, y);
-		// TODO Auto-generated constructor stub
-	}
+public class School {
 
-	@Override
-	public int getWidth() {
-		// TODO Auto-generated method stub
-		return 0;
+	public School() {
+		slimes = new HashSet<Slime>();
 	}
+	
+	public Set<Slime> getSlimes() {
+		return slimes;
+	}
+	
+	public boolean hasAsSlime(Slime slime) {
+		return getSlimes().contains(slimes);
+	}
+	
+	public void addAsSlime(Slime slime) {
+		getSlimes().add(slime);
+	}
+	
+	public void removeAsSlime(Slime slime) {
+		getSlimes().remove(slime);
+	}
+	
+	public int getNbSlimes() {
+		return getSlimes().size();
+	}
+	
+	public boolean canHaveAsSlime(Slime slime) {
+		return slime != null;
+	}
+	
+	private Set<Slime> slimes;
 
-	@Override
-	public int getHeight() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
 
 }

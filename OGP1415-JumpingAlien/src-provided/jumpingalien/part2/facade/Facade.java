@@ -110,8 +110,8 @@ public class Facade implements IFacadePart2 {
 	}
 
 	@Override
+	@Deprecated
 	public void advanceTime(Mazub alien, double dt) {
-		// TODO Auto-generated method stub
 		return;
 	}
 
@@ -166,61 +166,67 @@ public class Facade implements IFacadePart2 {
 
 	@Override
 	public int[] getVisibleWindow(World world) {
-		int left
-		int right
-		int top
-		int bottom
+		int left = world.getWindowPosition()[0];
+		int right = left + world.getWindowSize()[0];
+		int bottom = world.getWindowPosition()[1];
+		int top = bottom + world.getWindowSize()[1];
+		int[] result = {left,bottom,right,top};
+		return result;
 	}
 
 	@Override
 	public int[] getBottomLeftPixelOfTile(World world, int tileX, int tileY) {
-		// TODO Auto-generated method stub
-		return null;
+		return new int[] {tileX*world.getTileLength(), tileY*world.getTileLength()};
 	}
 
 	@Override
 	public int[][] getTilePositionsIn(World world, int pixelLeft,
 			int pixelBottom, int pixelRight, int pixelTop) {
-		// TODO Auto-generated method stub
-		return null;
+		
 	}
 
 	@Override
 	public int getGeologicalFeature(World world, int pixelX, int pixelY)
 			throws ModelException {
-		// TODO Auto-generated method stub
-		return 0;
+		TerrainType result = world.getTerrainAt(pixelX, pixelY);
+		if(result == TerrainType.AIR)
+			return 0;
+		if(result == TerrainType.SOLID_GROUND)
+			return 1;
+		if(result == TerrainType.WATER)
+			return 2;
+		//if(result == TerrainType.MAGMA)
+		return 3;
 	}
 
 	@Override
 	public void setGeologicalFeature(World world, int tileX, int tileY,
 			int tileType) {
-		// TODO Auto-generated method stub
+		TerrainType[] LOOKUP = {TerrainType.AIR, TerrainType.SOLID_GROUND,
+									TerrainType.WATER, TerrainType.MAGMA};
+		world.setTerrainAt(tileX,tileY,LOOKUP[tileType]);
 
 	}
 
 	@Override
 	public void setMazub(World world, Mazub alien) {
-		// TODO Auto-generated method stub
+		world.addObject(alien);
 
 	}
 
 	@Override
 	public boolean isImmune(Mazub alien) {
-		// TODO Auto-generated method stub
-		return false;
+		return alien.getTimeToBeImmune() > 0;
 	}
 
 	@Override
 	public Plant createPlant(int x, int y, Sprite[] sprites) {
-		// TODO Auto-generated method stub
-		return null;
+		return new Plant(null,(double) x, (double) y, sprites);
 	}
 
 	@Override
 	public void addPlant(World world, Plant plant) {
-		// TODO Auto-generated method stub
-
+		world.addObject(plant);
 	}
 
 	@Override
@@ -231,14 +237,12 @@ public class Facade implements IFacadePart2 {
 
 	@Override
 	public int[] getLocation(Plant plant) {
-		// TODO Auto-generated method stub
-		return null;
+		return plant.getPosition();
 	}
 
 	@Override
 	public Sprite getCurrentSprite(Plant plant) {
-		// TODO Auto-generated method stub
-		return null;
+		return plant.getCurrentSprite();
 	}
 
 	@Override
@@ -249,7 +253,7 @@ public class Facade implements IFacadePart2 {
 
 	@Override
 	public void addShark(World world, Shark shark) {
-		// TODO Auto-generated method stub
+		world.addObject(shark);
 
 	}
 
@@ -261,8 +265,7 @@ public class Facade implements IFacadePart2 {
 
 	@Override
 	public int[] getLocation(Shark shark) {
-		// TODO Auto-generated method stub
-		return null;
+		return shark.getPosition();
 	}
 
 	@Override
@@ -273,14 +276,12 @@ public class Facade implements IFacadePart2 {
 
 	@Override
 	public School createSchool() {
-		// TODO Auto-generated method stub
-		return null;
+		return new School();
 	}
 
 	@Override
 	public Slime createSlime(int x, int y, Sprite[] sprites, School school) {
-		// TODO Auto-generated method stub
-		return null;
+		return new Slime(null, x, y, sprites, school);
 	}
 
 	@Override
@@ -291,26 +292,22 @@ public class Facade implements IFacadePart2 {
 
 	@Override
 	public Collection<Slime> getSlimes(World world) {
-		// TODO Auto-generated method stub
-		return null;
+		return (Collection<Slime>) world.getAllInstancesOf(Slime.class);
 	}
 
 	@Override
 	public int[] getLocation(Slime slime) {
-		// TODO Auto-generated method stub
-		return null;
+		return slime.getPosition();
 	}
 
 	@Override
 	public Sprite getCurrentSprite(Slime slime) {
-		// TODO Auto-generated method stub
-		return null;
+		return slime.getCurrentSprite();
 	}
 
 	@Override
 	public School getSchool(Slime slime) {
-		// TODO Auto-generated method stub
-		return null;
+		return slime.getSchool();
 	}
 
 }
