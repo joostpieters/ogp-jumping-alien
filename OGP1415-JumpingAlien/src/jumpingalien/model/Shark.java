@@ -10,7 +10,7 @@ import jumpingalien.util.Sprite;
  * @author Andreas
  *
  */
-public class Shark extends GameObject {
+public class Shark extends AutomaticObject {
 
 	/**
 	 * @param world
@@ -21,7 +21,31 @@ public class Shark extends GameObject {
 		super(world, x, y, 0, 100, 100, sprites, 100, 200, 400, 400, 150, 1000);
 		// TODO Auto-generated constructor stub
 	}
+	
 
+	
+	@Override
+	public void advanceTime(double duration) {
+		super.advanceTime(duration);
+		setTimer(getTimer()+duration);
+		if(getTimer() > getGoal()) {
+			startNewMovement();
+		}
+	}
+	
+	@Override
+	public void startNewMovement() {
+		setTimer(0);
+		endMove();
+		//4 seconds is less likely, but still possible when duration = 0.2
+		setGoal(1+generator.nextDouble()*(3.8-1));
+		if(generator.nextDouble() < 0.5)
+			startMove(Direction.LEFT);
+		else
+			startMove(Direction.RIGHT);
+		
+	}
+	
 	@Override
 	public Sprite getCurrentSprite() {
 		if (getXDirection() == Direction.LEFT)
@@ -51,8 +75,9 @@ public class Shark extends GameObject {
 			}
 		}
 
-		else
+		else {
 			setMagmaTimer(0.2);
+		}
 	}
 
 
