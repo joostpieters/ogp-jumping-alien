@@ -6,6 +6,8 @@ package jumpingalien.model;
 import static java.lang.Math.abs;
 import static java.lang.Math.pow;
 import static java.lang.Math.signum;
+
+
 import jumpingalien.model.World.TerrainType;
 import jumpingalien.util.Sprite;
 import be.kuleuven.cs.som.annotate.*;
@@ -47,12 +49,15 @@ public abstract class GameObject {
 		this.setToEndDuck(false);
 		this.setStillMoving(false);
 		
-		setTimer(0);
+
 		
 		this.setTimeToBeImmune(0);
 		this.setWaterTimer(0);
 		this.setMagmaTimer(0.2);
 		this.setAirTimer(0);
+		
+
+		
 	
 	}
 	
@@ -91,18 +96,7 @@ public abstract class GameObject {
 		this.myWorld = myWorld;
 	}
 	private World myWorld;
-
-	public double getTimer() {
-		return this.timer;
-	}
-	
-	protected void setTimer(double time) {
-		this.timer = time;
-	}
-	
-	private double timer;
-	
-	
+		
 	private int hitPoints;
 	private final int MAX_HITPOINTS;
 	
@@ -244,6 +238,7 @@ public abstract class GameObject {
 		}
 		
 		moveX(duration);
+		if(this instanceof Shark)
 		moveY(duration);
 		if(getXVelocity() != 0)
 			setTimeSinceLastMove(0);
@@ -263,7 +258,7 @@ public abstract class GameObject {
 		setTimeToBeImmune(getTimeToBeImmune()-duration);
 	}
 		
-	public GameObject touches(Class className) {
+	public GameObject touches(Class<?> className) {
 		int[] pos = this.getPosition();
 		int x = pos[0];
 		int y = pos[1];

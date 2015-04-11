@@ -209,8 +209,6 @@ public class Mazub extends GameObject {
 	 * 		  | (duration < 0) || (duration >= 0.2)	
 	 */
 	public void advanceTime(double duration) throws IllegalArgumentException {
-		if ((duration < 0) || (duration >= 0.2))
-			throw new IllegalArgumentException("Illegal time duration!");
 		super.advanceTime(duration);
 	}
 	

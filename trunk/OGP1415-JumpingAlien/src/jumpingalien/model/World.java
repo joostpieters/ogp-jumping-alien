@@ -138,8 +138,8 @@ public class World {
 	
 	//no documentation
 	public void advanceTime(double duration) throws IllegalArgumentException {
-		if ((duration < 0) || (duration >= 0.2))
-			throw new IllegalArgumentException("Illegal time duration!");
+		//if ((duration < 0) || (duration >= 0.2))
+			//throw new IllegalArgumentException("Illegal time duration!");
 		Mazub myMazub = (Mazub) getObjectAt(getMazubPosition()[0],getMazubPosition()[1],0);
 		removeObjectAt(getMazubPosition()[0],getMazubPosition()[1],0);
 		myMazub.advanceTime(duration);
@@ -159,19 +159,27 @@ public class World {
 		adjustWindow();
 		
 		for(int k = 0; k<=1; k++) {
+			assert Math.abs(duration) < 0.2;
+			System.out.println("pass");
+			System.out.println(duration);
+			if(duration > 0.2) duration = 0.2;
+			System.out.println(duration);
 			for(int i = 0; i <= getXLimit(); i++) {
 				for(int j = 0; j <= getYLimit(); j++) {
 					if(! (getMazubPosition()[0] == i && getMazubPosition()[1] == j)) {
 						GameObject myObject = getObjectAt(i,j,k);
-						if(myObject == null) {continue;}
-						if (i == myObject.getX() && j == myObject.getY()) {
+						if(myObject == null)
+							continue;
+						if (i == myObject.getPosition()[0] && j == myObject.getPosition()[1]) {
 						removeObjectAt(i,j,k);
 						myObject.advanceTime(duration);
+						//if(myObject instanceof Shark) System.out.println(duration);
 						int[] new_pos2 = myObject.getPosition();
 						setObjectAt(new_pos2[0],new_pos2[1],k,myObject);
 						if ( new_pos2[0] < 0 || new_pos2[0] > getXLimit() ||
-							 new_pos2[1] < 0 || new_pos2[0] > getYLimit() )
+							 new_pos2[1] < 0 || new_pos2[0] > getYLimit() ) { 
 							myObject.terminate(true);
+							}
 						
 						}
 					}		

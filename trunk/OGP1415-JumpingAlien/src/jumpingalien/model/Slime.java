@@ -1,17 +1,15 @@
 package jumpingalien.model;
 
-import java.util.Random;
 
 import jumpingalien.model.World.TerrainType;
 import jumpingalien.util.Sprite;
 
-public class Slime extends GameObject {
+public class Slime extends AutomaticObject {
 
 	public Slime(World world, double x, double y, Sprite[] sprites, School school) {
 		super(world, x, y, 1, 100, 100, sprites, 100, 0, 250, 250, 70, 1000);
 		assert school != null;
 		this.setSchool(school);
-		generator = new Random();
 		startNewMovement();
 	}
 	
@@ -52,19 +50,10 @@ public class Slime extends GameObject {
 	
 	private School school;
 	
-	private Random generator;
-	
-	
-	public double getGoal() {
-		return goal;
-	}
 
-
-	private void setGoal(double goal) {
-		this.goal = goal;
-	}
 	
-	private double goal;
+	
+
 
 
 	public void advanceTime(double duration) {
@@ -75,7 +64,7 @@ public class Slime extends GameObject {
 			startNewMovement();
 	}
 	
-	private void startNewMovement() {
+	protected void startNewMovement() {
 		endMove();
 		setTimer(0);
 		if(generator.nextDouble() < 0.5) //nextDouble() returns random double out of [0,1]
