@@ -14,7 +14,7 @@ public class JumpingException extends RuntimeException {
 	 * 
 	 * @param 	message
 	 * 			The message for this new JumpingException.
-	 * @param	character
+	 * @param	gameObject
 	 * 			The Mazub character for this new JumpingException.
 	 * @post	The character of this new JumpingException is the same as the given
 	 * 			Mazub character.
@@ -23,9 +23,9 @@ public class JumpingException extends RuntimeException {
 	 * 			with message as diagnostic message.
 	 * 			| super(message)
 	 */
-	public JumpingException(String message, Mazub character) {
+	public JumpingException(String message, GameObject gameObject) {
 	    super(message);
-	    this.character = character;
+	    this.character = gameObject;
 	}
 	
 	/**
@@ -33,7 +33,7 @@ public class JumpingException extends RuntimeException {
 	 * @return result == this.character
 	 */
 	@Basic @Immutable
-	public Mazub getCharacter() {
+	public GameObject getCharacter() {
 		return this.character;
 	}
 	
@@ -41,5 +41,5 @@ public class JumpingException extends RuntimeException {
 	/**
 	 * Variable referencing the Mazub character of this JumpingException.
 	 */
-	private final Mazub character;
+	private final GameObject character;
 }

@@ -35,7 +35,7 @@ public class Facade implements IFacade {
 		TerrainType[] terrains = {TerrainType.SOLID_GROUND,TerrainType.SOLID_GROUND,TerrainType.SOLID_GROUND,TerrainType.SOLID_GROUND,TerrainType.SOLID_GROUND};
 		int[][] objectPos = {};
 		GameObject[] objects = {};
-		World myWorld = new World(1023,767,1, objects, objectPos, terrains, terrainPos, windowSize);
+		World myWorld = new World(1023,767,1, objects, objectPos, terrains, terrainPos, windowSize,10000,10000);
 		Mazub myMazub = new Mazub(myWorld,(double) pixelLeftX, (double) pixelBottomY,sprites);
 		myWorld.setObjectAt(pixelLeftX,pixelBottomY,0,myMazub);
 		return myMazub;

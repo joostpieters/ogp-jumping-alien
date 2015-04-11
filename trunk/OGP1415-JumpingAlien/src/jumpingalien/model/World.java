@@ -3,6 +3,9 @@
  */
 package jumpingalien.model;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import be.kuleuven.cs.som.annotate.*;
 
 /**
@@ -38,6 +41,26 @@ public class World {
 		setTargetTileY(targetTileY);
 		setGameOver(false);
 		setDidPlayerWin(false);
+	}
+	
+	public void addObject(GameObject obj) {
+		obj.setMyWorld(this);
+		int x = obj.getPosition()[0];
+		int y = obj.getPosition()[1];
+		setObjectAt(x,y,obj.getZ(),obj);
+	}
+	
+	public Set getAllInstancesOf(Class c) { //Set<GameObject> mag niet van de facade
+		Set<GameObject> result = new HashSet<>();
+		for(int k = 0; k<=1; k++) {
+			for(int i = 0; i <= getXLimit(); i++) {
+				for(int j = 0; j <= getYLimit(); j++) {
+					if(c.isInstance(getObjectAt(i,j,k)))
+							result.add(getObjectAt(i,j,k));
+				}
+			}	
+		}
+		return result;
 	}
 
 	@Immutable
