@@ -66,7 +66,7 @@ public class Mazub extends GameObject {
 	
 		super(world, x, y, 0, 100, 500 ,sprites, 
 				100, 800, 300, 100,
-								90, 1000);
+								90, 1000, true);
 //		assert isValidX((int) x);
 //		assert isValidY((int) y);
 //		assert isValidPosition((int) x,(int) y);

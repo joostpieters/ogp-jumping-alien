@@ -7,7 +7,7 @@ import jumpingalien.util.Sprite;
 public class Slime extends AutomaticObject {
 
 	public Slime(World world, double x, double y, Sprite[] sprites, School school) {
-		super(world, x, y, 0, 100, 100, sprites, 100, 0, 250, 250, 70, 1000);
+		super(world, x, y, 0, 100, 100, sprites, 100, 0, 250, 250, 70, 1000, true);
 		assert school != null;
 		this.setSchool(school);
 		startNewMovement();

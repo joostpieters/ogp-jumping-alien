@@ -5,7 +5,7 @@ import jumpingalien.util.Sprite;
 public class Plant extends AutomaticObject {
 
 	public Plant(World world, double x, double y, Sprite[] sprites) {
-		super(world, x, y, 1, 1, 1, sprites, 50, 0, 50, 50, 1, 0);
+		super(world, x, y, 1, 1, 1, sprites, 50, 0, 50, 50, 1, 0, false);
 	}
 
 	
@@ -48,7 +48,9 @@ public class Plant extends AutomaticObject {
 	
 	//Gegokt, want staat niet in opgave
 	public Sprite getCurrentSprite() {
-		return getSprites()[0];
+		if(getXDirection() == Direction.LEFT)
+			return getSprites()[0];
+		return getSprites()[1];
 	}
 
 }
