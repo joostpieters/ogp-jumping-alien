@@ -4,8 +4,6 @@
 package jumpingalien.model;
 
 import static java.lang.Math.*;
-
-
 import jumpingalien.model.World.TerrainType;
 import jumpingalien.util.Sprite;
 import be.kuleuven.cs.som.annotate.*;
@@ -24,7 +22,7 @@ public abstract class GameObject {
 							int initialHitPoints, int maxHitPoints, Sprite[] sprites,
 								double xInitialVelocity, double yInitialVelocity,
 									double xVelocityLimit,  double duckedVelocityLimit,
-										double xAcceleration, double yAcceleration) {
+										double xAcceleration, double yAcceleration, boolean solid) {
 		
 		assert sprites != null;
 		setMyWorld(world);
@@ -56,6 +54,8 @@ public abstract class GameObject {
 		this.setMagmaTimer(0.2);
 		this.setAirTimer(0);
 		
+		this.SOLID = solid;
+		
 
 		
 	
@@ -86,6 +86,12 @@ public abstract class GameObject {
 	 * Variable registering the maximum allowed velocity in the x direction of this Mazub character.
 	 */
 	private double xVelocityLimit; //in pixels per seconde
+	
+	@Immutable
+	public boolean isSolid() {
+		return SOLID;
+	}
+	private final boolean SOLID;
 	
 	
 	public World getMyWorld() {
@@ -135,22 +141,75 @@ public abstract class GameObject {
 			//return false;
 		if (y<0)
 			return false;
+		if(! isSolid())
+			return true;
 			
 		int width = this.getWidth();
 		int height = this.getHeight();
-		for (int i = 1; i<width-1; i++) {
+		
+		for(GameObject obj : myWorld.getGameObjects()) {
+			if(obj != this) {
+				if(rectanglesIntersect(obj.getPosition()[0]+1,obj.getPosition()[1]+1,obj.getWidth()-1,obj.getHeight()-1,
+					x+1,y+1,this.getWidth()-1,this.getHeight()-1))
+						if(obj.isSolid())
+							return false;
+			}
+			
+		}
+		
+		
+		
+		/*for (int i = 1; i<width-1; i++) {
 			if (x+i > myWorld.getXLimit())
 				break;
 			for (int j = 1; j<height-1; j++) {
 				if (y+j > myWorld.getYLimit())
 					break;
-				if (( (myWorld.getObjectAt(x+i, y+j,getZ()) != this) && (myWorld.getObjectAt(x+i, y+j, getZ()) != null))
-						|| (! (myWorld.getTerrainAt(x+i,y+j).isPassable())))
+				if (! myWorld.getTerrainAt(x+i,y+j).isPassable())
 					return false;
 			}
+		}*/
+		
+		
+		for (int i = 1; i < width-1; i++) {
+			if (! (myWorld.getTerrainAt(x + i, y+1).isPassable() && 
+				myWorld.getTerrainAt(x + i, y + height - 2).isPassable()))
+				return false;
 		}
+
+		for (int j = 2; j < height-2; j++) {
+			if (! (myWorld.getTerrainAt(x+1, y + j).isPassable() &&
+					myWorld.getTerrainAt(x + width - 2, y + j).isPassable()))
+					return false;
+		}
+		
 		return true;
 	}
+	
+	
+	
+	//NOG GRONDIG TESTEN
+	public boolean rectanglesIntersect(int x1, int y1, int width1, int height1,
+										int x2, int y2, int width2, int height2) {
+		int[][] corners1 = {{x1,y1},{x1,y1+height1-1},{x1+width1-1,y1+height1-1},{x1+width1-1,y1}};
+		int[][] corners2 = {{x2,y2},{x2,y2+height2-2},{x2+width2-2,y2+height2-2},{x2+width2-2,y2}};
+		
+		for(int i = 0; i < corners1.length; i++) {
+			if (pointInRectangle(corners1[i][0], corners1[i][1], x2, y2, width2, height2))
+				return true;
+			if (pointInRectangle(corners2[i][0], corners2[i][1], x1, y1, width1, height1))
+				return true;
+		}
+		
+		return false;
+	}
+	
+	public boolean pointInRectangle(int x,int y, int RectX, int RectY, int width, int height) {
+		if(RectX <= x && x <= RectX+width-1 && RectY <= y && y <= RectY+height-1)
+			return true;
+		return false;
+	}
+
 	
 
 	
@@ -227,6 +286,7 @@ public abstract class GameObject {
 	public void advanceTime(double duration) {
 		if(duration > 0.2 || duration < 0) return; //???????????????
 		
+		handleInteraction(duration);
 		
 		double v_norm = sqrt(pow(getXVelocity(),2)+pow(getYVelocity(),2))/100;
 		double a_norm = sqrt(pow(getXAcceleration(),2)+pow(getYAcceleration(),2))/100;
@@ -245,7 +305,7 @@ public abstract class GameObject {
 		if (isTerminated()) {
 			setTimeSinceTermination(getTimeSinceTermination() + duration);
 			if (getTimeSinceTermination() > 0.6) {
-				myWorld.removeObjectAt(getPosition()[0],getPosition()[1],getZ());
+				myWorld.removeObject(this);
 				if (this instanceof Mazub)
 					myWorld.endGame();	
 			}
@@ -278,28 +338,48 @@ public abstract class GameObject {
 	}
 		
 	public GameObject touches(Class<?> className) {
-		int[] pos = this.getPosition();
-		int x = pos[0];
-		int y = pos[1];
-		int height = this.getHeight();
-		int width = this.getWidth();
 		
-		for (int k = 0; k <= 1; k++) {
-			for (int i = 0; i < width; i++) {
-				if (className.isInstance(myWorld.getObjectAt(x + i, y, k)))
-					return myWorld.getObjectAt(x + i, y, k);
-				if	(className.isInstance(myWorld.getObjectAt(x+i, y+height-1, k)))
-					return myWorld.getObjectAt(x+i, y+height-1, k); 
+		for(GameObject obj : myWorld.getGameObjects()) {
+			if(obj != this && className.isInstance(obj)) {
+				if(rectanglesIntersect(obj.getPosition()[0],obj.getPosition()[1],obj.getWidth(),obj.getHeight(),
+					this.getPosition()[0],this.getPosition()[1],this.getWidth(),this.getHeight()))
+							return obj;
 			}
 			
-			for (int j = 1; j < height-1; j++) {
-				if (className.isInstance(myWorld.getObjectAt(x,y+j,k)))
-					return myWorld.getObjectAt(x,y+j,k);
-				if (className.isInstance(myWorld.getObjectAt(x+width-1,y+j,k)))
-					return myWorld.getObjectAt(x+width-1,y+j,k);
-			}
 		}
 		return null;
+	
+//		for(GameObject obj: myWorld.getGameObjects()) {
+//			if(className.isInstance(obj) && obj != this) {
+//					if(obj.overlapsWith(this))
+//						return obj
+//				}	
+//			}
+//			
+//		}
+			
+//		int[] pos = this.getPosition();
+//		int x = pos[0];
+//		int y = pos[1];
+//		int height = this.getHeight();
+//		int width = this.getWidth();
+//		
+//		for (int k = 0; k <= 1; k++) {
+//			for (int i = 0; i < width; i++) {
+//				if (className.isInstance(myWorld.getObjectAt(x + i, y, k)))
+//					return myWorld.getObjectAt(x + i, y, k);
+//				if	(className.isInstance(myWorld.getObjectAt(x+i, y+height-1, k)))
+//					return myWorld.getObjectAt(x+i, y+height-1, k); 
+//			}
+//			
+//			for (int j = 1; j < height-1; j++) {
+//				if (className.isInstance(myWorld.getObjectAt(x,y+j,k)))
+//					return myWorld.getObjectAt(x,y+j,k);
+//				if (className.isInstance(myWorld.getObjectAt(x+width-1,y+j,k)))
+//					return myWorld.getObjectAt(x+width-1,y+j,k);
+//			}
+//		}
+		//return null;
 	}
 	
 	public boolean touches(TerrainType terrainType) {
@@ -1055,7 +1135,8 @@ public abstract class GameObject {
 	protected void setTimeToBeImmune(double timeToBeImmune) {
 		if (timeToBeImmune < 0)
 			this.timeToBeImmune = 0;
-		this.timeToBeImmune = timeToBeImmune;
+		else
+			this.timeToBeImmune = timeToBeImmune;
 		
 	}
 
