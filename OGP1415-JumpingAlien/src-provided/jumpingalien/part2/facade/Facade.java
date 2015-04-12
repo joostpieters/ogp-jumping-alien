@@ -128,8 +128,7 @@ public class Facade implements IFacadePart2 {
 		World.TerrainType[] emptyArray3 = {};
 		GameObject[] emptyArray4 = {};
 		int[] windowSize = {visibleWindowWidth,visibleWindowHeight};
-		World myWorld = new World(tileSize*nbTilesX-1,tileSize*nbTilesY-1, tileSize, 
-				emptyArray4, emptyArray2, emptyArray3, emptyArray2,
+		World myWorld = new World(tileSize*nbTilesX-1,tileSize*nbTilesY-1, tileSize,
 				windowSize, targetTileX, targetTileY);
 		return myWorld;
 	}
