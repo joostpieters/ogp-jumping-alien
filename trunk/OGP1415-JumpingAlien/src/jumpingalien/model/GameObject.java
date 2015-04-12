@@ -3,9 +3,7 @@
  */
 package jumpingalien.model;
 
-import static java.lang.Math.abs;
-import static java.lang.Math.pow;
-import static java.lang.Math.signum;
+import static java.lang.Math.*;
 
 
 import jumpingalien.model.World.TerrainType;
@@ -27,6 +25,8 @@ public abstract class GameObject {
 								double xInitialVelocity, double yInitialVelocity,
 									double xVelocityLimit,  double duckedVelocityLimit,
 										double xAcceleration, double yAcceleration) {
+		
+		assert sprites != null;
 		setMyWorld(world);
 		setPosition(x,y);
 		MAX_HITPOINTS = maxHitPoints;
@@ -225,7 +225,21 @@ public abstract class GameObject {
 	}
 	
 	public void advanceTime(double duration) {
-		handleInteraction(duration);
+		if(duration > 0.2 || duration < 0) return; //???????????????
+		
+		
+		double v_norm = sqrt(pow(getXVelocity(),2)+pow(getYVelocity(),2))/100;
+		double a_norm = sqrt(pow(getXAcceleration(),2)+pow(getYAcceleration(),2))/100;
+		double timeSlice;
+		if(v_norm != 0 || a_norm != 0)
+			timeSlice = 0.01 / (v_norm+a_norm*duration);
+		else
+			timeSlice = duration;
+		double fragments = ceil(duration/timeSlice);
+		double adjustedDuration = duration/fragments;
+		
+		
+		
 		if(getHitPoints() == 0)
 			this.terminate(false);
 		if (isTerminated()) {
@@ -237,9 +251,13 @@ public abstract class GameObject {
 			}
 		}
 		
-		moveX(duration);
-		if(this instanceof Shark)
-		moveY(duration);
+		for(int i = 0; i < fragments; i++) {
+			
+			moveX(adjustedDuration);
+			moveY(adjustedDuration);
+		}
+		
+		
 		if(getXVelocity() != 0)
 			setTimeSinceLastMove(0);
 		else
@@ -256,6 +274,7 @@ public abstract class GameObject {
 		 
 
 		setTimeToBeImmune(getTimeToBeImmune()-duration);
+		
 	}
 		
 	public GameObject touches(Class<?> className) {
@@ -948,6 +967,7 @@ public abstract class GameObject {
 	 * 		  | 	new.getXVelocity() > getXVelocity() || getXVelocity() == getXVelocityLimit()
 	 */
 	private void moveX(double duration) {
+		
 		if (duration <= 0)
 			return;
 		if (isStillMoving() && getXVelocity() == 0)
@@ -966,13 +986,16 @@ public abstract class GameObject {
 		else {
 			xNew = xCurrent + (getXVelocity()*duration + 0.5*getXAcceleration()*pow(duration,2));
 		}
+		
 				
 		if(! isValidPosition((int) xNew,getPosition()[1])) {
 			vNew = 0;
 			xNew = xCurrent;
 			}
-		setPosition(xNew,getPosition()[1]);
+		setPosition(xNew,getY());
 		setXVelocity(vNew);
+		
+
 	}
 	
 	
@@ -1015,7 +1038,7 @@ public abstract class GameObject {
 			yNew = yCurrent;
 			vNew = 0;
 		}
-		setPosition(getPosition()[0],yNew);
+		setPosition(getX(),yNew);
 		setYVelocity(vNew);
 	}
 	

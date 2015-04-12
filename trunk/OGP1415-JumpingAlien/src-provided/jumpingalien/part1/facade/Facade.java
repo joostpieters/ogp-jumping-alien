@@ -31,13 +31,13 @@ public class Facade implements IFacade {
 	 */
 	public Mazub createMazub(int pixelLeftX, int pixelBottomY, Sprite[] sprites) {
 		int[] windowSize = {1024,768};
-		int[][] terrainPos = {{200,80},{201,80},{202,80},{203,80},{204,80}};
-		TerrainType[] terrains = {TerrainType.SOLID_GROUND,TerrainType.SOLID_GROUND,TerrainType.SOLID_GROUND,TerrainType.SOLID_GROUND,TerrainType.SOLID_GROUND};
-		int[][] objectPos = {};
-		GameObject[] objects = {};
-		World myWorld = new World(1023,767,1, objects, objectPos, terrains, terrainPos, windowSize,10000,10000);
+		World myWorld = new World(1023,767,1,windowSize,10000,10000);
 		Mazub myMazub = new Mazub(myWorld,(double) pixelLeftX, (double) pixelBottomY,sprites);
 		myWorld.setObjectAt(pixelLeftX,pixelBottomY,0,myMazub);
+		myWorld.setTerrainAt(200,200,TerrainType.SOLID_GROUND);
+		myWorld.setTerrainAt(201,200,TerrainType.SOLID_GROUND);
+		myWorld.setTerrainAt(202,200,TerrainType.SOLID_GROUND);
+		myWorld.setTerrainAt(203,200,TerrainType.SOLID_GROUND);
 		return myMazub;
 	}
 

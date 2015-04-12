@@ -36,6 +36,7 @@ public class Plant extends AutomaticObject {
 	
 	protected void startNewMovement() {
 		setGoal(0.5);
+		setTimer(0);
 		endMove();
 		if(this.getXDirection() == Direction.LEFT)
 			this.startMove(Direction.RIGHT);
@@ -47,9 +48,7 @@ public class Plant extends AutomaticObject {
 	
 	//Gegokt, want staat niet in opgave
 	public Sprite getCurrentSprite() {
-		if(getXDirection() == Direction.LEFT)
-			return getSprites()[0];
-		return getSprites()[1];
+		return getSprites()[0];
 	}
 
 }

@@ -14,9 +14,7 @@ import be.kuleuven.cs.som.annotate.*;
  */
 public class World {
 	
-	public World(int xLimit, int yLimit, int tileLength, 
-					GameObject[] objects, int[][]  objectPositions,
-						TerrainType[] terrains, int[][] terrainPositions,
+	public World(int xLimit, int yLimit, int tileLength,
 						int[] windowSize, int targetTileX, int targetTileY) {
 		X_LIMIT = xLimit;
 		Y_LIMIT = yLimit;
@@ -27,12 +25,7 @@ public class World {
 		for(int i = 0; i < (xLimit+1)/tileLength; i++)
 			for(int j = 0; j < (yLimit+1)/tileLength; j++)
 				setTerrainAt(i,j,TerrainType.AIR);
-		
-		for (int i = 0; i < objects.length; i++) 
-			setObjectAt(objectPositions[i][0],objectPositions[i][1],objectPositions[i][2],objects[i]);
-		
-		for (int i = 0; i < terrains.length; i++)
-			setTerrainAt(terrainPositions[i][0],terrainPositions[i][1],terrains[i]);
+
 		
 		setWindowSize(windowSize[0],windowSize[1]);
 		setWindowPosition(0,0);
@@ -107,6 +100,7 @@ public class World {
 			for (int j = 1; j<height-1; j++) {
 				if ((y+j > getYLimit()) || (y+j < 0))
 					break;
+				
 				this.gameObjects[x + i][y + j][z] = object;
 			}
 		}	
@@ -157,13 +151,10 @@ public class World {
 		}
 		
 		adjustWindow();
-		
+		assert (5 < 0.2);
+		int cnt = 0; //
 		for(int k = 0; k<=1; k++) {
-			assert Math.abs(duration) < 0.2;
-			System.out.println("pass");
-			System.out.println(duration);
-			if(duration > 0.2) duration = 0.2;
-			System.out.println(duration);
+
 			for(int i = 0; i <= getXLimit(); i++) {
 				for(int j = 0; j <= getYLimit(); j++) {
 					if(! (getMazubPosition()[0] == i && getMazubPosition()[1] == j)) {
@@ -172,8 +163,9 @@ public class World {
 							continue;
 						if (i == myObject.getPosition()[0] && j == myObject.getPosition()[1]) {
 						removeObjectAt(i,j,k);
+						if(myObject instanceof Plant) cnt++;
 						myObject.advanceTime(duration);
-						//if(myObject instanceof Shark) System.out.println(duration);
+						assert duration < 0.2;
 						int[] new_pos2 = myObject.getPosition();
 						setObjectAt(new_pos2[0],new_pos2[1],k,myObject);
 						if ( new_pos2[0] < 0 || new_pos2[0] > getXLimit() ||
@@ -186,6 +178,7 @@ public class World {
 				}
 			}
 		}
+		System.out.println(cnt);
 	}
 	
 	private int[] mazubPosition = new int[2];
@@ -221,10 +214,10 @@ public class World {
 	private int[] windowPosition = new int[2];
 	
 	public boolean canHaveAsWindowPosition(int x, int y) {
-		return ( getWindowPosition()[0] >= 0 && 
-				 getWindowPosition()[0] <= (getXLimit() - getWindowSize()[0]) &&
-				 getWindowPosition()[1] >= 0 &&
-				 getWindowPosition()[1] <= (getYLimit() - getWindowSize()[1]) );
+		return ( x >= 0 && 
+				 x <= (getXLimit() - getWindowSize()[0]) &&
+				 y >= 0 &&
+				 y <= (getYLimit() - getWindowSize()[1]) );
 				
 	}
 	
@@ -270,29 +263,33 @@ public class World {
 
 	public void adjustWindow() {
 		int[] pos = getMazubPosition();
-		if ((pos[0] - getWindowPosition()[0]) < 200)
+		if ((pos[0] - getWindowPosition()[0]) < 200) {
 			if (canHaveAsWindowPosition(pos[0]-200, getWindowPosition()[1]))
 				setWindowPosition(pos[0]-200, getWindowPosition()[1]);
 			else
 				setWindowPosition(0,getWindowPosition()[1]);
+			
+		}
 		
-		if (((getWindowPosition()[0] + getWindowSize()[0]) - pos[0]) < 200)
-			if (canHaveAsWindowPosition(pos[0]+200, getWindowPosition()[1]))
-				setWindowPosition(pos[0]+200, getWindowPosition()[1]);
+		else if (((getWindowPosition()[0] + getWindowSize()[0]) - pos[0]) < 200) {
+			if (canHaveAsWindowPosition(pos[0]-getWindowSize()[0]+200, getWindowPosition()[1]))
+				setWindowPosition(pos[0]-getWindowSize()[0]+200, getWindowPosition()[1]);
 			else
 				setWindowPosition(getXLimit() - getWindowSize()[0], getWindowPosition()[1]);
-		
-		if ((pos[1] - getWindowPosition()[1]) < 200)
+		}
+		if ((pos[1] - getWindowPosition()[1]) < 200) {
 			if (canHaveAsWindowPosition(getWindowPosition()[0], pos[1]-200))
 				setWindowPosition(getWindowPosition()[0], pos[1]-200);
 			else
 				setWindowPosition(getWindowPosition()[0], 0);
+		}
 		
-		if (((getWindowPosition()[1] + getWindowSize()[1]) - pos[1]) < 200)
-			if (canHaveAsWindowPosition(getWindowPosition()[0], pos[1] + 200))
-				setWindowPosition(getWindowPosition()[0], pos[1] + 200);
+		else if (((getWindowPosition()[1] + getWindowSize()[1]) - pos[1]) < 200) {
+			if (canHaveAsWindowPosition(getWindowPosition()[0], pos[1]-getWindowSize()[1] + 200))
+				setWindowPosition(getWindowPosition()[0],  pos[1]-getWindowSize()[1] + 200);
 			else
 				setWindowPosition(getWindowPosition()[0], getYLimit() - getWindowSize()[1]);
+		}
 	}
 	
 	private int targetTileX;
