@@ -26,6 +26,7 @@ public class Shark extends AutomaticObject {
 	
 	@Override
 	public void advanceTime(double duration) {
+		System.out.println(getHitPoints());
 		super.advanceTime(duration);
 		setTimer(getTimer()+duration);
 		if(getTimer() > getGoal()) {
