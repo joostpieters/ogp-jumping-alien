@@ -32,8 +32,6 @@ public class Plant extends AutomaticObject {
 		return;
 	}
 	
-
-	
 	protected void startNewMovement() {
 		setGoal(0.5);
 		setTimer(0);
@@ -51,6 +49,11 @@ public class Plant extends AutomaticObject {
 		if(getXDirection() == Direction.LEFT)
 			return getSprites()[0];
 		return getSprites()[1];
+	}
+	
+	@Override
+	public void terminate(boolean insta) {
+		super.terminate(true);		
 	}
 
 }
