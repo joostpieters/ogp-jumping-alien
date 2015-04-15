@@ -41,7 +41,6 @@ public class World {
 		getGameObjects().add(obj);
 		if(obj instanceof Mazub)
 			setMyMazub((Mazub) obj);
-			
 	}
 	
 	public Set getAllInstancesOf(Class c) { //Set<GameObject> mag niet van de facade
@@ -99,15 +98,25 @@ public class World {
 				(! ((new_pos1[1] <= getYLimit()) && (new_pos1[1] >= 0))))
 			myMazub.terminate(true);
 
-		int[] tile = getMatchingTile(new_pos1[0],new_pos1[1]);
-		if (tile[0] == getTargetTileX() && tile[1] == getTargetTileY()) {
+
+		if(GameObject.rectanglesIntersect(new_pos1[0],new_pos1[1],getMyMazub().getWidth(),getMyMazub().getHeight(),
+				getTargetTileX()*getTileLength(),getTargetTileY()*getTileLength(),(getTargetTileX() + 1)*getTileLength(),(getTargetTileY() + 1)*getTileLength())) {
 			myMazub.terminate(true);
 			setDidPlayerWin(true);
 		}
+			
+//		
+//		int[] tile = getMatchingTile(new_pos1[0],new_pos1[1]);
+//		if (tile[0] == getTargetTileX() && tile[1] == getTargetTileY()) {
+//			myMazub.terminate(true);
+//			setDidPlayerWin(true);
+//		}
 		
 		adjustWindow();
 
-		for(GameObject obj: getGameObjects()) {
+		Set<GameObject> copySet = new HashSet<>();
+		copySet.addAll(getGameObjects());
+		for(GameObject obj: copySet) {
 						if(! (obj instanceof Mazub))  {
 							obj.advanceTime(duration);
 							int[] new_pos2 = obj.getPosition();

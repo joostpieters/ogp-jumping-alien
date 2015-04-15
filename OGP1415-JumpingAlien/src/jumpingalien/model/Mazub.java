@@ -306,7 +306,4 @@ public class Mazub extends GameObject {
 		
 	}
 	
-
-	
-
 }

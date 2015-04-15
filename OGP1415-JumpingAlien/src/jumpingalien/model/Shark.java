@@ -19,18 +19,22 @@ public class Shark extends AutomaticObject {
 	 */
 	public Shark(World world, double x, double y, Sprite[] sprites) {
 		super(world, x, y, 0, 100, 100, sprites, 100, 200, 400, 400, 150, 1000, true);
-		// TODO Auto-generated constructor stub
+		setCounter(0);
 	}
 	
 
 	
 	@Override
 	public void advanceTime(double duration) {
-		System.out.println(getHitPoints());
+//		System.out.println(getHitPoints());
 		super.advanceTime(duration);
 		setTimer(getTimer()+duration);
 		if(getTimer() > getGoal()) {
 			startNewMovement();
+		}
+		if (getCounter() == 1 && getYVelocity() < 0 && isSubmerged()) {
+			setYVelocity(0);
+//			System.out.println("ok");
 		}
 	}
 	
@@ -38,6 +42,12 @@ public class Shark extends AutomaticObject {
 	public void startNewMovement() {
 		setTimer(0);
 		endMove();
+		try {
+			endJump();
+		}
+		catch (Exception exc) {
+		}
+		
 		//4 seconds is less likely, but still possible when duration = 0.2
 		setGoal(1+generator.nextDouble()*(3.8-1));
 		if(generator.nextDouble() < 0.5)
@@ -45,6 +55,15 @@ public class Shark extends AutomaticObject {
 		else
 			startMove(Direction.RIGHT);
 		
+		if (getCounter() == 0) {
+			try {
+				startJump();
+			}
+			catch (Exception exc) {
+			}
+		}
+		setDivingAcceleration(100*(-0.2+0.4*generator.nextDouble()));
+		setCounter((getCounter() + 1)%5); 
 	}
 	
 	@Override
@@ -79,7 +98,71 @@ public class Shark extends AutomaticObject {
 		else {
 			setMagmaTimer(0.2);
 		}
+		
+		Mazub object1 = (Mazub) this.touches(Mazub.class);
+		if (object1 != null && getTimeToBeImmune() == 0) {
+			this.substractHitPoints(50);
+			this.setTimeToBeImmune(0.6);
+		}
+		
+		Slime object2 = (Slime) this.touches(Slime.class);
+		if (object2 != null && getTimeToBeImmune() == 0) {
+			this.substractHitPoints(50);
+			this.setTimeToBeImmune(0.6);
+		}
+		
+		
+	}
+	
+	@Override
+	public boolean canJump() {
+		boolean touchesWater = false;
+		for(int i = 0; i < getWidth(); i++) {
+			if (getMyWorld().getTerrainAt(getPosition()[0] + i, getPosition()[1]) == TerrainType.WATER)
+				touchesWater = true;
+		}
+		return ((super.canJump()) || touchesWater);		
 	}
 
+	private int counter;
 
+	public int getCounter() {
+		return counter;
+	}
+	
+	private void setCounter(int counter) {
+		this.counter = counter;
+	}
+	
+	@Override
+	public double getYAcceleration() {
+		if (getCounter() == 0) {
+			if (isSubmerged())
+				return 0;
+			return -getY_ACCELERATION();
+		}
+			
+		if (isSubmerged())
+			return getDivingAcceleration();
+		return -getY_ACCELERATION();
+		
+	}
+
+	public boolean isSubmerged() {
+		for(int i = 0; i < getWidth(); i++) {
+			if (getMyWorld().getTerrainAt(getPosition()[0] + i, getPosition()[1] + getHeight() -1) == TerrainType.WATER)
+				return true;
+		}
+		return false;
+	}
+	
+	private double divingAcceleration;
+
+	public double getDivingAcceleration() {
+		return divingAcceleration;
+	}
+
+	public void setDivingAcceleration(double divingAcceleration) {
+		this.divingAcceleration = divingAcceleration;
+	}
 }

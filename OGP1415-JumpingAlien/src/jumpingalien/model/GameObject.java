@@ -189,7 +189,7 @@ public abstract class GameObject {
 	
 	
 	//NOG GRONDIG TESTEN
-	public boolean rectanglesIntersect(int x1, int y1, int width1, int height1,
+	public static boolean rectanglesIntersect(int x1, int y1, int width1, int height1,
 										int x2, int y2, int width2, int height2) {
 		int[][] corners1 = {{x1,y1},{x1,y1+height1-1},{x1+width1-1,y1+height1-1},{x1+width1-1,y1}};
 		int[][] corners2 = {{x2,y2},{x2,y2+height2-2},{x2+width2-2,y2+height2-2},{x2+width2-2,y2}};
@@ -204,7 +204,7 @@ public abstract class GameObject {
 		return false;
 	}
 	
-	public boolean pointInRectangle(int x,int y, int RectX, int RectY, int width, int height) {
+	public static boolean pointInRectangle(int x,int y, int RectX, int RectY, int width, int height) {
 		if(RectX <= x && x <= RectX+width-1 && RectY <= y && y <= RectY+height-1)
 			return true;
 		return false;
@@ -266,12 +266,13 @@ public abstract class GameObject {
 	
 	//insta wil zeggen object meteen verwijderen uit gamewereld in volgende advancetime
 	public void terminate(boolean insta) {
+		if (isTerminated())
+			return;
 		this.isTerminated = true;
 		if (insta)
 			setTimeSinceTermination(0.7);
 		else
-			setTimeSinceTermination(0);
-		
+			setTimeSinceTermination(0);	
 	}
 	
 	private double timeSinceTermination;
@@ -629,7 +630,7 @@ public abstract class GameObject {
 	 * 		  | new.getYVelocity() == yVelocity
 	 */
 	@Raw
-	private void setYVelocity(double yVelocity) {
+	protected void setYVelocity(double yVelocity) {
 		this.yVelocity = yVelocity;
 	}
 	
@@ -753,7 +754,7 @@ public abstract class GameObject {
 	 * 		  | isJumping()
 	 */
 	public void startJump() throws JumpingException {
-		if (isJumping() || ! canJump())
+		if (/*isJumping() || */ ! canJump())
 			throw new JumpingException("Already jumping!", this);
 		setYVelocity(getYInitialVelocity());
 	}
@@ -1163,6 +1164,9 @@ public abstract class GameObject {
 	}
 	protected void setAirTimer(double airTimer) {
 		this.airTimer = airTimer;
+	}
+	public double getY_ACCELERATION() {
+		return Y_ACCELERATION;
 	}
 	
 	
