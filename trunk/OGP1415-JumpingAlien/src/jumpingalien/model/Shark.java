@@ -18,7 +18,7 @@ public class Shark extends AutomaticObject {
 	 * @param y
 	 */
 	public Shark(World world, double x, double y, Sprite[] sprites) {
-		super(world, x, y, 0, 100, 100, sprites, 100, 200, 400, 400, 150, 1000, true);
+		super(world, x, y, 100, 100, sprites, 100, 200, 400, 400, 150, 1000, true);
 		setCounter(0);
 	}
 	

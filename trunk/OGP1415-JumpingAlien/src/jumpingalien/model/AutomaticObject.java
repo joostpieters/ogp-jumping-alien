@@ -28,12 +28,12 @@ public abstract class AutomaticObject extends GameObject {
 	 * @param xAcceleration
 	 * @param yAcceleration
 	 */
-	public AutomaticObject(World world, double x, double y, int z,
+	public AutomaticObject(World world, double x, double y,
 			int initialHitPoints, int maxHitPoints, Sprite[] sprites,
 			double xInitialVelocity, double yInitialVelocity,
 			double xVelocityLimit, double duckedVelocityLimit,
 			double xAcceleration, double yAcceleration, boolean solid) {
-		super(world, x, y, z, initialHitPoints, maxHitPoints, sprites,
+		super(world, x, y, initialHitPoints, maxHitPoints, sprites,
 				xInitialVelocity, yInitialVelocity, xVelocityLimit,
 				duckedVelocityLimit, xAcceleration, yAcceleration, solid);
 		generator = new Random();

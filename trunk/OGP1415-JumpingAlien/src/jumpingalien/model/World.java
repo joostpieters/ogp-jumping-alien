@@ -121,8 +121,8 @@ public class World {
 							obj.advanceTime(duration);
 							int[] new_pos2 = obj.getPosition();
 							if ( new_pos2[0] < 0 || new_pos2[0] > getXLimit() ||
-									new_pos2[1] < 0 || new_pos2[0] > getYLimit() );
-								//obj.terminate(true);
+									new_pos2[1] < 0 || new_pos2[1] > getYLimit() )
+								obj.terminate(true);
 						}
 		}
 
