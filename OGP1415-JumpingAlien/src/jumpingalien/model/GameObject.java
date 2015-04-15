@@ -9,27 +9,91 @@ import jumpingalien.util.Sprite;
 import be.kuleuven.cs.som.annotate.*;
 
 /**
- * @author Jonathan
- *
+ * A class of game objects involving several properties.
+ * 
+ * @invar	Each game object can have its position as its position.
+ * 		  | canHaveAsPosition(getPosition()[0],getPosition()[1])
+ * @invar	Each game object can have its velocity as its velocity.
+ * 		  | canHaveAsXVelocity(getXVelocity())
+ * @invar	Each game object can have its initial velocity as its initial velocity in the x direction.
+ * 			Each game object can have its velocity limit as its velocity limit in the x direction.
+ * 		  | isValidXInitialVelocityAndXVelocityLimit(getXInitialVelocity(), getXVelocityLimit())
+ * @invar	Each game object can have its acceleration as its acceleration in the x direction.
+ * 		  | canHaveAsXAcceleration(getXAcceleration())
+ * @invar	Each game object has Direction.LEFT or Direction.RIGHT as its direction.
+ * 		  | (getXDirection() == Direction.LEFT) || (getXDirection() == Direction.RIGHT)
+ * @invar	Each game object must have a proper world attached to it.
+ * 		  | hasProperWorld();
+ * 
+ * @author 	Andreas Schryvers & Jonathan Oostvogels
+ * 			2e Bachelor ingenieurswetenschappen
+ * 			Subversion repository: https://code.google.com/p/ogp-jumping-alien/
  */
 public abstract class GameObject {
 
-	public abstract Sprite getCurrentSprite();
-	public abstract void handleInteraction(double duration);
-
-	
-	public GameObject(World world, double x, double y, int z, 
+	/**
+	 * Initialize this new game object with the given parameters.
+	 * 
+	 * @param world
+	 * 
+	 * @param x
+	 *		  The initial x position for this new game object. 
+	 * @param y
+	 * 		  The initial y position for this new game object. 
+	 * @param initialHitPoints
+	 * 		  The initial number of hitpoints for this new game object.
+	 * @param maxHitPoints
+	 * 		  The maximum number of hitpoints this new game object can have.
+	 * @param sprites
+	 * 		  The series of initial sprites for this new game object.
+	 * @param xInitialVelocity
+	 * 		  The initial velocity in the x direction for this new game object.
+	 * @param yInitialVelocity
+	 *		  The initial velocity in the y direction for this new game object.
+	 * @param xVelocityLimit
+	 * 		  The velocity limit in the x direction for this new game object.
+	 * @param duckedVelocityLimit
+	 * 		  The velocity limit in the x direction while the game object is ducked for this new game object.
+	 * @param xAcceleration
+	 * 		  The acceleration in the x directions for this new game object.
+	 * @param yAcceleration
+	 * 		  The acceleration in the y directions for this new game object.
+	 * @param solid
+	 * 		  The solid state for this new game object.
+	 * 
+	 * @pre	  | canHaveAsPosition((int) x, (int) y)
+	 * @pre	  | sprites != null
+	 * @pre	  | isValidXInitialVelocityAndXVelocityLimit(xInitialVelocity, xVelocityLimit)
+	 * 
+	 * @effect | setPosition(x,y)
+	 * @effect | setXVelocityLimit(double xVelocityLimit)
+	 * @effect | setSprites(sprites)
+	 * @effect | setHitpoints(initialHitPoints)
+	 * @effect | setMyWorld(world)
+	 * @post   | new.X_ACCELERATION = xAcceleration
+	 * @post   | new.Y_ACCELERATION = yAcceleration
+	 * @post   | new.X_INITIAL_VELOCITY = xInitialVelocity
+	 * @post   | new.Y_INITIAL_VELOCITY = yInitialVelocity
+	 * @post   | new.getXInitialVelocity() == xInitialVelocity
+	 * @post   | new.isSolid == solid
+	 * @post   | new.getDuckedVelocityLimit() == duckedVelocityLimit
+	 * 
+	 * 		  
+	 */
+	@Raw
+	public GameObject(World world, double x, double y, 
 							int initialHitPoints, int maxHitPoints, Sprite[] sprites,
 								double xInitialVelocity, double yInitialVelocity,
 									double xVelocityLimit,  double duckedVelocityLimit,
 										double xAcceleration, double yAcceleration, boolean solid) {
 		
 		assert sprites != null;
+		assert isValidXInitialVelocityAndXVelocityLimit(xInitialVelocity, xVelocityLimit);
+		
 		setMyWorld(world);
 		setPosition(x,y);
 		MAX_HITPOINTS = maxHitPoints;
 		setHitPoints(initialHitPoints);
-		this.Z = z;
 		this.setSprites(sprites);
 		setXDirection(Direction.RIGHT);
 		
@@ -47,8 +111,6 @@ public abstract class GameObject {
 		this.setToEndDuck(false);
 		this.setStillMoving(false);
 		
-
-		
 		this.setTimeToBeImmune(0);
 		this.setWaterTimer(0);
 		this.setMagmaTimer(0.2);
@@ -56,89 +118,177 @@ public abstract class GameObject {
 		
 		this.SOLID = solid;
 		
-
-		
+		assert canHaveAsXAcceleration(xAcceleration);
+		assert canHaveAsXVelocity(xVelocity);
+		if (getMyWorld() != null)
+			assert canHaveAsPosition((int) x, (int) y);
 	
 	}
 	
+	//geen commentaar nodig
+	public abstract Sprite getCurrentSprite();
 	
-	private final double DUCKED_VELOCITY_LIMIT;
 	/**
-	 * Variable registering the acceleration in the x direction that applies to all Mazub characters.
+	 * Handle the interaction of this game object with other game objects.
+	 * 
+	 * @param 	duration
+	 * 			The duration for which the interaction should be handled.
+	 */
+	public abstract void handleInteraction(double duration);
+	
+	/**
+	 * Variable registering the velocity in the x direction while ducked of this game object.
+	 */
+	private final double DUCKED_VELOCITY_LIMIT;
+	
+	/**
+	 * Return the ducked velocity limit of this game object.
+	 */
+	@Basic @Immutable
+	public double getDuckedVelocityLimit() {
+		return DUCKED_VELOCITY_LIMIT;
+	}
+
+	/**
+	 * Variable registering the acceleration in the x direction that applies to this game object.
 	 */
 	private final double X_ACCELERATION; //in pixels per seconde kwadraat
-	
 	/**
-	 * Variable registering the acceleration in the y direction that applies to all Mazub characters.
+	 * Variable registering the acceleration in the y direction that applies to this game object.
 	 */
 	private final double Y_ACCELERATION; //in pixels per seconde kwadraat
 	/**
-	 * Variable registering the initial velocity in the x direction of this Mazub charachter.
+	 * Variable registering the initial velocity in the x direction that applies to this game object.
 	 */
 	private final double X_INITIAL_VELOCITY; //in pixels per seconde
 	
 	/**
-	 * Variable registering the initial velocity in the y direction that applies to all Mazub characters.
+	 * Variable registering the initial velocity in the y direction that applies to this game object.
 	 */
 	private final double Y_INITIAL_VELOCITY; //in pixels per seconde
 	
 	/**
-	 * Variable registering the maximum allowed velocity in the x direction of this Mazub character.
+	 * Variable registering the maximum allowed velocity in the x direction that applies to this game object.
 	 */
 	private double xVelocityLimit; //in pixels per seconde
 	
-	@Immutable
+	@Immutable @Basic
+	/**
+	 * Return the solid state of this game object.
+	 */
 	public boolean isSolid() {
 		return SOLID;
 	}
+	
+	/**
+	 * Variable registering the solid state of this game object.
+	 */
 	private final boolean SOLID;
 	
-	
+	/**
+	 * Return the world that belongs to this game object.
+	 */
+	@Basic
 	public World getMyWorld() {
 		return myWorld;
 	}
+	/**
+	 * 
+	 * @param myWorld
+	 * 		  The new world for this game object.
+	 * @pre	  |  getMyWorld() == null
+	 * @post  |  new.getMyWorld() == myWorld
+	 */
 	public void setMyWorld(World myWorld) {
 		assert getMyWorld() == null;
 		this.myWorld = myWorld;
 	}
+	/**
+	 * Variable registering the world of this game object.
+	 */
 	private World myWorld;
 		
+	/**
+	 * Variable registering the number of hitpoints of this game object.
+	 */
 	private int hitPoints;
+	/**
+	 * Variable registering the maximum number of hitpoints of this game object.
+	 */
 	private final int MAX_HITPOINTS;
 	
+	/**
+	 * Return the maximum number of hitpoints of this game object.
+	 */
+	@Immutable @Basic
 	public int getMaxHitpoints() {
 		return MAX_HITPOINTS;
 	}
 	
+	/**
+	 * Return the number of hitpoints of this game object.
+	 */
+	@Basic
 	public int getHitPoints() {
 		return this.hitPoints;
 	}
 	
+	/**
+	 * Set the number of hitpoints of this game object to the given number of hitpoints.
+	 * 
+	 * @param hitPoints
+	 * 		  The new number of hitpoints.
+	 * @post  | if (hitpoints < 0)
+	 * 		  |		new.getHitPoints == 0
+	 *		  |	else if (hitPoints > getMaxHitpoints())
+	 *		  |		new.getHitPoints = getMaxHitpoints();
+	 *		  | else
+	 *		  |		new.getHitPoints = hitPoints;
+	 */
 	protected void setHitPoints(int hitPoints) {
 		if (hitPoints < 0)
 			this.hitPoints = 0;
-		else if (hitPoints > MAX_HITPOINTS)
-			this.hitPoints = MAX_HITPOINTS;
+		else if (hitPoints > getMaxHitpoints())
+			this.hitPoints = getMaxHitpoints();
 		else
 			this.hitPoints = hitPoints;
 	}
 	
+	/**
+	 * Add the given number of hitpoints to the current number of hitpoints.
+	 * 
+	 * @param 	hitPoints
+	 * 		  	The number of hitpoints to be added to the current number of hitpoints.
+	 * @pre	  	| hitpoints >= 0
+	 * @effect 	| setHitpoints(getHitPoints() + hitPoints)
+	 */
 	protected void addHitPoints(int hitPoints) {
 		assert hitPoints >= 0;
 		setHitPoints(getHitPoints() + hitPoints);
 	}
 	
+	/**
+	 * Subtract the given number of hitpoints of the current number of hitpoints.
+	 * @param	hitPoints
+	 * 			The number of hitpoints to be subtracted of the current number of hitpoints.
+	 * @pre		| hitpoints >= 0
+	 * @effect	| setHitPoints(getHitPoints() - hitPoints)
+	 */
 	protected void substractHitPoints(int hitPoints) {
 		assert hitPoints >= 0;
 		setHitPoints(getHitPoints() - hitPoints);
 	}
 	
-	public boolean isValidPosition(int x,int y) {
-		//if (!( (x <= myWorld.getXLimit()) && (x >= 0) ))
-			//return false;
-		
-		//if(! ((y <= myWorld.getYLimit()) && (y >= 0)))
-			//return false;
+	/**
+	 * Check whether this game object can have the given position as its position.
+	 * 
+	 * @param x
+	 * 		  The x position to be checked.
+	 * @param y
+	 * 		  The y position to be checked.
+	 * @return 
+	 */
+	public boolean canHaveAsPosition(int x,int y) {
 		if (y<0)
 			return false;
 		if(! isSolid())
@@ -156,21 +306,7 @@ public abstract class GameObject {
 			}
 			
 		}
-		
-		
-		
-		/*for (int i = 1; i<width-1; i++) {
-			if (x+i > myWorld.getXLimit())
-				break;
-			for (int j = 1; j<height-1; j++) {
-				if (y+j > myWorld.getYLimit())
-					break;
-				if (! myWorld.getTerrainAt(x+i,y+j).isPassable())
-					return false;
-			}
-		}*/
-		
-		
+			
 		for (int i = 1; i < width-1; i++) {
 			if (! (myWorld.getTerrainAt(x + i, y+1).isPassable() && 
 				myWorld.getTerrainAt(x + i, y + height - 2).isPassable()))
@@ -187,8 +323,27 @@ public abstract class GameObject {
 	}
 	
 	
-	
-	//NOG GRONDIG TESTEN
+	/**
+	 * Check whether two rectangles intersect.
+	 * 
+	 * @param x1
+	 * 		  The x position of the first rectangle
+	 * @param y1
+	 * 		  The y position of the first rectangle
+	 * @param width1
+	 * 		  The width of the first rectangle
+	 * @param height1
+	 * 		  The height of the first rectangle
+	 * @param x2
+	 * 		  The x position of the second rectangle
+	 * @param y2
+	 * 		  The y position of the second rectangle
+	 * @param width2
+	 * 		  The width of the second rectangle
+	 * @param height2
+	 * 		  The height of the second rectangle
+	 * @return 
+	 */
 	public static boolean rectanglesIntersect(int x1, int y1, int width1, int height1,
 										int x2, int y2, int width2, int height2) {
 		int[][] corners1 = {{x1,y1},{x1,y1+height1-1},{x1+width1-1,y1+height1-1},{x1+width1-1,y1}};
@@ -228,15 +383,16 @@ public abstract class GameObject {
 	public double getY() {
 		return this.y;
 	}
-	
-	public int getZ() {
-		return this.Z;
-	}
-	
 
-	
+	/**
+	 * 
+	 * @param x
+	 * 		  The new x position of this game object.
+	 * @param y
+	 * 		  The new y position of this game object.
+	 * @post  | new.getX() == x && new.getY() == y
+	 */
 	protected void setPosition(double x, double y) {
-		assert isValidPosition((int) x,(int) y);
 		this.x = x;
 		this.y = y;
 	}
@@ -250,9 +406,7 @@ public abstract class GameObject {
 	 * Variable registering the y position of this game object.
 	 */
 	private double y;
-	
-	private final int Z;
-	
+		
 	public int[] getPosition() {
 		int[] result = {(int) getX(), (int) getY()};
 		return result;
@@ -331,7 +485,7 @@ public abstract class GameObject {
 		 
 		 if (getToEndDuck() == true)
 			 endDuck();
-		 setJumping(isValidPosition(getPosition()[0],getPosition()[1] - 1));
+		 setJumping(canHaveAsPosition(getPosition()[0],getPosition()[1] - 1));
 		 
 
 		setTimeToBeImmune(getTimeToBeImmune()-duration);
@@ -408,7 +562,7 @@ public abstract class GameObject {
 	
 	
 	/**
-	 * Return the sprites of this Mazub character.
+	 * Return the sprites of this game object.
 	 */
 	@Basic
 	public Sprite[] getSprites() {
@@ -416,11 +570,11 @@ public abstract class GameObject {
 	}
 	
 	/**
-	 * Set the sprites for this Mazub charaacter to the given sprites.
+	 * Set the sprites for this game object to the given sprites.
 	 * 
 	 * @param 	sprites
-	 * 			The new sprites for this Mazub character.
-	 * @post	The new sprites of this Mazub character are equal to
+	 * 			The new sprites for this game object.
+	 * @post	The new sprites of this game object are equal to
 	 * 			the given sprites.
 	 * 		  | new.getSprites() == sprites
 	 */
@@ -430,12 +584,12 @@ public abstract class GameObject {
 	}
 	
 	/**
-	 * Array registering the sprites of this Mazub character.
+	 * Array registering the sprites of this game object.
 	 */
 	private Sprite[] sprites;
 	
 	/**
-	 * @return Return the width of this Mazub character's current sprite.
+	 * @return Return the width of this game object's current sprite.
 	 * 		 | result == (this.getCurrentSprite().getWidth())
 	 */
 	public int getWidth() {
@@ -443,7 +597,7 @@ public abstract class GameObject {
 	}
 	
 	/**
-	 * @return Return the height of this Mazub charachter's currect sprite.
+	 * @return Return the height of this game object's currect sprite.
 	 * 		 | result == (this.getCurrentSprite().getHeight())
 	 */
 	public int getHeight() {
@@ -454,7 +608,7 @@ public abstract class GameObject {
 	//COMMENTAAR AANPASSEN
 	
 	/**
-	 * Return the xDirection of this Mazub character.
+	 * Return the xDirection of this game object.
 	 */
 	@Basic
 	public Direction getXDirection() {
@@ -462,13 +616,13 @@ public abstract class GameObject {
 	}
 	
 	/**
-	 * Set the xDirection for this Mazub character to the given xDirection.
+	 * Set the xDirection for this game object to the given xDirection.
 	 * 
 	 * @param 	xDirection
-	 * 			The new xDirection for this Mazub character.
+	 * 			The new xDirection for this game object.
 	 * @pre		The given direction should be Direction.LEFT or Direction.RIGHT.
 	 * 		  | (xDirection == Direction.LEFT) || (xDirection == Direction.RIGHT)
-	 * @post	The new xDirection of this Mazub character is equal to
+	 * @post	The new xDirection of this game object is equal to
 	 * 			the given xDirection.
 	 * 		  | new.getXDirection() == xDirection
 	 */
@@ -479,14 +633,14 @@ public abstract class GameObject {
 	}
 
 	/**
-	 * Variable registering the x direction of this Mazub character. The x direction
+	 * Variable registering the x direction of this game object. The x direction
 	 * is Direction.LEFT or Direction.RIGHT.
 	 */
 	private Direction xDirection;
 	
 	/**
 	 * An enumeration introducing two directions used to express the x direction 
-	 * of a Mazub character.
+	 * of a game object.
 	 */
 	public static enum Direction {
 		LEFT, RIGHT;
@@ -497,7 +651,7 @@ public abstract class GameObject {
 	
 	
 	/**
-	 * Check whether the given xInitialVelocity and xVelocityLimiy are valid for any Mazub character.
+	 * Check whether the given xInitialVelocity and xVelocityLimiy are valid for any game object.
 	 *  
 	 * @param	xInitialVelocity
 	 * 			The initial velocity in the x direction to be checked.
@@ -515,11 +669,11 @@ public abstract class GameObject {
 	}
 	
 	/**
-	 * Return the x velocity limit of this Mazub character. 
-	 * This velocity limit is positive if the direction of the Mazub is Direction.RIGHT
-	 * and negative if the direction of the Mazub is Direcion.LEFT.
+	 * Return the x velocity limit of this game object. 
+	 * This velocity limit is positive if the direction of the game object is Direction.RIGHT
+	 * and negative if the direction of the game object is Direcion.LEFT.
 	 * 
-	 * @return 	Return this Mazub character's velocity limit, adjusted for this Mazub's direction.
+	 * @return 	Return this game object's velocity limit, adjusted for this game object's direction.
 	 * 			| if (getXDirection() == Direction.RIGHT)
 	 *			|	result == xVelocityLimit
 	 *			| else
@@ -534,7 +688,7 @@ public abstract class GameObject {
 	}
 	
 	/**
-	 * Return the initial velocity in the x direction of this Mazub character.
+	 * Return the initial velocity in the x direction of this game object.
 	 */
 	@Basic @Immutable
 	public double getXInitialVelocity() {
@@ -542,21 +696,23 @@ public abstract class GameObject {
 	}
 	
 	/**
-	 * Return the initial velocity in the y direction of this Mazub character.
+	 * Return the initial velocity in the y direction of this game object.
 	 */
 	@Basic @Immutable
 	public double getYInitialVelocity() {
 		return Y_INITIAL_VELOCITY;
 	}
 	
+	
+	
 	/**
-	 * Set the xVelocityLimit of this Mazub character to the given xVelocityLimit.
+	 * Set the xVelocityLimit of this game object to the given xVelocityLimit.
 	 * 
 	 * @param 	xVelocityLimit
-	 * 			The new xVelocityLimit for this Mazub character.
-	 * @pre		The given xVelocityLimit must be a valid xVelocityLimit for this Mazub character.
+	 * 			The new xVelocityLimit for this game object.
+	 * @pre		The given xVelocityLimit must be a valid xVelocityLimit for this game object.
 	 * 		  | isValidXInitialVelocityAndXVelocityLimit(getXInitialVelocity(),xVelocityLimit)
-	 * @post	The new xVelocityLimit of this Mazub character is equal to
+	 * @post	The new xVelocityLimit of this game object is equal to
 	 * 			the given xVelocityLimit.
 	 * 		  | new.getXVelocityLimit() == xVelocityLimit
 	 */
@@ -568,7 +724,7 @@ public abstract class GameObject {
 	
 	
 	/**
-	 * Check whether this Mazub character can have the given xVelocity as its
+	 * Check whether this game object can have the given xVelocity as its
 	 * velocity in the x direction.
 	 * 
 	 * @param 	xVelocity
@@ -577,7 +733,7 @@ public abstract class GameObject {
 	 * 			the absolute value of the given velocity is greater 
 	 * 			than or equal to the initial velocity in the x direction and the 
 	 * 			absolute value of the given velocity is smaller than or equal to the
-	 * 			velocity limit in the x direction of this Mazub character.
+	 * 			velocity limit in the x direction of this game object.
 	 * 		  | result == 
 	 * 		  |    (  (xVelocity == 0) 
 	 * 		  |   || ( (abs(xVelocity) >= getXInitialVelocity())
@@ -588,7 +744,7 @@ public abstract class GameObject {
 	}
 	
 	/**
-	 * Return the xVelocity of this Mazub character.
+	 * Return the xVelocity of this game object.
 	 */
 	@Basic
 	public double getXVelocity() {
@@ -596,7 +752,7 @@ public abstract class GameObject {
 	}
 	
 	/**
-	 * Return the yVelocity of this Mazub character.
+	 * Return the yVelocity of this game object.
 	 */
 	@Basic
 	public double getYVelocity() {
@@ -604,13 +760,13 @@ public abstract class GameObject {
 	}
 	
 	/**
-	 * Set the xVelocity of this Mazub character to the given xVelocity.
+	 * Set the xVelocity of this game object to the given xVelocity.
 	 * 
 	 * @param 	xVelocity
-	 * 			The new xVelocity for this Mazub character.
-	 * @pre		The given xVelocity must be a valid xVelocity for this Mazub character.
+	 * 			The new xVelocity for this game object.
+	 * @pre		The given xVelocity must be a valid xVelocity for this game object.
 	 * 		  | canHaveAsXVelocity(xVelocity)
-	 * @post	The new xVelocity of this Mazub character is equal to
+	 * @post	The new xVelocity of this game object is equal to
 	 * 			the given xVelocity.
 	 * 		  | new.getXVelocity() == xVelocity
 	 */
@@ -621,11 +777,11 @@ public abstract class GameObject {
 	}
 	
 	/**
-	 * Set the yVelocity of this Mazub character to the given yVelocity.
+	 * Set the yVelocity of this game object to the given yVelocity.
 	 * 
 	 * @param 	yVelocity
-	 * 			The new yVelocity for this Mazub character.
-	 * @post	The new yVelocity of this Mazub character is equal to
+	 * 			The new yVelocity for this game object.
+	 * @post	The new yVelocity of this game object is equal to
 	 * 			the given yVelocity.
 	 * 		  | new.getYVelocity() == yVelocity
 	 */
@@ -635,19 +791,19 @@ public abstract class GameObject {
 	}
 	
 	/**
-	 * Variable registering the xVelocity of this Mazub character.
+	 * Variable registering the xVelocity of this game object.
 	 */
 	private double xVelocity;
 	
 	/**
-	 * Variable registering the yVelocity of this Mazub character.
+	 * Variable registering the yVelocity of this game object.
 	 */
 	private double yVelocity;
 	
 
 	
 	/**
-	 * Check whether this Mazub character can have the given xAcceleration as
+	 * Check whether this game object can have the given xAcceleration as
 	 * its acceleration in the x direction.
 	 * 
 	 * @param 	xAcceleration
@@ -658,12 +814,12 @@ public abstract class GameObject {
 	 * 		  |    (signum(xAcceleration) == signum(getXVelocity())
 	 */
 	public boolean canHaveAsXAcceleration(double xAcceleration) {
-		return (signum(xAcceleration) == signum(getXVelocity())) ;
+		return (signum(xAcceleration) == signum(getXVelocity()) || getXVelocity() == 0) ;
 	}
 	
 	/**
 	 * 
-	 * Return this Mazub character's current acceleration in the x direction.
+	 * Return this game object's current acceleration in the x direction.
 	 * 
 	 * @return	0 if xVelocity is 0 or if xVelocity is equal to xVelocityLimit
 	 * 		  | if ( (getXVelocity() == 0) || (getXVelocity() == getXVelocityLimit()) )
@@ -688,9 +844,9 @@ public abstract class GameObject {
 	}
 	
 	/**
-	 * Return the acceleration in the y direction of this Mazub character.
+	 * Return the acceleration in the y direction of this game object.
 	 * 
-	 * @result 	If this Mazub character is jumping, return the opposite of the value stored as acceleration in the y direction.
+	 * @result 	If this game object is jumping, return the opposite of the value stored as acceleration in the y direction.
 	 * 			Otherwise, return 0.
 	 * 			| if (isJumping())
 	 * 			| 	then result == -Y_ACCELERATION
@@ -707,18 +863,18 @@ public abstract class GameObject {
 	
 	
 	/**
-	 * The given Mazub starts moving in the given x direction with initial velocity
+	 * The given game object starts moving in the given x direction with initial velocity
 	 * getXInitialVelocity() and with acceleration getXAcceleration().
 	 * 
 	 * @param 	direction
-	 * 			The direction in which the Mazub character should move.
+	 * 			The direction in which the game object should move.
 	 * @pre		The given direction should be Direction.LEFT or Direction.RIGHT.
 	 * 		  | (direction == Direction.LEFT) || (direction == Direction.RIGHT)
-	 * @post	The new xDirection of this Mazub character is equal to the given direction.
+	 * @post	The new xDirection of this game object is equal to the given direction.
 	 * 		  | new.getXDirection() == direction
-	 * @post	The new xVelocity of this Mazub character is equal to getXInitialVelocity() if
-	 * 			the direction of this Mazub character is Direction.RIGHT or equal to 
-	 * 			- getXInitialVelocity() if the direction of this Mazub character is Direction.LEFT.
+	 * @post	The new xVelocity of this game object is equal to getXInitialVelocity() if
+	 * 			the direction of this game object is Direction.RIGHT or equal to 
+	 * 			- getXInitialVelocity() if the direction of this game object is Direction.LEFT.
 	 * 		  | abs(new.getXVelocity()) == getXInitialVelocity()
 	 */
 	public void startMove(Direction direction) {
@@ -732,10 +888,10 @@ public abstract class GameObject {
 	}
 	
 	/**
-	 * The given Mazub character stops moving in the x direction. 
+	 * The given game object stops moving in the x direction. 
 	 * Its velocity in the x direction is set to 0.
 	 * 
-	 * @post This Mazub character's velocity in the x direction is 0.
+	 * @post This game object's velocity in the x direction is 0.
 	 * 		| new.getXVelocity() == 0
 	 */
 	public void endMove() {
@@ -744,13 +900,13 @@ public abstract class GameObject {
 	}
 	
 	/**
-	 * The given Mazub character starts jumping with initial velocity
+	 * The given game object starts jumping with initial velocity
 	 * Y_INITIAL_VELOCITY and with acceleration getYAcelleration().
 	 * 
-	 * @post	The new yVelocity of this mazub character is equal to Y_INITIAL_VELOCITY.
+	 * @post	The new yVelocity of this game object is equal to Y_INITIAL_VELOCITY.
 	 * 		  | new.getYVelocity() == Y_INITIAL_VELOCITY
 	 * @throws 	JumpingException
-	 * 			This Mazub character cannot start jumping because it is already jumping.
+	 * 			This game object cannot start jumping because it is already jumping.
 	 * 		  | isJumping()
 	 */
 	public void startJump() throws JumpingException {
@@ -761,17 +917,17 @@ public abstract class GameObject {
 	
 	public boolean canJump() {
 		return (getPosition()[1] == 0 ||
-				( !(isValidPosition(getPosition()[0],getPosition()[1]-1))));
+				( !(canHaveAsPosition(getPosition()[0],getPosition()[1]-1))));
 	}
 	
 	/**
-	 * The given Mazub stops jumping. Its velocity is set to 0 if it was greater than 0.
+	 * The given game object stops jumping. Its velocity is set to 0 if it was greater than 0.
 	 * 
-	 * @post	The new yVelocity of this Mazub character is equal to 0 if yVelocity is greater than 0.
+	 * @post	The new yVelocity of this game object is equal to 0 if yVelocity is greater than 0.
 	 * 		  | if (getYVelocity() > 0)
 	 * 		  |		new.getYVelocity() == 0
 	 * @throws 	JumpingException
-	 * 			This Mazub charachter cannot stop jumping because it is not jumping.
+	 * 			This game object cannot stop jumping because it is not jumping.
 	 * 		  | ! isJumping()
 	 */
 	public void endJump() throws JumpingException {
@@ -782,7 +938,7 @@ public abstract class GameObject {
 	}
 	
 	/**
-	 * Check whether this Mazub character is jumping.
+	 * Check whether this game object is jumping.
 	 * 
 	 * @return 	True if and only if the current y position is greater than 0.
 	 * 		  | result == (getY() > 0)
@@ -799,22 +955,22 @@ public abstract class GameObject {
 	private boolean isJumping;
 	
 	/**
-	 * The given Mazub character starts ducking. Its velocity limit in the x direction
-	 * is set to DUCKED_VELOCITY_LIMIT. Its new ducked state is equal to True.
+	 * The given game object starts ducking. Its velocity limit in the x direction
+	 * is set to the ducked velocity limit. Its new ducked state is equal to true.
 	 * 
-	 * @post	The new previousXVelocityLimit of this Mazub character is equal to the old xVelocityLimit.
+	 * @post	The new previousXVelocityLimit of this game object is equal to the old xVelocityLimit.
 	 * 		  | new.getPreviousXVelocityLimit() == abs(this.getXVelocityLimit())
-	 * @post 	The new xVelocityLimit of this Mazub character is equal to DUCKED_VELOCITY_LIMIT.
-	 * 		  | abs(new.getXVelocityLimit()) == DUCKED_VELOCITY_LIMIT
-	 * @post	If this Mazub character has a velocity in the x direction that is greater than 
+	 * @post 	The new xVelocityLimit of this game object is equal to the ducked velocity limit.
+	 * 		  | abs(new.getXVelocityLimit()) == getDuckedVelocityLimit()
+	 * @post	If this game object has a velocity in the x direction that is greater than 
 	 * 			the new xVelocityLimit, then the new velocity in the x direction is set to the new
 	 * 			xVelocityLimit.
 	 * 		  | if (abs(this.getXVelocity()) > abs(new.getXVelocityLimit()))
 	 * 		  |		new.getXVelocity() == (signum(this.getXVelocity())) * (new.getXVelocityLimit())
-	 * @post	The new ducked state of this Mazub character is equal to true.
+	 * @post	The new ducked state of this game object is equal to true.
 	 * 		  | new.isDucking() == true
 	 * @throws	IllegalStateExpcetion
-	 * 			This Mazub character cannot start ducking because it is already ducking.
+	 * 			This game object cannot start ducking because it is already ducking.
 	 * 		  | isDucking()
 	 * 
 	 */
@@ -823,7 +979,7 @@ public abstract class GameObject {
 			throw new IllegalStateException("Already ducking!");
 		if (getToEndDuck() == false) {
 			setPreviousXVelocityLimit(abs(getXVelocityLimit()));
-			setXVelocityLimit(DUCKED_VELOCITY_LIMIT);
+			setXVelocityLimit(getDuckedVelocityLimit());
 		}
 		if(abs(getXVelocity()) > abs(getXVelocityLimit()))
 			setXVelocity(signum(getXVelocity())*abs(getXVelocityLimit()));
@@ -832,15 +988,15 @@ public abstract class GameObject {
 	}
 	
 	/**
-	 * The given Mazub character stops ducking. Its velocity limit in the x direction
+	 * The given game object stops ducking. Its velocity limit in the x direction
 	 * is reset to the previous xVelocityLimit. 
 	 * 
-	 * @post	The new xVelocityLimit of this Mazub character is equal to the previousXVelocityLimit.
+	 * @post	The new xVelocityLimit of this game object is equal to the previousXVelocityLimit.
 	 * 		  | new.getXVelocityLimit() == this.getPreviousXVelocityLimit()
-	 * @post	The new ducked state of this Mazub character is equal to false.
+	 * @post	The new ducked state of this game object is equal to false.
 	 * 		  | new.isDucking() == false
 	 * @throws	IllegalStateException
-	 * 			This Mazub character cannot stop ducking because it is not ducking.
+	 * 			This game object cannot stop ducking because it is not ducking.
 	 * 		  | ! isDucking()
 	 */
 	public void endDuck() throws IllegalStateException {
@@ -871,7 +1027,7 @@ public abstract class GameObject {
 	public boolean canEndDuck() {
 		boolean previous = isDucking();
 		setDucking(false);
-		if (isValidPosition(getPosition()[0],getPosition()[1])) {
+		if (canHaveAsPosition(getPosition()[0],getPosition()[1])) {
 			setDucking(previous);
 			return true;
 		}
@@ -882,7 +1038,7 @@ public abstract class GameObject {
 	
 
 	/**
-	 * Return the ducked state of this Mazub character.
+	 * Return the ducked state of this game object.
 	 */
 	@Basic
 	public boolean isDucking() {
@@ -890,11 +1046,11 @@ public abstract class GameObject {
 	}
 	
 	/**
-	 * Set the ducked state of this Mazub character to the given state.
+	 * Set the ducked state of this game object to the given state.
 	 * 
 	 * @param 	state
-	 * 			The new state for this Mazub character.
-	 * @post	The new ducked state of this Mazub character is equal to
+	 * 			The new state for this game object.
+	 * @post	The new ducked state of this game object is equal to
 	 * 			the given state.
 	 * 		  | new.isDucking() == state
 	 */
@@ -904,7 +1060,7 @@ public abstract class GameObject {
 	}
 	
 	/**
-	 * Return the previousXVelocityLimit of this Mazub character.
+	 * Return the previousXVelocityLimit of this game object.
 	 */
 	@Basic
 	public double getPreviousXVelocityLimit() {
@@ -912,14 +1068,14 @@ public abstract class GameObject {
 	}
 	
 	/**
-	 * Set the previousXVelocityLimit of this Mazub character to the given
+	 * Set the previousXVelocityLimit of this game object to the given
 	 * previousXVelocityLimit.
 	 * 
 	 * @param 	previousXVelocityLimit
-	 * 			The new previousXVelocityLimit for this Mazub character.
-	 * @pre		The given previousXVelocityLimit should be a valid xVelocityLimit for this Mazub character.
+	 * 			The new previousXVelocityLimit for this game object.
+	 * @pre		The given previousXVelocityLimit should be a valid xVelocityLimit for this game object.
 	 * 		  | isValidXInitialVelocityAndXVelocityLimit(getXInitialVelocity(),previousXVelocityLimit)
-	 * @post	The new previousXVelocityLimit of this Mazub character is equal to
+	 * @post	The new previousXVelocityLimit of this game object is equal to
 	 * 			the given previousXVelocityLimit.
 	 * 		  | new.getPreviousXVelocityLimit() == previousXVelocityLimit
 	 */
@@ -934,7 +1090,7 @@ public abstract class GameObject {
 	 */
 	private double previousXVelocityLimit;
 	/**
-	 * Variable registering the ducked state of this Mazub character.
+	 * Variable registering the ducked state of this game object.
 	 */
 	private boolean isDucking;
 	/**
@@ -946,8 +1102,8 @@ public abstract class GameObject {
 
 
 	/**
-	 * Return the timeSinceLastMove of this Mazub character.
-	 * The timeSinceLastMove of a Mazub character expresses the time that has
+	 * Return the timeSinceLastMove of this game object.
+	 * The timeSinceLastMove of a game object expresses the time that has
 	 * passed since the character made its last horizontal move.
 	 */
 	@Basic 
@@ -956,12 +1112,12 @@ public abstract class GameObject {
 	}
 	
 	/**
-	 * Set the timeSinceLastMove of this Mazub character to the given timeSinceLastMove.
+	 * Set the timeSinceLastMove of this game object to the given timeSinceLastMove.
 	 * 
 	 * @param	timeSinceLastMove
-	 * 			The new timeSinceLastMove for this Mazub character.
+	 * 			The new timeSinceLastMove for this game object.
 	 * @pre		The given timeSinceLastMove must be positive.
-	 * @post	The new timeSinceLastMove of this Mazub character is equal to
+	 * @post	The new timeSinceLastMove of this game object is equal to
 	 * 			the given timeSinceLastMove.
 	 * 		  | new.getTimeSinceLastMove() == timeSinceLastMove
 	 */
@@ -972,13 +1128,13 @@ public abstract class GameObject {
 	}
 	
 	/**
-	 * Variable registering the time since the last move of this Mazub character.
+	 * Variable registering the time since the last move of this game object.
 	 */
 	private double timeSinceLastMove;
 
 
 	/**
-	 * Return the timeSinceLastRunningImage of this Mazub character.
+	 * Return the timeSinceLastRunningImage of this game object.
 	 */
 	@Basic
 	public double getTimeSinceLastRunningImage() {
@@ -986,13 +1142,13 @@ public abstract class GameObject {
 	}
 
 	/**
-	 * Set the timeSinceLastRunningImage of this Mazub character to the given timeSinceLastRunningImage.
+	 * Set the timeSinceLastRunningImage of this game object to the given timeSinceLastRunningImage.
 	 * 
 	 * @param 	timeSinceLastRunningImage 
-	 * 			The new timeSinceLastRunningImage for this Mazub character.
+	 * 			The new timeSinceLastRunningImage for this game object.
 	 * @pre		The given timeSinceLastRunningImage should be positive.
 	 * 		  | timeSinceLastRunningImage >= 0
-	 * @post	The new timeSinceLastRunningImage of this Mazub character is equal 
+	 * @post	The new timeSinceLastRunningImage of this game object is equal 
 	 * 			to the given timeSinceLastRunningImage.
 	 * 		  | new.getTimeSinceLastRunningImage() == timeSinceLastRunningImage	
 	 */
@@ -1002,15 +1158,15 @@ public abstract class GameObject {
 	}
 	
 	/**
-	 * Variable registering the time since the last image for a running motion was used for this Mazub character.
+	 * Variable registering the time since the last image for a running motion was used for this game object.
 	 */
 	private double timeSinceLastRunningImage = 0;
 	
 	/**
-	 * Check whether this Mazub character is running normally. A Mazub character
+	 * Check whether this game object is running normally. A game object
 	 * is running normally if it is ducking nor jumping, and if its velocity is not equal to 0.
 	 * 
-	 * @return	True if and only if this Mazub character is ducking nor jumping, and if its velocity
+	 * @return	True if and only if this game object is ducking nor jumping, and if its velocity
 	 * 			is not equal to 0.
 	 * 		  | result ==
 	 * 		  |    ( ! isDucking())
@@ -1022,27 +1178,27 @@ public abstract class GameObject {
 	}
 
 	/**
-	 * Move this Mazub character in the x direction for the given duration.
+	 * Move this game object in the x direction for the given duration.
 	 * 
 	 * @param	duration
-	 * 			The duration for which the Mazub character should move in the x direction.
-	 * @post	If the direction of this Mazub character is Direction.RIGHT and duration is greater than 0, 
-	 * 			then the new x position of this	Mazub character has increased or this Mazub character
+	 * 			The duration for which the game object should move in the x direction.
+	 * @post	If the direction of this game object is Direction.RIGHT and duration is greater than 0, 
+	 * 			then the new x position of this	game object has increased or this game object
 	 * 			is positioned at the right border of the screen.
 	 * 		  | if getXDirection() == Direction.RIGHT && duration > 0
 	 * 		  | 	new.getX() > getX() || getX() == X_LIMIT
-	 * @post	If the direction of this Mazub character is Direction.LEFT and duration is greater than 0,
-	 * 			then the new x position of this	Mazub character has decreaed or this Mazub character is
+	 * @post	If the direction of this game object is Direction.LEFT and duration is greater than 0,
+	 * 			then the new x position of this	game object has decreaed or this game object is
 	 *			positioned at the left border of the screen.
 	 * 		  | if getXDirection() == Direction.LEFT && duration > 0
 	 * 		  | 	new.getX() < getX() || getX() == 0
-	 * @post	If the direction of this Mazub character is Direction.RIGHT and duration is greater than 0, 
-	 * 			then the new xVelocity of this	Mazub character has increased or the xVelocity is equal to
+	 * @post	If the direction of this game object is Direction.RIGHT and duration is greater than 0, 
+	 * 			then the new xVelocity of this	game object has increased or the xVelocity is equal to
 	 * 			xVelocityLimit.
 	 * 		  | if getXDirection() == Direction.RIGHT && duration > 0
 	 * 		  | 	new.getXVelocity() > getXVelocity() || getXVelocity() == getXVelocityLimit()
-	 * @post	If the direction of this Mazub character is Direction.LEFT and duration is greater than 0, 
-	 * 			then the new xVelocity of this	Mazub character has decreased or the xVelocity is equal to
+	 * @post	If the direction of this game object is Direction.LEFT and duration is greater than 0, 
+	 * 			then the new xVelocity of this	game object has decreased or the xVelocity is equal to
 	 * 			- xVelocityLimit.
 	 * 		  | if getXDirection() == Direction.LEFT && duration > 0
 	 * 		  | 	new.getXVelocity() > getXVelocity() || getXVelocity() == getXVelocityLimit()
@@ -1069,7 +1225,7 @@ public abstract class GameObject {
 		}
 		
 				
-		if(! isValidPosition((int) xNew,getPosition()[1])) {
+		if(! canHaveAsPosition((int) xNew,getPosition()[1])) {
 			vNew = 0;
 			xNew = xCurrent;
 			}
@@ -1091,11 +1247,11 @@ public abstract class GameObject {
 	}
 
 	/**
-	 * Move this Mazub character in the y direction for the given duration.
+	 * Move this game object in the y direction for the given duration.
 	 * 
 	 * @param 	duration
-	 * 			The duration for which the Mazub character should move in the y direction.
-	 * @post  	If duration > 0, the Mazub character is either not jumping or its new y-position is smaller than or equal to
+	 * 			The duration for which the game object should move in the y direction.
+	 * @post  	If duration > 0, the game object is either not jumping or its new y-position is smaller than or equal to
 	 * 		  	getY()+getYVelocity*duration+0.5*getYAcceleration()*pow(duration,2.0).
 	 * 		  | if duration > 0
 	 * 		  | 	then (new.getY() <= getY()+getYVelocity*duration+0.5*getYAcceleration()*pow(duration,2.0)) 
@@ -1115,7 +1271,7 @@ public abstract class GameObject {
 		
 		yNew = yCurrent + vCurrent*duration + 0.5*getYAcceleration()*pow(duration,2.0);
 		
-		if(! isValidPosition(getPosition()[0],(int) yNew)) {
+		if(! canHaveAsPosition(getPosition()[0],(int) yNew)) {
 			yNew = yCurrent;
 			vNew = 0;
 		}
@@ -1154,6 +1310,8 @@ public abstract class GameObject {
 	public double getMagmaTimer() {
 		return magmaTimer;
 	}
+	
+	
 	protected void setMagmaTimer(double magmaTimer) {
 		this.magmaTimer = magmaTimer;
 	}
@@ -1169,6 +1327,9 @@ public abstract class GameObject {
 		return Y_ACCELERATION;
 	}
 	
+	public boolean hasProperWorld() {
+		return (getMyWorld() != null);
+	}
 	
 	
 	
