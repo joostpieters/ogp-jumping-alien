@@ -37,12 +37,31 @@ public class World {
 	 * @param targetTileY
 	 * 		  The y position of the target tile.
 	 * 
+	 * @pre		| xLimit > 0;
+	 * @pre		| yLimit > 0;
+	 * 
 	 * @post	| new.getXLimit() == xLimit
 	 * @post	| new.getYLimit() == yLimit
-	 * @effect | 
+	 * @post	| new.getTileLength() == tileLength
+	 * @post	| new.getGameObjects() == HashSet<GameObject>
+	 * @effect  | for all i, j pixels in world
+	 * 			| 	setTerrainAt(i,j,TerrainType.AIR)
+	 * @effect  | setWindowSize(windowSize[0],windowSize[1]);
+	 * @effect 	| setWindowPosition(0,0);
+	 * @effect 	| adjustWindow();
+	 * @effect 	| setTargetTileX(targetTileX);
+	 * @effect 	| setTargetTileY(targetTileY);
+	 * @effect 	| setGameOver(false);
+	 * @effect 	| setDidPlayerWin(false);
+	 * 
 	 */
+	//is het nodig om ook ook te zeggen dat gameover op false gezet wordt?!
+	
 	public World(int xLimit, int yLimit, int tileLength,
 						int[] windowSize, int targetTileX, int targetTileY) {
+		assert xLimit > 0;
+		assert yLimit > 0;
+		
 		X_LIMIT = xLimit;
 		Y_LIMIT = yLimit;
 		TILE_LENGTH = tileLength;
@@ -52,7 +71,6 @@ public class World {
 		for(int i = 0; i < (xLimit+1)/tileLength; i++)
 			for(int j = 0; j < (yLimit+1)/tileLength; j++)
 				setTerrainAt(i,j,TerrainType.AIR);
-
 		
 		setWindowSize(windowSize[0],windowSize[1]);
 		setWindowPosition(0,0);
@@ -63,6 +81,16 @@ public class World {
 		setDidPlayerWin(false);
 	}
 	
+	/**
+	 * Associate the given object with this world.
+	 * 
+	 * @param obj
+	 * 		  The object that should be associated with this world.
+	 * @effect  | obj.setMyWorld(this)
+	 * @effect  | getGameObjects().add(obj)
+	 * @effect	| if (obj instanceof Mazub)
+	 * @effect	|	setMyMazub((Mazub) obj)
+	 */
 	public void addObject(GameObject obj) {
 		obj.setMyWorld(this);
 		getGameObjects().add(obj);
@@ -70,6 +98,16 @@ public class World {
 			setMyMazub((Mazub) obj);
 	}
 	
+	/**
+	 * Return a set of all the game objects of a certain class.
+	 * 
+	 * @param c
+	 * 		  The class from which to get the objects from.
+	 * 
+	 * @return | for each obj in getGameObjects()
+	 * 		   |    if(c.isInstance(obj))
+	 * 		   | 	   result.add(obj)
+	 */
 	public Set getAllInstancesOf(Class c) { //Set<GameObject> mag niet van de facade
 		Set<GameObject> result = new HashSet<>();
 		for(GameObject obj : getGameObjects()) {
@@ -79,43 +117,72 @@ public class World {
 		return result;
 	}
 
-	@Immutable
-	@Basic
+	
+	/**
+	 * Return the x limit of this world.
+	 */
+	@Basic @Immutable
 	public int getXLimit() {
 		return X_LIMIT;
 	}
 	
-	private final int X_LIMIT ; //1023 in pixels
+	/**
+	 * Variable registering the x limit of this world.
+	 */
+	private final int X_LIMIT;
 	
-	@Immutable
-	@Basic
+	
+	/**
+	 * Return the y limit of this world.
+	 */
+	@Basic @Immutable
 	public int getYLimit() {
 		return Y_LIMIT;
 	}
 	
-	private final int Y_LIMIT; //767 in pixels
+	/**
+	 * Variable registering the y limit of this world.
+	 */
+	private final int Y_LIMIT; 
 	
-	@Immutable
-	@Basic
+	/**
+	 * Return the tile length of this world.
+	 */
+	@Basic @Immutable
 	public int getTileLength() {
 		return TILE_LENGTH;
 	}
 	
+	/**
+	 * Variable registering the tile length of this world.
+	 */
 	private final int TILE_LENGTH;
 	
-
-	
+	/**
+	 * Remove the given object from this world.
+	 * 
+	 * @param obj
+	 * 		  The object to remove
+	 * @effect | getGameObjects().remove(obj)
+	 */
 	public void removeObject(GameObject obj) {
 		getGameObjects().remove(obj);
 	}
 	
+	/**
+	 * Return the set of game objects that is associated with this world.
+	 */
+	@Basic
 	public Set<GameObject> getGameObjects() {
 		return gameObjects;
 	}
 	
+	/**
+	 * Variable registering the game objects that are associated with this world.
+	 */
 	private Set<GameObject> gameObjects;
 	
-	//no documentation
+	//no documentation needed
 	public void advanceTime(double duration) throws IllegalArgumentException {
 		//if ((duration < 0) || (duration >= 0.2))
 			//throw new IllegalArgumentException("Illegal time duration!");
@@ -152,37 +219,79 @@ public class World {
 								obj.terminate(true);
 						}
 		}
-
 	}
 	
-	
-
+	/**
+	 * Return the Mazub that is associated with this world.
+	 */
+	@Basic
 	public Mazub getMyMazub() {
 		return myMazub;
 	}
 
+	/**
+	 * Set the Mazub that is associated with this world to the given Mazub.
+	 * @param myMazub
+	 * 		  The new Mazub for this world.
+	 * @post  new.getMyMazub() == myMazub
+	 */
 	private void setMyMazub(Mazub myMazub) {
 		this.myMazub = myMazub;
 	}
 
+	/**
+	 * Variable registering the Mazub that is associated with this world.
+	 */
 	private Mazub myMazub;
 	
+	/**
+	 * Return the window size of this world as an array of width and height.
+	 */
+	@Basic
 	public int[] getWindowSize() {
 		return this.windowSize;
 	}
 	
+	/**
+	 * Set the window size of this world to the given width and height.
+	 * @param width
+	 * 		  The new width for this world.
+	 * @param height
+	 * 		  The new height for this world.
+	 * @post  new.getWindowSize() == {width,height}
+	 */
 	public void setWindowSize(int width, int height) {
 		this.windowSize[0] = width;
 		this.windowSize[1] = height;
 	}
 	
+	/**
+	 * Variable registering the window size of this world.
+	 */
 	private int[] windowSize = new int[2];
 	
+	/**
+	 * Return the window position of this world.
+	 */
 	public int[] getWindowPosition() {
 		return this.windowPosition;
 	}
 	
+	/**
+	 * Set the window position of this world to the given x and y.
+	 * @param x
+	 * 		  The new x coordinate of the windows size for this world.
+	 * @param y
+	 * 		  The new y coordinate of the windows size for this world
+	 * @pre	  | x > 0 && x <= getXLimit() - getWindowSize()[0]
+	 * @pre   | y > 0 && y >= getYLimit() - getWindowSize()[1]
+	 * 
+	 * @post  | new.getWindowPosition() == {x,y}
+	 */
+	@Raw
 	private void setWindowPosition(int x, int y) {
+		assert x >= 0 && x <= getXLimit() - getWindowSize()[0];
+		assert y >= 0 && y <= getYLimit() - getWindowSize()[1];
 		this.windowPosition[0] = x;
 		this.windowPosition[1] = y;
 	}
