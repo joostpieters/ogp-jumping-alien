@@ -50,6 +50,7 @@ public class Slime extends AutomaticObject {
 	
 	/**
 	 * Set the school of this slime to the given school.
+	 * 
 	 * @param school
 	 * 		  The new school for this slime
 	 * @post  | new.getSchool() == school
@@ -67,9 +68,17 @@ public class Slime extends AutomaticObject {
 	 * @effect  | getSchool.removeAsSlime(this)
 	 * @effect  | setSchool(school)
 	 * @effect  | school.addAsSlime(this)
-	 *
+	 * @post    | for each colleague in old.getSchool().getSlimes()
+	 * 			| 	if  (colleague != this) {
+	 *			|		colleague.addHitPoints(1);
+	 *			|		this.substractHitPoints(1);
+	 *			|	}
+	 * @post    | for each colleague in new.getSchool().getSlimes()
+	 * 			| 	if  (colleague != this) {
+	 *			|		this.addHitPoints(1);
+	 *			|		colleague.substractHitPoints(1);
+	 *			|	}
 	 */
-	//hoe @post fixen voor subtract en add hitpoints?
 	public void transferToSchool(School school) {
 		for(Slime colleague: getSchool().getSlimes()) {
 			if (colleague != this) {
@@ -90,8 +99,11 @@ public class Slime extends AutomaticObject {
 	
 	/**
 	 * Subtract the given number of hitpoints from the current number of hitpoints.
+	 * 
 	 * @effect | super.subtractHitPoints(hitPoints)
-	 * @post  //hoe fixen?
+	 * @post   | for each colleague in getSchool().getSlimes()
+	 * 		   |    if (colleague != this)
+	 *		   |       colleague.substractHitPoints(1);
 	 */
 	@Override
 	protected void substractHitPoints(int hitPoints) {
@@ -120,6 +132,7 @@ public class Slime extends AutomaticObject {
 	
 	/**
 	 * Start a new movement.
+	 * 
 	 * @effect | endMove()
 	 * @effect | setTimer(0)
 	 * @effect | if (generator.nextDouble() < 0.5)
@@ -137,6 +150,7 @@ public class Slime extends AutomaticObject {
 			startMove(Direction.RIGHT);
 		setGoal(2+(5.8-2)*generator.nextDouble());
 	}
+
 
 
 	@Override

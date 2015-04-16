@@ -9,11 +9,38 @@ import java.util.Set;
 import be.kuleuven.cs.som.annotate.*;
 
 /**
- * @author Jonathan
- *
+ * A class of worlds involving several properties. 
+ * This class has an association with the class of game objects.
+ * 
+ * @invar 	| for each object in this.getGameObjects()
+ * 			| object.canHaveAsPosition(object.getPosition()[0],object.getPosition()[1])
+ * 
+ * @author 	Andreas Schryvers & Jonathan Oostvogels
+ * 			2e Bachelor ingenieurswetenschappen
+ * 			Subversion repository: https://code.google.com/p/ogp-jumping-alien/
  */
 public class World {
 	
+	/**
+	 * Initialize this new world with the given parameters.
+	 * 
+	 * @param xLimit
+	 * 		  The maximum pixel position in the x direction.
+	 * @param yLimit
+	 * 		  The maximum pixel position in the y direction.
+	 * @param tileLength
+	 * 		  The length of a square tile.
+	 * @param windowSize
+	 * 		  The size of the window the player can see.
+	 * @param targetTileX
+	 * 		  The x position of the target tile.
+	 * @param targetTileY
+	 * 		  The y position of the target tile.
+	 * 
+	 * @post	| new.getXLimit() == xLimit
+	 * @post	| new.getYLimit() == yLimit
+	 * @effect | 
+	 */
 	public World(int xLimit, int yLimit, int tileLength,
 						int[] windowSize, int targetTileX, int targetTileY) {
 		X_LIMIT = xLimit;
