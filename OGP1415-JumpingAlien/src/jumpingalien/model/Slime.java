@@ -3,9 +3,36 @@ package jumpingalien.model;
 
 import jumpingalien.model.World.TerrainType;
 import jumpingalien.util.Sprite;
+import be.kuleuven.cs.som.annotate.*;
 
+/**
+ * A class of slimes as special kinds of automatic game objects, with an association
+ * with the class School.
+ * 
+ * @author 	Andreas Schryvers & Jonathan Oostvogels
+ * 			2e Bachelor ingenieurswetenschappen
+ * 			Subversion repository: https://code.google.com/p/ogp-jumping-alien/
+ */
 public class Slime extends AutomaticObject {
 
+	/**
+	 * @param world
+	 * 		  The world of this slime.
+	 * @param x
+	 *		  The initial x position for this new slime. 
+	 * @param y
+	 * 		  The initial y position for this new slime. 
+	 * @param sprites
+	 * 		  The series of initial sprites for this new slime.
+	 * @param school
+	 * 		  The school this new slime belongs to.
+	 * 
+	 * @pre	   | school != null
+	 * @effect | super(world, x, y, 100, 100, sprites, 100, 0, 250, 250, 70, 1000, true)
+	 * @effect | setSchool(school)
+	 */
+	//fout om @effect zo te gebruiken? waarden mogen niet in super weergegeven worden?
+	
 	public Slime(World world, double x, double y, Sprite[] sprites, School school) {
 		super(world, x, y, 100, 100, sprites, 100, 0, 250, 250, 70, 1000, true);
 		assert school != null;
@@ -13,15 +40,36 @@ public class Slime extends AutomaticObject {
 		startNewMovement();
 	}
 	
-	
+	/**
+	 * Return the school associated with this slime.
+	 */
+	@Basic
 	public School getSchool() {
 		return school;
 	}
 	
+	/**
+	 * Set the school of this slime to the given school.
+	 * @param school
+	 * 		  The new school for this slime
+	 * @post  | new.getSchool() == school
+	 */
 	private void setSchool(School school) {
 		this.school = school;
 	}
 
+	/**
+	 * Transfer this slime to the given school. If a slime changes its school, hitpoints of
+	 * all accompanying slimes of both school are adjusted.
+	 * 
+	 * @param school
+	 * 		  The school this slime should be transfered to.
+	 * @effect  | getSchool.removeAsSlime(this)
+	 * @effect  | setSchool(school)
+	 * @effect  | school.addAsSlime(this)
+	 *
+	 */
+	//hoe @post fixen voor subtract en add hitpoints?
 	public void transferToSchool(School school) {
 		for(Slime colleague: getSchool().getSlimes()) {
 			if (colleague != this) {
@@ -40,6 +88,11 @@ public class Slime extends AutomaticObject {
 		}
 	}
 	
+	/**
+	 * Subtract the given number of hitpoints from the current number of hitpoints.
+	 * @effect | super.subtractHitPoints(hitPoints)
+	 * @post  //hoe fixen?
+	 */
 	@Override
 	protected void substractHitPoints(int hitPoints) {
 		super.substractHitPoints(hitPoints);
@@ -48,14 +101,15 @@ public class Slime extends AutomaticObject {
 				colleague.substractHitPoints(1);
 	}
 	
+	/**
+	 * Variable registering the school of this slime.
+	 */
 	private School school;
 	
 
-	
-	
-
-
-
+	/**
+	 * onduidelijk of documentatie nodig is //
+	 */
 	public void advanceTime(double duration) {
 		super.advanceTime(duration);
 		setTimer(getTimer()+duration);
@@ -64,6 +118,16 @@ public class Slime extends AutomaticObject {
 			startNewMovement();
 	}
 	
+	/**
+	 * Start a new movement.
+	 * @effect | endMove()
+	 * @effect | setTimer(0)
+	 * @effect | if (generator.nextDouble() < 0.5)
+	 * 		   |   startMove(Direction.LEFT)
+	 * 		   | else
+	 * 		   |   startMove(Direction.RIGHT)
+	 * @effect | setGoal(2+(5.8-2)*generator.nextDouble())
+	 */
 	protected void startNewMovement() {
 		endMove();
 		setTimer(0);

@@ -1,6 +1,7 @@
 package jumpingalien.model;
 
 import jumpingalien.util.Sprite;
+import be.kuleuven.cs.som.annotate.*;
 
 public class Plant extends AutomaticObject {
 

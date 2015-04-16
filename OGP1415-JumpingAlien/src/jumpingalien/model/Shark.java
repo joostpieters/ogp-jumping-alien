@@ -5,6 +5,7 @@ package jumpingalien.model;
 
 import jumpingalien.model.World.TerrainType;
 import jumpingalien.util.Sprite;
+import be.kuleuven.cs.som.annotate.*;
 
 /**
  * @author Andreas

@@ -70,23 +70,7 @@ public class Mazub extends GameObject {
 	 * 
 	 * @param 	duration
 	 * 			The duration for which advanceTime should work.
-	 * @effect	Move this Mazub character in the x and y direction for the given duration.
-	 * 		  | moveX(duration) && moveY(duration)
-	 * @post	If the current xVelocity is not equal to 0, then the new timeSinceLastMove is equal to 0.
-	 * 		  | if (getXVelocity() != 0)
-	 * 		  | 	then new.getTimeSinceLastMove() == 0;
-	 * @post	If the current xVelocity is equal to 0, then the new timeSinceLastMove is equal to the current
-	 * 			timeSinceLastMove + duration.
-	 * 		  | if (getXVelocity() == 0)
-	 * 		  |		then new.getTimeSinceLastMove() == (this.getTimeSinceLastMove()+duration)
-	 * @post	If this Mazub character is running normally, then the new timeSinceLastRunningImage is equal
-	 * 		    to the current timeSinceLastRunningImage + duration
-	 * 		  | if (isRunningNormally())
-	 * 		  | 	then new.getTimeSinceLastRunningImage() == (this.getTimeSinceLastRunningImage() + duration)
-	 * @post	If this Mazub character is not running normally, then the new timeSinceLastRunningImage is equal
-	 * 		    to the current timeSinceLastRunningImage.
-	 * 		  | if (! isRunningNormally())
-	 * 		  | 	then new.getTimeSinceLastRunningImage() == 0
+	 * @effect	super.advanceTime(duration)
 	 * @throws 	IllegalArgumentException
 	 * 			The given duration is not a valid duration. A duration is not valid
 	 * 			if it is smaller than 0 or greater than or equal to 0.2.
@@ -147,6 +131,11 @@ public class Mazub extends GameObject {
 		return (this.getSprites().length-10)/2;
 	}
 
+	/**
+	 * Handle the interaction of this Mazub charachter with other objects for the given time duration.
+	 *
+	 */
+	//hoe documentatie fixen?
 	public void handleInteraction(double duration) {
 		Plant object0 = (Plant) this.touches(Plant.class);
 		if (object0 != null && this.getHitPoints() != this.getMaxHitpoints()) {

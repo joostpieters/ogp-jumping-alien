@@ -35,7 +35,7 @@ public abstract class GameObject {
 	 * Initialize this new game object with the given parameters.
 	 * 
 	 * @param world
-	 * 
+	 * 		  The world of this game object.
 	 * @param x
 	 *		  The initial x position for this new game object. 
 	 * @param y
@@ -61,9 +61,12 @@ public abstract class GameObject {
 	 * @param solid
 	 * 		  The solid state for this new game object.
 	 * 
-	 * @pre	  | canHaveAsPosition((int) x, (int) y)
+	 * @pre	  |  if (getMyWorld() != null)
+	 * 		  |	 	canHaveAsPosition((int) x, (int) y)
 	 * @pre	  | sprites != null
 	 * @pre	  | isValidXInitialVelocityAndXVelocityLimit(xInitialVelocity, xVelocityLimit)
+	 * @pre	  | canHaveAsXAcceleration(xAcceleration);
+ 	 * @pre	  | canHaveAsXVelocity(xVelocity);
 	 * 
 	 * @effect | setPosition(x,y)
 	 * @effect | setXVelocityLimit(double xVelocityLimit)
@@ -75,7 +78,7 @@ public abstract class GameObject {
 	 * @post   | new.X_INITIAL_VELOCITY = xInitialVelocity
 	 * @post   | new.Y_INITIAL_VELOCITY = yInitialVelocity
 	 * @post   | new.getXInitialVelocity() == xInitialVelocity
-	 * @post   | new.isSolid == solid
+	 * @post   | new.isSolid() == solid
 	 * @post   | new.getDuckedVelocityLimit() == duckedVelocityLimit
 	 * 
 	 * 		  
@@ -90,12 +93,12 @@ public abstract class GameObject {
 		assert sprites != null;
 		assert isValidXInitialVelocityAndXVelocityLimit(xInitialVelocity, xVelocityLimit);
 		
-		setMyWorld(world);
-		setPosition(x,y);
-		MAX_HITPOINTS = maxHitPoints;
-		setHitPoints(initialHitPoints);
+		this.setMyWorld(world);
+		this.setPosition(x,y);
+		this.MAX_HITPOINTS = maxHitPoints;
+		this.setHitPoints(initialHitPoints);
 		this.setSprites(sprites);
-		setXDirection(Direction.RIGHT);
+		this.setXDirection(Direction.RIGHT);
 		
 		this.X_INITIAL_VELOCITY = xInitialVelocity;
 		this.Y_INITIAL_VELOCITY = yInitialVelocity;
@@ -118,10 +121,10 @@ public abstract class GameObject {
 		
 		this.SOLID = solid;
 		
-		assert canHaveAsXAcceleration(xAcceleration);
-		assert canHaveAsXVelocity(xVelocity);
-		if (getMyWorld() != null)
-			assert canHaveAsPosition((int) x, (int) y);
+		assert this.canHaveAsXAcceleration(xAcceleration);
+		assert this.canHaveAsXVelocity(xVelocity);
+		if (this.getMyWorld() != null)
+			assert this.canHaveAsPosition((int) x, (int) y);
 	
 	}
 	
@@ -146,7 +149,7 @@ public abstract class GameObject {
 	 */
 	@Basic @Immutable
 	public double getDuckedVelocityLimit() {
-		return DUCKED_VELOCITY_LIMIT;
+		return this.DUCKED_VELOCITY_LIMIT;
 	}
 
 	/**
@@ -172,12 +175,13 @@ public abstract class GameObject {
 	 */
 	private double xVelocityLimit; //in pixels per seconde
 	
-	@Immutable @Basic
+	
 	/**
 	 * Return the solid state of this game object.
 	 */
+	@Immutable @Basic
 	public boolean isSolid() {
-		return SOLID;
+		return this.SOLID;
 	}
 	
 	/**
@@ -190,9 +194,10 @@ public abstract class GameObject {
 	 */
 	@Basic
 	public World getMyWorld() {
-		return myWorld;
+		return this.myWorld;
 	}
 	/**
+	 * Set the world of this game object to the given world.
 	 * 
 	 * @param myWorld
 	 * 		  The new world for this game object.
@@ -212,6 +217,7 @@ public abstract class GameObject {
 	 * Variable registering the number of hitpoints of this game object.
 	 */
 	private int hitPoints;
+	
 	/**
 	 * Variable registering the maximum number of hitpoints of this game object.
 	 */
@@ -222,7 +228,7 @@ public abstract class GameObject {
 	 */
 	@Immutable @Basic
 	public int getMaxHitpoints() {
-		return MAX_HITPOINTS;
+		return this.MAX_HITPOINTS;
 	}
 	
 	/**
@@ -268,9 +274,10 @@ public abstract class GameObject {
 	}
 	
 	/**
-	 * Subtract the given number of hitpoints of the current number of hitpoints.
+	 * Subtract the given number of hitpoints from the current number of hitpoints.
+	 * 
 	 * @param	hitPoints
-	 * 			The number of hitpoints to be subtracted of the current number of hitpoints.
+	 * 			The number of hitpoints to be subtracted from the current number of hitpoints.
 	 * @pre		| hitpoints >= 0
 	 * @effect	| setHitPoints(getHitPoints() - hitPoints)
 	 */
@@ -287,6 +294,21 @@ public abstract class GameObject {
 	 * @param y
 	 * 		  The y position to be checked.
 	 * @return 
+	 * 	 	  | if (! isSolid())
+	 * 		  |	 then result == true
+	 * 		  | else if (y<0)
+	 * 		  |  then result == false
+	 * 		  | else if (for each obj in myWorld.getGameObjects()
+	 * 		  | 		 if obj.isSolid()
+	 * 		  |			 	if rectanglesIntersect(obj.getPosition()[0]+1,obj.getPosition()[1]+1,obj.getWidth()-1,obj.getHeight()-1,
+	 *		  |				x+1,y+1,this.getWidth()-1,this.getHeight()-1)))
+	 * 		  |   			 then result == false
+	 * 		  | else if (for a pixel of the lower border, or upper border, or left border, or right border
+	 * 		  |			! (myWorld.getTerrainAt(pixel).isPassable())
+	 * 		  |				 then result == false
+	 * 		  | else
+	 * 		  |	 result == true
+	 * 					
 	 */
 	public boolean canHaveAsPosition(int x,int y) {
 		if (y<0)
@@ -299,12 +321,11 @@ public abstract class GameObject {
 		
 		for(GameObject obj : myWorld.getGameObjects()) {
 			if(obj != this) {
-				if(rectanglesIntersect(obj.getPosition()[0]+1,obj.getPosition()[1]+1,obj.getWidth()-1,obj.getHeight()-1,
-					x+1,y+1,this.getWidth()-1,this.getHeight()-1))
-						if(obj.isSolid())
-							return false;
+				if(obj.isSolid())
+					if(rectanglesIntersect(obj.getPosition()[0]+1,obj.getPosition()[1]+1,obj.getWidth()-1,obj.getHeight()-1,
+						x+1,y+1,width-1,height-1))
+								return false;
 			}
-			
 		}
 			
 		for (int i = 1; i < width-1; i++) {
@@ -343,6 +364,12 @@ public abstract class GameObject {
 	 * @param height2
 	 * 		  The height of the second rectangle
 	 * @return 
+	 * 		  | if (for each corner of each rectangle
+	 * 		  |     ! pointInRectangle(cornerX, cornerY, otherrectangleX, otherrectangleY,
+	 * 		  |							otherrectangleWidht, otherrectangleHeight))
+	 * 		  |		then result == true
+	 * 		  | else
+	 * 		  | 	result == false
 	 */
 	public static boolean rectanglesIntersect(int x1, int y1, int width1, int height1,
 										int x2, int y2, int width2, int height2) {
@@ -355,18 +382,35 @@ public abstract class GameObject {
 			if (pointInRectangle(corners2[i][0], corners2[i][1], x1, y1, width1, height1))
 				return true;
 		}
-		
 		return false;
 	}
 	
+	
+	/**
+	 * 
+	 * @param x
+	 * 		  The x position of the point
+	 * @param y
+	 * 	      The y position of the point
+	 * @param RectX
+	 * 		  The x position of the rectangle
+	 * @param RectY
+	 * 	  	  The y position of the rectangle
+	 * @param width
+	 * 		  The width of the rectangle
+	 * @param height
+	 * 		  The height of the rectangle
+	 * @return
+	 *		  if (RectX <= x && x <= RectX+width-1 && RectY <= y && y <= RectY+height-1)
+	 *		       then result == true
+	 *		  else
+	 *			   result == false 
+	 */
 	public static boolean pointInRectangle(int x,int y, int RectX, int RectY, int width, int height) {
 		if(RectX <= x && x <= RectX+width-1 && RectY <= y && y <= RectY+height-1)
 			return true;
 		return false;
 	}
-
-	
-
 	
 	/**
 	 * Return the x position of this game object.
@@ -385,14 +429,19 @@ public abstract class GameObject {
 	}
 
 	/**
+	 * Set the position of this game object to the given x and the given y.
 	 * 
 	 * @param x
 	 * 		  The new x position of this game object.
 	 * @param y
 	 * 		  The new y position of this game object.
+	 * @pre	  canHaveAsPosition(x,y)
 	 * @post  | new.getX() == x && new.getY() == y
 	 */
 	protected void setPosition(double x, double y) {
+//		assert canHaveAsPosition((int) x,(int)y);
+//		deze assertion zorgt voor problemen als ge helemaal bovenaan op een slime gaat staan
+//		en dan tegen het plafond springt
 		this.x = x;
 		this.y = y;
 	}
@@ -407,37 +456,86 @@ public abstract class GameObject {
 	 */
 	private double y;
 		
+	/**
+	 * Return the position of this game object.
+	 * 
+	 * @return  | result == {(int) getX(), (int) getY()}
+	 */
 	public int[] getPosition() {
 		int[] result = {(int) getX(), (int) getY()};
 		return result;
 	}
 	
+	/**
+	 * Variable registering the termination state of this game object.
+	 */
 	private boolean isTerminated;
+	
+	/**
+	 * Return the termination state of this game object.
+	 */
 	public boolean isTerminated() {
 		return this.isTerminated;
 	}
 	
+	/**
+	 * Set the termination state of this game object to the given flag.
+	 * @param flag
+	 * 		  The new termination state for this game object.
+	 * @post  | new.isTerminated() == flag
+	 */
+	private void setTerminated(boolean flag) {
+		this.isTerminated = flag;	
+	}
+	
 	
 	//insta wil zeggen object meteen verwijderen uit gamewereld in volgende advancetime
+	/**
+	 * Terminate this game object.
+	 * @param insta
+	 * 		  determines whether this game object should be 
+	 *		  terminated instantly (insta == true) or after a certain amount of time (insta == false).
+	 * @post   |  if (isTerminated())
+	 *		   | 	result ==
+	 * @effect |  if (! isTerminad())
+	 * 		   |    setTerminated(true)
+	 */
 	public void terminate(boolean insta) {
 		if (isTerminated())
 			return;
-		this.isTerminated = true;
+		setTerminated(true);
 		if (insta)
 			setTimeSinceTermination(0.7);
 		else
 			setTimeSinceTermination(0);	
 	}
 	
+	/**
+	 * Variable registering the time since the object is terminated.
+	 */
 	private double timeSinceTermination;
 
+	/**
+	 * Return the time since the object is terminated.
+	 */
+	@Basic
 	public double getTimeSinceTermination() {
 		return timeSinceTermination;
 	}
+	
+	/**
+	 * Set the time since the object is terminated to the given time.
+	 * 
+	 * @param timeSinceTermination
+	 * 		  The new time since termination
+	 * 
+	 * @post  | new.getTimeSinceTermination() == timeSinceTermination
+	 */
 	public void setTimeSinceTermination(double timeSinceTermination) {
 		this.timeSinceTermination = timeSinceTermination;
 	}
 	
+	//onduidelijk of er documentatie nodig is voor deze methode
 	public void advanceTime(double duration) {
 		if(duration > 0.2 || duration < 0) return; //???????????????
 		
@@ -492,6 +590,19 @@ public abstract class GameObject {
 		
 	}
 		
+	/**
+	 * Return the game object of the given class that touches this game object.
+	 * @param className
+	 * 		  The class of game objects for which to return a possible touching object.
+	 * @return | if (for a certain obj of myWorld.getGameObjects()
+	 * 		   |   	(obj != this && className.isInstance(obj)) &&
+	 *		   |	(rectanglesIntersect(obj.getPosition()[0],obj.getPosition()[1],obj.getWidth(),obj.getHeight(),
+	 *         |	this.getPosition()[0],this.getPosition()[1],this.getWidth(),this.getHeight()))
+	 *         |    result == obj
+	 *         | else 
+	 *         |	result == null
+	 */
+	//wat gebeurt er als er twee objecten tegelijk worden aangeraakt?
 	public GameObject touches(Class<?> className) {
 		
 		for(GameObject obj : myWorld.getGameObjects()) {
@@ -537,6 +648,15 @@ public abstract class GameObject {
 		//return null;
 	}
 	
+	/**
+	 * Check whether this game object touches the given type of terrain.
+	 * @param terrainType
+	 * 		  The terrainType to check.
+	 * @return
+	 */
+	
+	//return specifieren
+	
 	public boolean touches(TerrainType terrainType) {
 		int[] pos = this.getPosition();
 		int x = pos[0];
@@ -558,9 +678,7 @@ public abstract class GameObject {
 		
 	}
 	
-	//SPRITES
-	
-	
+		
 	/**
 	 * Return the sprites of this game object.
 	 */
@@ -574,9 +692,7 @@ public abstract class GameObject {
 	 * 
 	 * @param 	sprites
 	 * 			The new sprites for this game object.
-	 * @post	The new sprites of this game object are equal to
-	 * 			the given sprites.
-	 * 		  | new.getSprites() == sprites
+	 * @post	| new.getSprites() == sprites
 	 */
 	@Raw
 	public void setSprites(Sprite[] sprites) {
@@ -589,24 +705,23 @@ public abstract class GameObject {
 	private Sprite[] sprites;
 	
 	/**
-	 * @return Return the width of this game object's current sprite.
-	 * 		 | result == (this.getCurrentSprite().getWidth())
+	 * Return the width of this game object's current sprite.
+	 * 
+	 * @return | result == (this.getCurrentSprite().getWidth())
 	 */
 	public int getWidth() {
 		return this.getCurrentSprite().getWidth();
 	}
 	
 	/**
-	 * @return Return the height of this game object's currect sprite.
-	 * 		 | result == (this.getCurrentSprite().getHeight())
+	 * Return the height of this game object's currect sprite.
+	 * 
+	 * @return | result == (this.getCurrentSprite().getHeight())
 	 */
 	public int getHeight() {
 		return this.getCurrentSprite().getHeight();
 	}
-	
-	
-	//COMMENTAAR AANPASSEN
-	
+		
 	/**
 	 * Return the xDirection of this game object.
 	 */
@@ -620,11 +735,8 @@ public abstract class GameObject {
 	 * 
 	 * @param 	xDirection
 	 * 			The new xDirection for this game object.
-	 * @pre		The given direction should be Direction.LEFT or Direction.RIGHT.
-	 * 		  | (xDirection == Direction.LEFT) || (xDirection == Direction.RIGHT)
-	 * @post	The new xDirection of this game object is equal to
-	 * 			the given xDirection.
-	 * 		  | new.getXDirection() == xDirection
+	 * @pre	  | (xDirection == Direction.LEFT) || (xDirection == Direction.RIGHT)
+	 * @post  | new.getXDirection() == xDirection
 	 */
 	@Raw
 	private void setXDirection(Direction xDirection) {
@@ -645,11 +757,7 @@ public abstract class GameObject {
 	public static enum Direction {
 		LEFT, RIGHT;
 	}
-	
-	//MOVEMENT
-	
-	
-	
+		
 	/**
 	 * Check whether the given xInitialVelocity and xVelocityLimiy are valid for any game object.
 	 *  
@@ -657,12 +765,9 @@ public abstract class GameObject {
 	 * 			The initial velocity in the x direction to be checked.
 	 * @param	xVelocityLimit
 	 * 			The velocity limit in the x direction to be checked.
-	 * @return	True if and only if the given initial velocity is smaller than or equal to 
-	 * 			the velocity limit in the x direction, and if
-	 * 			the the given initial velocity is greater than or equal to 1.
-	 * 		  | result ==
-	 * 		  |    ( (xInitialVelocity <= xVelocityLimit)
-	 * 		  |   && (xInitialVelocity >= 1) )
+	 * @return	| result ==
+	 * 		    |    ( (xInitialVelocity <= xVelocityLimit)
+	 * 		    |   && (xInitialVelocity >= 1) )
 	 */
 	public static boolean isValidXInitialVelocityAndXVelocityLimit(double xInitialVelocity, double xVelocityLimit) {
 		return (xInitialVelocity <= xVelocityLimit) && (xInitialVelocity >= 1);
@@ -673,12 +778,10 @@ public abstract class GameObject {
 	 * This velocity limit is positive if the direction of the game object is Direction.RIGHT
 	 * and negative if the direction of the game object is Direcion.LEFT.
 	 * 
-	 * @return 	Return this game object's velocity limit, adjusted for this game object's direction.
-	 * 			| if (getXDirection() == Direction.RIGHT)
+	 * @return 	| if (getXDirection() == Direction.RIGHT)
 	 *			|	result == xVelocityLimit
 	 *			| else
 	 *			| 	result == -xVelocityLimit
-	 * 
 	 */
 	public double getXVelocityLimit() {
 		if (getXDirection() == Direction.RIGHT)
@@ -703,18 +806,13 @@ public abstract class GameObject {
 		return Y_INITIAL_VELOCITY;
 	}
 	
-	
-	
 	/**
 	 * Set the xVelocityLimit of this game object to the given xVelocityLimit.
 	 * 
 	 * @param 	xVelocityLimit
 	 * 			The new xVelocityLimit for this game object.
-	 * @pre		The given xVelocityLimit must be a valid xVelocityLimit for this game object.
-	 * 		  | isValidXInitialVelocityAndXVelocityLimit(getXInitialVelocity(),xVelocityLimit)
-	 * @post	The new xVelocityLimit of this game object is equal to
-	 * 			the given xVelocityLimit.
-	 * 		  | new.getXVelocityLimit() == xVelocityLimit
+	 * @pre	  | isValidXInitialVelocityAndXVelocityLimit(getXInitialVelocity(),xVelocityLimit)
+	 * @post  | new.getXVelocityLimit() == xVelocityLimit
 	 */
 	@Raw
 	private void setXVelocityLimit(double xVelocityLimit) {
@@ -729,15 +827,10 @@ public abstract class GameObject {
 	 * 
 	 * @param 	xVelocity
 	 * 			The velocity in the x direction to be checked.
-	 * @return	True if and only if the given velocity is 0 or if
-	 * 			the absolute value of the given velocity is greater 
-	 * 			than or equal to the initial velocity in the x direction and the 
-	 * 			absolute value of the given velocity is smaller than or equal to the
-	 * 			velocity limit in the x direction of this game object.
-	 * 		  | result == 
-	 * 		  |    (  (xVelocity == 0) 
-	 * 		  |   || ( (abs(xVelocity) >= getXInitialVelocity())
-	 *		  |        && (abs(xVelocity) <= getXVelocityLimit()) ) )
+	 * @return | result == 
+	 * 		   |    (  (xVelocity == 0) 
+	 * 		   |   || ( (abs(xVelocity) >= getXInitialVelocity())
+	 *		   |        && (abs(xVelocity) <= getXVelocityLimit()) ) )
 	 */
 	public boolean canHaveAsXVelocity(double xVelocity) {
 		return (xVelocity == 0) || (abs(xVelocity) >= abs(getXInitialVelocity())) && (abs(xVelocity) <= abs(getXVelocityLimit()));
@@ -764,11 +857,8 @@ public abstract class GameObject {
 	 * 
 	 * @param 	xVelocity
 	 * 			The new xVelocity for this game object.
-	 * @pre		The given xVelocity must be a valid xVelocity for this game object.
-	 * 		  | canHaveAsXVelocity(xVelocity)
-	 * @post	The new xVelocity of this game object is equal to
-	 * 			the given xVelocity.
-	 * 		  | new.getXVelocity() == xVelocity
+	 * @pre	  | canHaveAsXVelocity(xVelocity)
+	 * @post  | new.getXVelocity() == xVelocity
 	 */
 	@Raw
 	private void setXVelocity(double xVelocity) {
@@ -781,9 +871,7 @@ public abstract class GameObject {
 	 * 
 	 * @param 	yVelocity
 	 * 			The new yVelocity for this game object.
-	 * @post	The new yVelocity of this game object is equal to
-	 * 			the given yVelocity.
-	 * 		  | new.getYVelocity() == yVelocity
+	 * @post  | new.getYVelocity() == yVelocity
 	 */
 	@Raw
 	protected void setYVelocity(double yVelocity) {
@@ -800,18 +888,14 @@ public abstract class GameObject {
 	 */
 	private double yVelocity;
 	
-
-	
 	/**
 	 * Check whether this game object can have the given xAcceleration as
 	 * its acceleration in the x direction.
 	 * 
 	 * @param 	xAcceleration
 	 * 			The acceleration in the x direction to be checked.
-	 * @return	True if and only if the given acceleration in the x direction
-	 * 			has the same sign as the velocity in the x direction.
-	 * 		  | result ==
-	 * 		  |    (signum(xAcceleration) == signum(getXVelocity())
+	 * @return | result ==
+	 * 		   |    (signum(xAcceleration) == signum(getXVelocity() || getXVelocity() == 0)
 	 */
 	public boolean canHaveAsXAcceleration(double xAcceleration) {
 		return (signum(xAcceleration) == signum(getXVelocity()) || getXVelocity() == 0) ;
@@ -821,14 +905,12 @@ public abstract class GameObject {
 	 * 
 	 * Return this game object's current acceleration in the x direction.
 	 * 
-	 * @return	0 if xVelocity is 0 or if xVelocity is equal to xVelocityLimit
+	 * @return
 	 * 		  | if ( (getXVelocity() == 0) || (getXVelocity() == getXVelocityLimit()) )
 	 * 		  | 	then result == 0
-	 * 			Otherwise, X_ACCELERTATION if xDirection is equal to Direction.RIGHT
-	 * 		  | if (getXDirection() == Direction.RIGHT)
+	 * 		  | else if (getXDirection() == Direction.RIGHT)
 	 * 		  | 	then result == X_ACCELERATION
-	 * 			Otherwise, -X_ACCELERTATION if xDirection is equal to Direction.LEFT
-	 * 		  | if (getXDirection() == Direction.LEFT)
+	 * 		  | else if (getXDirection() == Direction.LEFT)
 	 * 		  | 	then result == -X_ACCELERATION
 	 *
 	 */
@@ -846,12 +928,11 @@ public abstract class GameObject {
 	/**
 	 * Return the acceleration in the y direction of this game object.
 	 * 
-	 * @result 	If this game object is jumping, return the opposite of the value stored as acceleration in the y direction.
-	 * 			Otherwise, return 0.
+	 * @return 	
 	 * 			| if (isJumping())
 	 * 			| 	then result == -Y_ACCELERATION
 	 * 			| else
-	 * 				result == 0
+	 * 			|	result == 0
 	 */
 	public double getYAcceleration() {
 		if (isJumping())
@@ -860,22 +941,15 @@ public abstract class GameObject {
 			return 0;
 	}
 
-	
-	
 	/**
 	 * The given game object starts moving in the given x direction with initial velocity
 	 * getXInitialVelocity() and with acceleration getXAcceleration().
 	 * 
 	 * @param 	direction
 	 * 			The direction in which the game object should move.
-	 * @pre		The given direction should be Direction.LEFT or Direction.RIGHT.
-	 * 		  | (direction == Direction.LEFT) || (direction == Direction.RIGHT)
-	 * @post	The new xDirection of this game object is equal to the given direction.
-	 * 		  | new.getXDirection() == direction
-	 * @post	The new xVelocity of this game object is equal to getXInitialVelocity() if
-	 * 			the direction of this game object is Direction.RIGHT or equal to 
-	 * 			- getXInitialVelocity() if the direction of this game object is Direction.LEFT.
-	 * 		  | abs(new.getXVelocity()) == getXInitialVelocity()
+	 * @pre	  | (direction == Direction.LEFT) || (direction == Direction.RIGHT)
+	 * @post  | new.getXDirection() == direction
+	 * @post  | abs(new.getXVelocity()) == getXInitialVelocity()
 	 */
 	public void startMove(Direction direction) {
 		setStillMoving(true);
@@ -890,9 +964,10 @@ public abstract class GameObject {
 	/**
 	 * The given game object stops moving in the x direction. 
 	 * Its velocity in the x direction is set to 0.
+	 * Its sill moving state is set to false.2
 	 * 
-	 * @post This game object's velocity in the x direction is 0.
-	 * 		| new.getXVelocity() == 0
+	 * @post | new.getXVelocity() == 0
+	 * @post | new.getStillMoving(false)
 	 */
 	public void endMove() {
 		setStillMoving(false);
@@ -903,18 +978,22 @@ public abstract class GameObject {
 	 * The given game object starts jumping with initial velocity
 	 * Y_INITIAL_VELOCITY and with acceleration getYAcelleration().
 	 * 
-	 * @post	The new yVelocity of this game object is equal to Y_INITIAL_VELOCITY.
-	 * 		  | new.getYVelocity() == Y_INITIAL_VELOCITY
+	 * @post	| new.getYVelocity() == Y_INITIAL_VELOCITY
 	 * @throws 	JumpingException
-	 * 			This game object cannot start jumping because it is already jumping.
-	 * 		  | isJumping()
+	 * 			| ! canJump()
 	 */
 	public void startJump() throws JumpingException {
-		if (/*isJumping() || */ ! canJump())
+		if (! canJump())
 			throw new JumpingException("Already jumping!", this);
 		setYVelocity(getYInitialVelocity());
 	}
 	
+	/**
+	 * Check whether this game object can jump.
+	 * 
+	 * @return | result == (getPosition()[1] == 0 ||
+			   |           ( !(canHaveAsPosition(getPosition()[0],getPosition()[1]-1))))
+	 */
 	public boolean canJump() {
 		return (getPosition()[1] == 0 ||
 				( !(canHaveAsPosition(getPosition()[0],getPosition()[1]-1))));
@@ -923,12 +1002,10 @@ public abstract class GameObject {
 	/**
 	 * The given game object stops jumping. Its velocity is set to 0 if it was greater than 0.
 	 * 
-	 * @post	The new yVelocity of this game object is equal to 0 if yVelocity is greater than 0.
-	 * 		  | if (getYVelocity() > 0)
+	 * @post  | if (getYVelocity() > 0)
 	 * 		  |		new.getYVelocity() == 0
 	 * @throws 	JumpingException
-	 * 			This game object cannot stop jumping because it is not jumping.
-	 * 		  | ! isJumping()
+	 *		  | ! isJumping()
 	 */
 	public void endJump() throws JumpingException {
 		if (!isJumping())
@@ -940,37 +1017,40 @@ public abstract class GameObject {
 	/**
 	 * Check whether this game object is jumping.
 	 * 
-	 * @return 	True if and only if the current y position is greater than 0.
-	 * 		  | result == (getY() > 0)
+	 * @return  | result == (getY() > 0)
 	 */
 	public boolean isJumping() {
 		return isJumping;
 				
 	}
 	
-	private void setJumping(boolean status) {
-		this.isJumping = status;
+	/**
+	 * Set the jumping state of this game object to the given flag.
+	 * @param flag
+	 * 		  The new jumping state for this game object.
+	 * @post  | new.isJumping() == flag
+	 */
+	private void setJumping(boolean flag) {
+		this.isJumping = flag;
 	}
 	
+	/**
+	 * Variable registering the jumping state of this game object.
+	 */
 	private boolean isJumping;
 	
 	/**
 	 * The given game object starts ducking. Its velocity limit in the x direction
-	 * is set to the ducked velocity limit. Its new ducked state is equal to true.
+	 * is set to the ducked velocity limit. Its new ducked state is equal to true. 
+	 * It's toEndDuck state is set to false.
 	 * 
-	 * @post	The new previousXVelocityLimit of this game object is equal to the old xVelocityLimit.
-	 * 		  | new.getPreviousXVelocityLimit() == abs(this.getXVelocityLimit())
-	 * @post 	The new xVelocityLimit of this game object is equal to the ducked velocity limit.
-	 * 		  | abs(new.getXVelocityLimit()) == getDuckedVelocityLimit()
-	 * @post	If this game object has a velocity in the x direction that is greater than 
-	 * 			the new xVelocityLimit, then the new velocity in the x direction is set to the new
-	 * 			xVelocityLimit.
-	 * 		  | if (abs(this.getXVelocity()) > abs(new.getXVelocityLimit()))
+	 * @post  | new.getPreviousXVelocityLimit() == abs(this.getXVelocityLimit())
+	 * @post  | abs(new.getXVelocityLimit()) == getDuckedVelocityLimit()
+	 * @post  | if (abs(this.getXVelocity()) > abs(new.getXVelocityLimit()))
 	 * 		  |		new.getXVelocity() == (signum(this.getXVelocity())) * (new.getXVelocityLimit())
-	 * @post	The new ducked state of this game object is equal to true.
-	 * 		  | new.isDucking() == true
+	 * @post  | new.isDucking() == true
+	 * @post  | new.getToEndDuck() == false
 	 * @throws	IllegalStateExpcetion
-	 * 			This game object cannot start ducking because it is already ducking.
 	 * 		  | isDucking()
 	 * 
 	 */
@@ -991,12 +1071,13 @@ public abstract class GameObject {
 	 * The given game object stops ducking. Its velocity limit in the x direction
 	 * is reset to the previous xVelocityLimit. 
 	 * 
-	 * @post	The new xVelocityLimit of this game object is equal to the previousXVelocityLimit.
-	 * 		  | new.getXVelocityLimit() == this.getPreviousXVelocityLimit()
-	 * @post	The new ducked state of this game object is equal to false.
-	 * 		  | new.isDucking() == false
+	 * @post  | if canEndDuck()
+	 * 		  | 	new.getXVelocityLimit() == this.getPreviousXVelocityLimit()
+	 * 		  |		new.isDucking() == false
+	 * 		  |		new.getToEndDuck() == false
+	 * 		  | else
+	 * 		  |     new.getToEndDuck() == true
 	 * @throws	IllegalStateException
-	 * 			This game object cannot stop ducking because it is not ducking.
 	 * 		  | ! isDucking()
 	 */
 	public void endDuck() throws IllegalStateException {
@@ -1013,17 +1094,37 @@ public abstract class GameObject {
 		//this.terminate(true); //Staat hier niks te doen?
 	}
 	
+	/**
+	 * Variable registering whether this game object needs to end duck.
+	 */
 	private boolean toEndDuck;
 	
-	
+	/**
+	 * Return the toEndDuck state of this game object.
+	 */
+	@Basic
 	public boolean getToEndDuck() {
 		return toEndDuck;
 	}
 
+	/**
+	 * Set the toEndDuck state of this game object to the given toEndDuck.
+	 * @param toEndDuck
+	 * 		  The new toEndDuck state of this game object.
+	 * @post  new.getToEndDuck() == toEndDuck
+	 */
 	private void setToEndDuck(boolean toEndDuck) {
 		this.toEndDuck = toEndDuck;
 	}
 	
+	/**
+	 * Check whether this game object can end its duck.
+	 * @return | if (canHaveAsPosition(getPosition()[0],getPosition()[1]) while setDucking(false) 
+	 * 		   |   result == true
+	 * 		   | else
+	 * 		   |   result == false
+	 */
+	//Hoe komt het dat we Mazub ni zien ontducken bij deze methode?
 	public boolean canEndDuck() {
 		boolean previous = isDucking();
 		setDucking(false);
@@ -1035,8 +1136,6 @@ public abstract class GameObject {
 		return false;
 	}
 	
-	
-
 	/**
 	 * Return the ducked state of this game object.
 	 */
@@ -1050,9 +1149,7 @@ public abstract class GameObject {
 	 * 
 	 * @param 	state
 	 * 			The new state for this game object.
-	 * @post	The new ducked state of this game object is equal to
-	 * 			the given state.
-	 * 		  | new.isDucking() == state
+	 * @post  | new.isDucking() == state
 	 */
 	@Raw
 	private void setDucking(boolean state) {
@@ -1073,11 +1170,8 @@ public abstract class GameObject {
 	 * 
 	 * @param 	previousXVelocityLimit
 	 * 			The new previousXVelocityLimit for this game object.
-	 * @pre		The given previousXVelocityLimit should be a valid xVelocityLimit for this game object.
-	 * 		  | isValidXInitialVelocityAndXVelocityLimit(getXInitialVelocity(),previousXVelocityLimit)
-	 * @post	The new previousXVelocityLimit of this game object is equal to
-	 * 			the given previousXVelocityLimit.
-	 * 		  | new.getPreviousXVelocityLimit() == previousXVelocityLimit
+	 * @pre	 | isValidXInitialVelocityAndXVelocityLimit(getXInitialVelocity(),previousXVelocityLimit)
+	 * @post | new.getPreviousXVelocityLimit() == previousXVelocityLimit
 	 */
 	@Raw
 	private void setPreviousXVelocityLimit(double previousXVelocityLimit) {
@@ -1089,17 +1183,16 @@ public abstract class GameObject {
 	 * Variable registering the previous velocity limit in the x direction.
 	 */
 	private double previousXVelocityLimit;
+	
 	/**
 	 * Variable registering the ducked state of this game object.
 	 */
 	private boolean isDucking;
+	
 	/**
 	 * Variable registering the velocity limit in the x direction while ducking.
 	 */
-
-	
-	
-
+	//WEG?!
 
 	/**
 	 * Return the timeSinceLastMove of this game object.
@@ -1116,10 +1209,8 @@ public abstract class GameObject {
 	 * 
 	 * @param	timeSinceLastMove
 	 * 			The new timeSinceLastMove for this game object.
-	 * @pre		The given timeSinceLastMove must be positive.
-	 * @post	The new timeSinceLastMove of this game object is equal to
-	 * 			the given timeSinceLastMove.
-	 * 		  | new.getTimeSinceLastMove() == timeSinceLastMove
+	 * @pre		| timeSinceLastMove >= 0
+	 * @post	| new.getTimeSinceLastMove() == timeSinceLastMove
 	 */
 	@Raw
 	private void setTimeSinceLastMove(double timeSinceLastMove) {
@@ -1146,11 +1237,8 @@ public abstract class GameObject {
 	 * 
 	 * @param 	timeSinceLastRunningImage 
 	 * 			The new timeSinceLastRunningImage for this game object.
-	 * @pre		The given timeSinceLastRunningImage should be positive.
-	 * 		  | timeSinceLastRunningImage >= 0
-	 * @post	The new timeSinceLastRunningImage of this game object is equal 
-	 * 			to the given timeSinceLastRunningImage.
-	 * 		  | new.getTimeSinceLastRunningImage() == timeSinceLastRunningImage	
+	 * @pre	  | timeSinceLastRunningImage >= 0
+	 * @post  | new.getTimeSinceLastRunningImage() == timeSinceLastRunningImage	
 	 */
 	private void setTimeSinceLastRunningImage(double timeSinceLastRunningImage) {
 		assert timeSinceLastRunningImage >= 0;
@@ -1166,8 +1254,7 @@ public abstract class GameObject {
 	 * Check whether this game object is running normally. A game object
 	 * is running normally if it is ducking nor jumping, and if its velocity is not equal to 0.
 	 * 
-	 * @return	True if and only if this game object is ducking nor jumping, and if its velocity
-	 * 			is not equal to 0.
+	 * @return
 	 * 		  | result ==
 	 * 		  |    ( ! isDucking())
 	 * 		  |   && (! isJumping())
@@ -1182,25 +1269,13 @@ public abstract class GameObject {
 	 * 
 	 * @param	duration
 	 * 			The duration for which the game object should move in the x direction.
-	 * @post	If the direction of this game object is Direction.RIGHT and duration is greater than 0, 
-	 * 			then the new x position of this	game object has increased or this game object
-	 * 			is positioned at the right border of the screen.
-	 * 		  | if getXDirection() == Direction.RIGHT && duration > 0
+	 * @post  | if getXDirection() == Direction.RIGHT && duration > 0
 	 * 		  | 	new.getX() > getX() || getX() == X_LIMIT
-	 * @post	If the direction of this game object is Direction.LEFT and duration is greater than 0,
-	 * 			then the new x position of this	game object has decreaed or this game object is
-	 *			positioned at the left border of the screen.
-	 * 		  | if getXDirection() == Direction.LEFT && duration > 0
+	 * @post  | if getXDirection() == Direction.LEFT && duration > 0
 	 * 		  | 	new.getX() < getX() || getX() == 0
-	 * @post	If the direction of this game object is Direction.RIGHT and duration is greater than 0, 
-	 * 			then the new xVelocity of this	game object has increased or the xVelocity is equal to
-	 * 			xVelocityLimit.
-	 * 		  | if getXDirection() == Direction.RIGHT && duration > 0
+	 * @post  | if getXDirection() == Direction.RIGHT && duration > 0
 	 * 		  | 	new.getXVelocity() > getXVelocity() || getXVelocity() == getXVelocityLimit()
-	 * @post	If the direction of this game object is Direction.LEFT and duration is greater than 0, 
-	 * 			then the new xVelocity of this	game object has decreased or the xVelocity is equal to
-	 * 			- xVelocityLimit.
-	 * 		  | if getXDirection() == Direction.LEFT && duration > 0
+	 * @post  | if getXDirection() == Direction.LEFT && duration > 0
 	 * 		  | 	new.getXVelocity() > getXVelocity() || getXVelocity() == getXVelocityLimit()
 	 */
 	private void moveX(double duration) {
@@ -1235,13 +1310,25 @@ public abstract class GameObject {
 
 	}
 	
-	
+	/**
+	 * Varible registering whether this game object is still moving.
+	 */
 	private boolean isStillMoving;
 
+	/**
+	 * Return the isStillMoving variable of this game object.
+	 */
+	@Basic
 	public boolean isStillMoving() {
 		return isStillMoving;
 	}
 
+	/**
+	 * Set the isStillMoving variable of this game object to the given isStillMoving.
+	 * @param isStillMoving
+	 * 		  The new isStillMoving value
+	 * @post  new.isStillMoving() == isStillMoving
+	 */
 	public void setStillMoving(boolean isStillMoving) {
 		this.isStillMoving = isStillMoving;
 	}
@@ -1251,13 +1338,10 @@ public abstract class GameObject {
 	 * 
 	 * @param 	duration
 	 * 			The duration for which the game object should move in the y direction.
-	 * @post  	If duration > 0, the game object is either not jumping or its new y-position is smaller than or equal to
-	 * 		  	getY()+getYVelocity*duration+0.5*getYAcceleration()*pow(duration,2.0).
-	 * 		  | if duration > 0
+	 * @post  | if duration > 0
 	 * 		  | 	then (new.getY() <= getY()+getYVelocity*duration+0.5*getYAcceleration()*pow(duration,2.0)) 
 	 * 		  |				|| (! isJumping())
-	 * @post	If duration > 0, the yVelocity has decreased or the character is not jumping.
-	 * 		  | if duration > 0
+	 * @post  | if duration > 0
 	 * 		  | 	then new.getYVelocity() < getYVelocity() || (! isJumping()) 
 	 */
 	private void moveY(double duration) {
@@ -1279,58 +1363,121 @@ public abstract class GameObject {
 		setYVelocity(vNew);
 	}
 	
-	
-	
-	
+	/**
+	 * Variable registering the time a game object has to be immune.
+	 */
 	private double timeToBeImmune;
 
-
+	/**
+	 * Return the timeToBeImmune of this game object.
+	 */
+	@Basic
 	public double getTimeToBeImmune() {
 		return timeToBeImmune;
 	}
 
+	/**
+	 * Set the timeToBeImmune of this game object to the given timeToBeImmune.
+	 * @param timeToBeImmune
+	 * 		  The new timeToBeImmunw
+	 * @post  | if (timeToBeImmune < 0)
+			  |		new.getTimeToBeImmune() == 0
+			  | else
+			  | 	new.getTimeToBeImmune == timeToBeImmune
+	 */
 	protected void setTimeToBeImmune(double timeToBeImmune) {
 		if (timeToBeImmune < 0)
 			this.timeToBeImmune = 0;
 		else
 			this.timeToBeImmune = timeToBeImmune;
-		
 	}
-
-
+	
+	/**
+	 * Variable registering how long this game object is in water.
+	 */
 	private double waterTimer;
+	
+	/**
+	 * Return the waterTimer of this game object. The waterTimer of a game object identifies
+	 * how long the game object has been in the water.
+	 */
+	@Basic
 	public double getWaterTimer() {
 		return waterTimer;
 	}
+	
+	/**
+	 * Set the waterTimer of this game objecect to the given value.
+	 * @param waterTimer
+	 * 		  The new value for the watertimer
+	 * @post  | new.getWaterTimer() == waterTimer
+	 */
 	protected void setWaterTimer(double waterTimer) {
 		this.waterTimer = waterTimer;
 	}
 	
+	/**
+	 * Variable registering how long this game object is in magma.
+	 */
 	private double magmaTimer;
+	
+	/**
+	 * Return the magmaTimer of this game object. The magmaTimer of a game object identifies
+	 * how long the game object has been in the magma.
+	 */
+	@Basic
 	public double getMagmaTimer() {
 		return magmaTimer;
 	}
 	
-	
+	/**
+	 * Set the magmaTimer of this game objecect to the given value.
+	 * @param magmaTimer
+	 * 		  The new value for the magmaTimer
+	 * @post  | new.getMagmaTimer() == magmaTimer
+	 */
 	protected void setMagmaTimer(double magmaTimer) {
 		this.magmaTimer = magmaTimer;
 	}
 	
+	/**
+	 * Variable registering how long this game object is in air.
+	 */
 	private double airTimer;
+	
+	/**
+	 * Return the airTimer of this game object. The airTimer of a game object identifies
+	 * how long the game object has been in the air.
+	 */
+	@Basic
 	public double getAirTimer() {
 		return airTimer;
 	}
+	
+	/**
+	 * Set the airTimer of this game objecect to the given value.
+	 * @param airTimer
+	 * 		  The new value for the airTimer
+	 * @post  | new.getAirTimer() == airTimer
+	 */
 	protected void setAirTimer(double airTimer) {
 		this.airTimer = airTimer;
 	}
+	
+	/**
+	 * Return the acceleration in the y direction of this game object.
+	 */
+	@Basic
 	public double getY_ACCELERATION() {
 		return Y_ACCELERATION;
 	}
 	
+	/**
+	 * Check whether this game object has a proper world.
+	 * @return | result == (getMyWorld() != null)
+	 */
 	public boolean hasProperWorld() {
 		return (getMyWorld() != null);
 	}
-	
-	
 	
 }
