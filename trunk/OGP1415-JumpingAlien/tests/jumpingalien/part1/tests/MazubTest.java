@@ -31,8 +31,6 @@ public class MazubTest {
 	World world;
 	
 	private final double E = 1e-4;
-	private final int X_LIMIT = 1023;
-	private final int Y_LIMIT = 767;
 	
 	//Default values
 	private static final double X_ACCELERATION = 90;
@@ -70,8 +68,8 @@ public class MazubTest {
 	
 	@Test
 	public void isValidPositionTest() {
-		assertFalse(normalMazub.isValidPosition(100,-1));
-		assertTrue(normalMazub.isValidPosition(100,0));
+		assertFalse(normalMazub.canHaveAsPosition(100,-1));
+		assertTrue(normalMazub.canHaveAsPosition(100,0));
 	}
 	
 	
@@ -242,7 +240,7 @@ public class MazubTest {
 		assertEquals(0,normalMazub.getYAcceleration(),E);
 	}
 	
-	//getWidth, getHeight and getCurrentSprite() should be verified visually
+	//getWidth, getHeight, getCurrentSprite: to be verified visually
 	
 	@Test
 	public void getCurrentSpriteTest() {

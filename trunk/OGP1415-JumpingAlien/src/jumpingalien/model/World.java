@@ -166,6 +166,7 @@ public class World {
 	 * @effect | getGameObjects().remove(obj)
 	 */
 	public void removeObject(GameObject obj) {
+
 		getGameObjects().remove(obj);
 	}
 	

@@ -22,11 +22,13 @@ public class School {
 		return slimes;
 	}
 	
+	@Basic
 	public boolean hasAsSlime(Slime slime) {
-		return getSlimes().contains(slimes);
+		return getSlimes().contains(slime);
 	}
 	
 	public void addAsSlime(Slime slime) {
+		assert canHaveAsSlime(slime);
 		getSlimes().add(slime);
 	}
 	
@@ -34,6 +36,7 @@ public class School {
 		getSlimes().remove(slime);
 	}
 	
+	@Basic
 	public int getNbSlimes() {
 		return getSlimes().size();
 	}

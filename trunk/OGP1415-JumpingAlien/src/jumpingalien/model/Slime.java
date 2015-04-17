@@ -53,10 +53,12 @@ public class Slime extends AutomaticObject {
 	 * 
 	 * @param school
 	 * 		  The new school for this slime
-	 * @post  | new.getSchool() == school
+	 * @post  	| new.getSchool() == school
+	 * @effect 	| school.addAsSlime(this)
 	 */
 	private void setSchool(School school) {
 		this.school = school;
+		school.addAsSlime(this);
 	}
 
 	/**
@@ -65,37 +67,42 @@ public class Slime extends AutomaticObject {
 	 * 
 	 * @param school
 	 * 		  The school this slime should be transfered to.
-	 * @effect  | getSchool.removeAsSlime(this)
+	 * @effect  | getSchool().removeAsSlime(this)
 	 * @effect  | setSchool(school)
 	 * @effect  | school.addAsSlime(this)
-	 * @post    | for each colleague in old.getSchool().getSlimes()
+	 * @effect    | for each colleague in old.getSchool().getSlimes()
 	 * 			| 	if  (colleague != this) {
 	 *			|		colleague.addHitPoints(1);
-	 *			|		this.substractHitPoints(1);
+	 *			|		this.substractHitPoints(1, false);
 	 *			|	}
-	 * @post    | for each colleague in new.getSchool().getSlimes()
+	 * @effect    | for each colleague in new.getSchool().getSlimes()
 	 * 			| 	if  (colleague != this) {
 	 *			|		this.addHitPoints(1);
-	 *			|		colleague.substractHitPoints(1);
+	 *			|		colleague.substractHitPoints(1, false);
 	 *			|	}
 	 */
 	public void transferToSchool(School school) {
 		for(Slime colleague: getSchool().getSlimes()) {
 			if (colleague != this) {
 				colleague.addHitPoints(1);
-				this.substractHitPoints(1);
+				this.substractHitPoints(1, false);
 			}
 		}
 		this.getSchool().removeAsSlime(this);
 		this.setSchool(school);
-		school.addAsSlime(this);
 		for(Slime colleague: getSchool().getSlimes()) {
 			if (colleague != this) {
 				this.addHitPoints(1);
-				colleague.substractHitPoints(1);
+				colleague.substractHitPoints(1, false);
 			}
 		}
 	}
+	
+	
+	/**
+	 * Variable registering the school of this slime.
+	 */
+	private School school;
 	
 	/**
 	 * Subtract the given number of hitpoints from the current number of hitpoints.
@@ -105,18 +112,22 @@ public class Slime extends AutomaticObject {
 	 * 		   |    if (colleague != this)
 	 *		   |       colleague.substractHitPoints(1);
 	 */
-	@Override
-	protected void substractHitPoints(int hitPoints) {
+
+	public void substractHitPoints(int hitPoints, boolean propagate) {
 		super.substractHitPoints(hitPoints);
-		for(Slime colleague: getSchool().getSlimes())
-			if (colleague != this)
-				colleague.substractHitPoints(1);
+		if(propagate == true) {
+			for(Slime colleague: getSchool().getSlimes()) {
+				if (colleague != this)
+					colleague.substractHitPoints(1, false);
+			}
+		}
 	}
 	
-	/**
-	 * Variable registering the school of this slime.
-	 */
-	private School school;
+	@Override
+	public void substractHitPoints(int hitPoints) {
+		substractHitPoints(hitPoints, true);
+	}
+
 	
 
 	/**
@@ -179,7 +190,7 @@ public class Slime extends AutomaticObject {
 		
 		Mazub object1 = (Mazub) this.touches(Mazub.class);
 		if (object1 != null && getTimeToBeImmune() == 0) {
-			this.substractHitPoints(50);
+			this.substractHitPoints(50, true);
 			this.setTimeToBeImmune(0.6);
 		}
 		
@@ -187,7 +198,7 @@ public class Slime extends AutomaticObject {
 		
 		Shark object2 = (Shark) this.touches(Shark.class);
 		if (object2 != null && getTimeToBeImmune() == 0) {
-			this.substractHitPoints(50);
+			this.substractHitPoints(50, true);
 			this.setTimeToBeImmune(0.6);
 		}
 		
@@ -196,7 +207,7 @@ public class Slime extends AutomaticObject {
 		if (this.touches(TerrainType.WATER)) {
 			this.setWaterTimer(getWaterTimer() + duration);
 			if (getWaterTimer() >= 0.2) {
-				this.substractHitPoints(2);
+				this.substractHitPoints(2, true);
 				setWaterTimer(getWaterTimer() - 0.2);
 			}
 		}
@@ -207,7 +218,7 @@ public class Slime extends AutomaticObject {
 		if (this.touches(TerrainType.MAGMA)) {
 			this.setMagmaTimer(getMagmaTimer() + duration);
 			if (getMagmaTimer() >= 0.2) {
-				this.substractHitPoints(50);
+				this.substractHitPoints(50, true);
 				setMagmaTimer(getMagmaTimer() - 0.2);
 			}
 		}

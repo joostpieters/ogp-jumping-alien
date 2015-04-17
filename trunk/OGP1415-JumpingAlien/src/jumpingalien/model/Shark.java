@@ -8,7 +8,7 @@ import jumpingalien.util.Sprite;
 import be.kuleuven.cs.som.annotate.*;
 
 /**
- * @author Andreas
+ * @author Jonathan Oostvogels & Andreas Schryvers
  *
  */
 public class Shark extends AutomaticObject {
@@ -24,10 +24,11 @@ public class Shark extends AutomaticObject {
 	}
 	
 
-	
+	/**
+	 * @post |getTimer() <= getGoal()
+	 */
 	@Override
 	public void advanceTime(double duration) {
-//		System.out.println(getHitPoints());
 		super.advanceTime(duration);
 		setTimer(getTimer()+duration);
 		if(getTimer() > getGoal()) {
@@ -35,12 +36,11 @@ public class Shark extends AutomaticObject {
 		}
 		if (getCounter() == 1 && getYVelocity() < 0 && isSubmerged()) {
 			setYVelocity(0);
-//			System.out.println("ok");
 		}
 	}
 	
 	@Override
-	public void startNewMovement() {
+	protected void startNewMovement() {
 		setTimer(0);
 		endMove();
 		try {
@@ -49,7 +49,7 @@ public class Shark extends AutomaticObject {
 		catch (Exception exc) {
 		}
 		
-		//4 seconds is less likely, but still possible when duration = 0.2
+		//4 seconds is less likely, but still possible when duration = (0.2
 		setGoal(1+generator.nextDouble()*(3.8-1));
 		if(generator.nextDouble() < 0.5)
 			startMove(Direction.LEFT);
@@ -125,7 +125,7 @@ public class Shark extends AutomaticObject {
 		return ((super.canJump()) || touchesWater);		
 	}
 
-	private int counter;
+
 
 	public int getCounter() {
 		return counter;
@@ -134,6 +134,8 @@ public class Shark extends AutomaticObject {
 	private void setCounter(int counter) {
 		this.counter = counter;
 	}
+	
+	private int counter;
 	
 	@Override
 	public double getYAcceleration() {
@@ -163,7 +165,7 @@ public class Shark extends AutomaticObject {
 		return divingAcceleration;
 	}
 
-	public void setDivingAcceleration(double divingAcceleration) {
+	private void setDivingAcceleration(double divingAcceleration) {
 		this.divingAcceleration = divingAcceleration;
 	}
 }
