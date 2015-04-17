@@ -30,6 +30,8 @@ public class Plant extends AutomaticObject {
 	
 	
 	public void handleInteraction(double duration) {
+		
+		//Handled by Mazub
 		return;
 	}
 	

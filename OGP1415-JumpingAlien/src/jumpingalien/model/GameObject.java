@@ -281,7 +281,7 @@ public abstract class GameObject {
 	 * @pre		| hitpoints >= 0
 	 * @effect	| setHitPoints(getHitPoints() - hitPoints)
 	 */
-	protected void substractHitPoints(int hitPoints) {
+	public void substractHitPoints(int hitPoints) {
 		assert hitPoints >= 0;
 		setHitPoints(getHitPoints() - hitPoints);
 	}
@@ -567,7 +567,9 @@ public abstract class GameObject {
 		for(int i = 0; i < fragments; i++) {
 			
 			moveX(adjustedDuration);
+			setJumping(canHaveAsPosition(getPosition()[0],getPosition()[1] - 1));
 			moveY(adjustedDuration);
+			setJumping(canHaveAsPosition(getPosition()[0],getPosition()[1] - 1));
 		}
 		
 		
@@ -583,7 +585,7 @@ public abstract class GameObject {
 		 
 		 if (getToEndDuck() == true)
 			 endDuck();
-		 setJumping(canHaveAsPosition(getPosition()[0],getPosition()[1] - 1));
+		 
 		 
 
 		setTimeToBeImmune(getTimeToBeImmune()-duration);
@@ -1284,6 +1286,7 @@ public abstract class GameObject {
 			return;
 		if (isStillMoving() && getXVelocity() == 0)
 			startMove(getXDirection());
+
 		double xCurrent = getX();
 		double vCurrent = getXVelocity();
 		double xNew = xCurrent;
@@ -1347,11 +1350,13 @@ public abstract class GameObject {
 	private void moveY(double duration) {
 		if (duration <= 0)
 			return;
+		
 		double yCurrent = getY();
 		double vCurrent = getYVelocity();
 		double yNew;
 		
 		double vNew = vCurrent + duration*getYAcceleration();
+		
 		
 		yNew = yCurrent + vCurrent*duration + 0.5*getYAcceleration()*pow(duration,2.0);
 		
