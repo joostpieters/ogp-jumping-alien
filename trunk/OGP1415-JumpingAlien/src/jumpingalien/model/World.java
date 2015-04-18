@@ -255,6 +255,7 @@ public class World {
 	
 	/**
 	 * Set the window size of this world to the given width and height.
+	 * 
 	 * @param width
 	 * 		  The new width for this world.
 	 * @param height
@@ -280,10 +281,11 @@ public class World {
 	
 	/**
 	 * Set the window position of this world to the given x and y.
+	 * 
 	 * @param x
-	 * 		  The new x coordinate of the windows size for this world.
+	 * 		  The new x position of the windows size for this world.
 	 * @param y
-	 * 		  The new y coordinate of the windows size for this world
+	 * 		  The new y position of the windows size for this world
 	 * @pre	  | x > 0 && x <= getXLimit() - getWindowSize()[0]
 	 * @pre   | y > 0 && y >= getYLimit() - getWindowSize()[1]
 	 * 
@@ -291,14 +293,29 @@ public class World {
 	 */
 	@Raw
 	private void setWindowPosition(int x, int y) {
-		assert x >= 0 && x <= getXLimit() - getWindowSize()[0];
-		assert y >= 0 && y <= getYLimit() - getWindowSize()[1];
+		assert canHaveAsWindowPosition(x, y);
 		this.windowPosition[0] = x;
 		this.windowPosition[1] = y;
 	}
 	
+	/**
+	 * Variable registering the window position of this world. The window position is an array consisting
+	 * of the left bottom pixel's coordinates.
+	 */
 	private int[] windowPosition = new int[2];
 	
+	/**
+	 * Check whether this world can have the given x and y as its window position.
+	 * 
+	 * @param x
+	 * 		  The x position to check
+	 * @param y
+	 * 		  The y position to check
+	 * @return  | result == ( x >= 0 && 
+				| 			x <= (getXLimit() - getWindowSize()[0]) &&
+				| 			y >= 0 &&
+			 	|			y <= (getYLimit() - getWindowSize()[1]) )
+	 */
 	public boolean canHaveAsWindowPosition(int x, int y) {
 		return ( x >= 0 && 
 				 x <= (getXLimit() - getWindowSize()[0]) &&
@@ -307,19 +324,56 @@ public class World {
 				
 	}
 	
+	/**
+	 * Get the terrain type at the given position.
+	 * 
+	 * @param x
+	 * 		  The x position of the position
+	 * @param y
+	 * 		  The y position of the position
+	 * @return  | if ((x > getXLimit()) || (x < 0) || (y > getYLimit()) || (y < 0))
+	 * 			|	 then result == TerrainType.AIR
+	 * 			| else
+	 * 			|    result == tiles.[getMatchingTile(x,y)[0]][getMatchingTile(x,y)[1]]
+	 */
 	public TerrainType getTerrainAt(int x, int y) {
-		if( (x > getXLimit()) || (x < 0) || (y > getYLimit()) || (y < 0))
+		if ((x > getXLimit()) || (x < 0) || (y > getYLimit()) || (y < 0))
 			return TerrainType.AIR;
 		int[] location = getMatchingTile(x,y);
 		return this.tiles[location[0]][location[1]];
 	}
 	
+	/**
+	 * Set the terrain at the given position to the given terrain type.
+	 * 
+	 * @param x
+	 * 		  The x position for the new terrain type
+	 * @param y
+	 * 		  The y position for the new terrain type
+	 * @param terrain
+	 * 		  The new terrain type for this position
+	 * 
+	 * @pre	  | ! (x > getXLimit() || (x < 0) || (y > getYLimit()) || (y < 0))
+	 * @post  | new.getTerrainAt(x,y) == terrain
+	 */
 	public void setTerrainAt(int x, int y, TerrainType terrain) {
-//		int[] location = getMatchingTile(x,y);
+		assert isInsideBoundaries(x, y);
 		this.tiles[x][y] = terrain;
 	}
 	
+	/**
+	 * Get the tile that belongs to the given position.
+	 * 
+	 * @param x
+	 * 		  The x position from where to retrieve the tile
+	 * @param y
+	 * 		  The y position from where to retrieve the tile
+	 * 
+	 * @pre	   | ! (x > getXLimit() || (x < 0) || (y > getYLimit()) || (y < 0))
+	 * @return | result == {x/getTileLength(),y/getTileLength()}
+	 */
 	public int[] getMatchingTile(int x, int y) {
+		assert isInsideBoundaries(x, y);
 		int[] result = {x/getTileLength(),y/getTileLength()};
 		return result;
 	}
@@ -415,4 +469,19 @@ public class World {
 		this.didPlayerWin = didPlayerWin;
 	}
 	
+	/**
+	 * Check whether the given x and y are inside the boundaries of the world.
+	 * 
+	 * @param x
+	 * 		  The x position to check
+	 * @param y
+	 * 		  The y position to check
+	 * 
+	 * @return  | result == ! (x > getXLimit() || (x < 0) || (y > getYLimit()) || (y < 0))
+	 */
+	
+	//moet ik nog fixen
+	public boolean isInsideBoundaries(int x, int y) {
+		return ! ( (x > getXLimit()) || (x < 0) || (y > getYLimit()) || (y < 0) );
+	}
 }
