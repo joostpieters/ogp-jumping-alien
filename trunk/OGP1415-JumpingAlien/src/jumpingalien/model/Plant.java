@@ -15,7 +15,7 @@ public class Plant extends AutomaticObject {
 	public void advanceTime(double duration) {
 		
 		if(getTimer()+duration > getGoal()) {
-			super.advanceTime(0.5-getTimer());
+			super.advanceTime(getGoal()-getTimer());
 			startNewMovement();
 			super.advanceTime(duration-(getGoal()-getTimer()));
 			setTimer(getTimer()+duration-getGoal());
@@ -37,7 +37,6 @@ public class Plant extends AutomaticObject {
 	
 	protected void startNewMovement() {
 		setGoal(0.5);
-		setTimer(0);
 		endMove();
 		if(this.getXDirection() == Direction.LEFT)
 			this.startMove(Direction.RIGHT);

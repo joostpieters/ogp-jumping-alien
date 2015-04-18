@@ -71,8 +71,9 @@ public abstract class GameObject {
 	 * @effect | setPosition(x,y)
 	 * @effect | setXVelocityLimit(double xVelocityLimit)
 	 * @effect | setSprites(sprites)
-	 * @effect | setHitpoints(initialHitPoints)
+	 * @effect | setHitPoints(initialHitPoints)
 	 * @effect | setMyWorld(world)
+	 * @effect | setTerminated(false)
 	 * @post   | new.X_ACCELERATION = xAcceleration
 	 * @post   | new.Y_ACCELERATION = yAcceleration
 	 * @post   | new.X_INITIAL_VELOCITY = xInitialVelocity
@@ -81,7 +82,8 @@ public abstract class GameObject {
 	 * @post   | new.isSolid() == solid
 	 * @post   | new.getDuckedVelocityLimit() == duckedVelocityLimit
 	 * 
-	 * 		  
+	 * 		  AANVULLEN
+	 * 			Waarom geen @ effect hierboven?
 	 */
 	@Raw
 	public GameObject(World world, double x, double y, 
@@ -125,6 +127,9 @@ public abstract class GameObject {
 		assert this.canHaveAsXVelocity(xVelocity);
 		if (this.getMyWorld() != null)
 			assert this.canHaveAsPosition((int) x, (int) y);
+		
+		this.setTerminated(false);
+		
 	
 	}
 	
@@ -227,7 +232,7 @@ public abstract class GameObject {
 	 * Return the maximum number of hitpoints of this game object.
 	 */
 	@Immutable @Basic
-	public int getMaxHitpoints() {
+	public int getMaxHitPoints() {
 		return this.MAX_HITPOINTS;
 	}
 	
@@ -246,16 +251,16 @@ public abstract class GameObject {
 	 * 		  The new number of hitpoints.
 	 * @post  | if (hitpoints < 0)
 	 * 		  |		new.getHitPoints == 0
-	 *		  |	else if (hitPoints > getMaxHitpoints())
-	 *		  |		new.getHitPoints = getMaxHitpoints();
+	 *		  |	else if (hitPoints > getMaxHitPoints())
+	 *		  |		new.getHitPoints = getMaxHitPoints();
 	 *		  | else
 	 *		  |		new.getHitPoints = hitPoints;
 	 */
 	protected void setHitPoints(int hitPoints) {
 		if (hitPoints < 0)
 			this.hitPoints = 0;
-		else if (hitPoints > getMaxHitpoints())
-			this.hitPoints = getMaxHitpoints();
+		else if (hitPoints > getMaxHitPoints())
+			this.hitPoints = getMaxHitPoints();
 		else
 			this.hitPoints = hitPoints;
 	}
@@ -266,7 +271,7 @@ public abstract class GameObject {
 	 * @param 	hitPoints
 	 * 		  	The number of hitpoints to be added to the current number of hitpoints.
 	 * @pre	  	| hitpoints >= 0
-	 * @effect 	| setHitpoints(getHitPoints() + hitPoints)
+	 * @effect 	| setHitPoints(getHitPoints() + hitPoints)
 	 */
 	protected void addHitPoints(int hitPoints) {
 		assert hitPoints >= 0;
@@ -281,7 +286,7 @@ public abstract class GameObject {
 	 * @pre		| hitpoints >= 0
 	 * @effect	| setHitPoints(getHitPoints() - hitPoints)
 	 */
-	public void substractHitPoints(int hitPoints) {
+	protected void substractHitPoints(int hitPoints) {
 		assert hitPoints >= 0;
 		setHitPoints(getHitPoints() - hitPoints);
 	}
@@ -300,7 +305,7 @@ public abstract class GameObject {
 	 * 		  |  then result == false
 	 * 		  | else if (for each obj in myWorld.getGameObjects()
 	 * 		  | 		 if obj.isSolid()
-	 * 		  |			 	if rectanglesIntersect(obj.getPosition()[0]+1,obj.getPosition()[1]+1,obj.getWidth()-1,obj.getHeight()-1,
+	 * 		  |			 	if rectanglesCollide(obj.getPosition()[0]+1,obj.getPosition()[1]+1,obj.getWidth()-1,obj.getHeight()-1,
 	 *		  |				x+1,y+1,this.getWidth()-1,this.getHeight()-1)))
 	 * 		  |   			 then result == false
 	 * 		  | else if (for a pixel of the lower border, or upper border, or left border, or right border
@@ -322,7 +327,7 @@ public abstract class GameObject {
 		for(GameObject obj : myWorld.getGameObjects()) {
 			if(obj != this) {
 				if(obj.isSolid())
-					if(rectanglesIntersect(obj.getPosition()[0]+1,obj.getPosition()[1]+1,obj.getWidth()-1,obj.getHeight()-1,
+					if(rectanglesCollide(obj.getPosition()[0]+1,obj.getPosition()[1]+1,obj.getWidth()-1,obj.getHeight()-1,
 						x+1,y+1,width-1,height-1))
 								return false;
 			}
@@ -345,7 +350,7 @@ public abstract class GameObject {
 	
 	
 	/**
-	 * Check whether two rectangles intersect.
+	 * Check whether two rectangles collide.
 	 * 
 	 * @param x1
 	 * 		  The x position of the first rectangle
@@ -371,8 +376,9 @@ public abstract class GameObject {
 	 * 		  | else
 	 * 		  | 	result == false
 	 */
-	public static boolean rectanglesIntersect(int x1, int y1, int width1, int height1,
+	public static boolean rectanglesCollide(int x1, int y1, int width1, int height1,
 										int x2, int y2, int width2, int height2) {
+
 		int[][] corners1 = {{x1,y1},{x1,y1+height1-1},{x1+width1-1,y1+height1-1},{x1+width1-1,y1}};
 		int[][] corners2 = {{x2,y2},{x2,y2+height2-2},{x2+width2-2,y2+height2-2},{x2+width2-2,y2}};
 		
@@ -537,7 +543,8 @@ public abstract class GameObject {
 	
 	//onduidelijk of er documentatie nodig is voor deze methode
 	public void advanceTime(double duration) {
-		if(duration > 0.2 || duration < 0) return; //???????????????
+		if(duration > 0.2 || duration < 0) return;
+		//Bij het laden van het level loopt het zonder deze regel soms mis (veel te grote duration)
 		
 		handleInteraction(duration);
 		
@@ -598,7 +605,7 @@ public abstract class GameObject {
 	 * 		  The class of game objects for which to return a possible touching object.
 	 * @return | if (for a certain obj of myWorld.getGameObjects()
 	 * 		   |   	(obj != this && className.isInstance(obj)) &&
-	 *		   |	(rectanglesIntersect(obj.getPosition()[0],obj.getPosition()[1],obj.getWidth(),obj.getHeight(),
+	 *		   |	(rectanglesCollide(obj.getPosition()[0],obj.getPosition()[1],obj.getWidth(),obj.getHeight(),
 	 *         |	this.getPosition()[0],this.getPosition()[1],this.getWidth(),this.getHeight()))
 	 *         |    result == obj
 	 *         | else 
@@ -609,7 +616,7 @@ public abstract class GameObject {
 		
 		for(GameObject obj : myWorld.getGameObjects()) {
 			if(obj != this && className.isInstance(obj)) {
-				if(rectanglesIntersect(obj.getPosition()[0],obj.getPosition()[1],obj.getWidth(),obj.getHeight(),
+				if(rectanglesCollide(obj.getPosition()[0],obj.getPosition()[1],obj.getWidth(),obj.getHeight(),
 					this.getPosition()[0],this.getPosition()[1],this.getWidth(),this.getHeight()))
 							return obj;
 			}

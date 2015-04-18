@@ -88,8 +88,11 @@ public class Slime extends AutomaticObject {
 				this.substractHitPoints(1, false);
 			}
 		}
-		this.getSchool().removeAsSlime(this);
+		School oldSchool = this.getSchool();
 		this.setSchool(school);
+		
+		oldSchool.removeAsSlime(this);
+		
 		for(Slime colleague: getSchool().getSlimes()) {
 			if (colleague != this) {
 				this.addHitPoints(1);

@@ -194,7 +194,7 @@ public class World {
 			myMazub.terminate(true);
 
 
-		if(GameObject.rectanglesIntersect(new_pos1[0],new_pos1[1],getMyMazub().getWidth(),getMyMazub().getHeight(),
+		if(GameObject.rectanglesCollide(new_pos1[0],new_pos1[1],getMyMazub().getWidth(),getMyMazub().getHeight(),
 				getTargetTileX()*getTileLength(),getTargetTileY()*getTileLength(),(getTargetTileX() + 1)*getTileLength(),(getTargetTileY() + 1)*getTileLength())) {
 			myMazub.terminate(true);
 			setDidPlayerWin(true);
