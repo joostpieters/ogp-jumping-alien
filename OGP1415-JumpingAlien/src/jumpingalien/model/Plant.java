@@ -3,6 +3,11 @@ package jumpingalien.model;
 import jumpingalien.util.Sprite;
 import be.kuleuven.cs.som.annotate.*;
 
+/**
+ * @author 	Andreas Schryvers & Jonathan Oostvogels
+ * 			2e Bachelor ingenieurswetenschappen
+ * 			Subversion repository: https://code.google.com/p/ogp-jumping-alien/
+ */
 public class Plant extends AutomaticObject {
 
 	public Plant(World world, double x, double y, Sprite[] sprites) {
