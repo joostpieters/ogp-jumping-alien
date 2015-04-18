@@ -29,10 +29,12 @@ public class School {
 	
 	public void addAsSlime(Slime slime) {
 		assert canHaveAsSlime(slime);
+		assert slime.getSchool() == this;
 		getSlimes().add(slime);
 	}
 	
 	public void removeAsSlime(Slime slime) {
+		assert slime.getSchool() != this;
 		getSlimes().remove(slime);
 	}
 	

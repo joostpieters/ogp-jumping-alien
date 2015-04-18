@@ -60,9 +60,7 @@ public class Mazub extends GameObject {
 				100, 800, 300, 100,
 								90, 1000, true);
 
-		this.setTimeToBeImmune(0);
-		this.setWaterTimer(0);
-		this.setMagmaTimer(0.2);
+		
 	}
 	
 	/**
@@ -138,7 +136,7 @@ public class Mazub extends GameObject {
 	//hoe documentatie fixen?
 	public void handleInteraction(double duration) {
 		Plant object0 = (Plant) this.touches(Plant.class);
-		if (object0 != null && this.getHitPoints() != this.getMaxHitpoints()) {
+		if (object0 != null && this.getHitPoints() != this.getMaxHitPoints()) {
 			this.addHitPoints(50);
 			object0.substractHitPoints(1);
 		}
