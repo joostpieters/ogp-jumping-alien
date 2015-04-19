@@ -43,14 +43,14 @@ public class World {
 	 * @post	| new.getXLimit() == xLimit
 	 * @post	| new.getYLimit() == yLimit
 	 * @post	| new.getTileLength() == tileLength
+	 * @post	| new.getTargetTileX() == targetTileX
+	 * @post	| new.getTargetTileY() == targetTileY
 	 * @post	| new.getGameObjects() == HashSet<GameObject>
-	 * @effect  | for all i, j pixels in world
+	 * @effect  | for all pixels in this world with coordinates x and y
 	 * 			| 	setTerrainAt(i,j,TerrainType.AIR)
 	 * @effect  | setWindowSize(windowSize[0],windowSize[1]);
 	 * @effect 	| setWindowPosition(0,0);
 	 * @effect 	| adjustWindow();
-	 * @effect 	| setTargetTileX(targetTileX);
-	 * @effect 	| setTargetTileY(targetTileY);
 	 * @effect 	| setGameOver(false);
 	 * @effect 	| setDidPlayerWin(false);
 	 * 
@@ -67,6 +67,8 @@ public class World {
 		TILE_LENGTH = tileLength;
 		gameObjects = new HashSet<GameObject>();
 		tiles = new TerrainType[(xLimit+1)/tileLength][(yLimit+1)/tileLength];
+		TARGET_TILE_X = targetTileX;
+		TARGET_TILE_Y = targetTileY;
 		
 		for(int i = 0; i < (xLimit+1)/tileLength; i++)
 			for(int j = 0; j < (yLimit+1)/tileLength; j++)
@@ -75,8 +77,6 @@ public class World {
 		setWindowSize(windowSize[0],windowSize[1]);
 		setWindowPosition(0,0);
 		adjustWindow();
-		setTargetTileX(targetTileX);
-		setTargetTileY(targetTileY);
 		setGameOver(false);
 		setDidPlayerWin(false);
 	}
@@ -103,7 +103,6 @@ public class World {
 	 * 
 	 * @param c
 	 * 		  The class from which to get the objects from.
-	 * 
 	 * @return | for each obj in getGameObjects()
 	 * 		   |    if(c.isInstance(obj))
 	 * 		   | 	   result.add(obj)
@@ -200,13 +199,6 @@ public class World {
 			setDidPlayerWin(true);
 		}
 			
-//		
-//		int[] tile = getMatchingTile(new_pos1[0],new_pos1[1]);
-//		if (tile[0] == getTargetTileX() && tile[1] == getTargetTileY()) {
-//			myMazub.terminate(true);
-//			setDidPlayerWin(true);
-//		}
-		
 		adjustWindow();
 
 		Set<GameObject> copySet = new HashSet<>();
@@ -232,6 +224,7 @@ public class World {
 
 	/**
 	 * Set the Mazub that is associated with this world to the given Mazub.
+	 * 
 	 * @param myMazub
 	 * 		  The new Mazub for this world.
 	 * @post  new.getMyMazub() == myMazub
@@ -286,9 +279,7 @@ public class World {
 	 * 		  The new x position of the windows size for this world.
 	 * @param y
 	 * 		  The new y position of the windows size for this world
-	 * @pre	  | x > 0 && x <= getXLimit() - getWindowSize()[0]
-	 * @pre   | y > 0 && y >= getYLimit() - getWindowSize()[1]
-	 * 
+	 * @pre	  | canHaveAsWindowPosition(x, y)	 * 
 	 * @post  | new.getWindowPosition() == {x,y}
 	 */
 	@Raw
@@ -312,9 +303,9 @@ public class World {
 	 * @param y
 	 * 		  The y position to check
 	 * @return  | result == ( x >= 0 && 
-				| 			x <= (getXLimit() - getWindowSize()[0]) &&
-				| 			y >= 0 &&
-			 	|			y <= (getYLimit() - getWindowSize()[1]) )
+	 *			| 			x <= (getXLimit() - getWindowSize()[0]) &&
+	 *			| 			y >= 0 &&
+	 *		 	|			y <= (getYLimit() - getWindowSize()[1]) )
 	 */
 	public boolean canHaveAsWindowPosition(int x, int y) {
 		return ( x >= 0 && 
@@ -325,19 +316,19 @@ public class World {
 	}
 	
 	/**
-	 * Get the terrain type at the given position.
+	 * Get the terrain type of the given position.
 	 * 
 	 * @param x
-	 * 		  The x position of the position
+	 * 		  The x coordinate of the position
 	 * @param y
-	 * 		  The y position of the position
-	 * @return  | if ((x > getXLimit()) || (x < 0) || (y > getYLimit()) || (y < 0))
+	 * 		  The y coordinate of the position
+	 * @return  | if ! isInsideBoundaries(x,y)
 	 * 			|	 then result == TerrainType.AIR
 	 * 			| else
 	 * 			|    result == tiles.[getMatchingTile(x,y)[0]][getMatchingTile(x,y)[1]]
 	 */
 	public TerrainType getTerrainAt(int x, int y) {
-		if ((x > getXLimit()) || (x < 0) || (y > getYLimit()) || (y < 0))
+		if (! isInsideBoundaries(x,y))
 			return TerrainType.AIR;
 		int[] location = getMatchingTile(x,y);
 		return this.tiles[location[0]][location[1]];
@@ -378,31 +369,82 @@ public class World {
 		return result;
 	}
 
+	/**
+	 * Variable registering the terrain type on tiles.
+	 */
 	private TerrainType[][] tiles;
 	
-	
+	/**
+	 * An enumeration introducing different terrain types used to express the terrain of a tile.
+	 */
 	@Value
-	public enum TerrainType {
+	public static enum TerrainType {
 		AIR(true), WATER(true), MAGMA(true), SOLID_GROUND(false);
 		
-		private TerrainType(boolean isPassable) {
-			this.passable = isPassable;
+		/**
+		 * Set the passable state of this terrain type to the given flag.
+		 * 
+		 * @param flag
+		 * 		  The passable state for this terrain type
+		 * @post  | new.isPassable() == flag
+		 */
+		private TerrainType(boolean flag) {
+			this.passable = flag;
 		}
 		
+		/**
+		 * Return the passable state of this terrain type.
+		 */
 		public boolean isPassable() {
 			return this.passable;
 		}
 		
+		/**
+		 * Variable registering whether a certain terrain type is passable.
+		 */
 		private final boolean passable;
 	}
 	
-	
+	/**
+	 * End the game.
+	 * 
+	 * @effect  | setGameOver(true)
+	 */
 	public void endGame() {
 		setGameOver(true);
 	}
 
+	/**
+	 * Adjust the window position to the position of Mazub.
+	 * 
+	 * @effect	| if (getMyMazub() == null)
+	 * 			|    return;
+	 * 			| else
+	 * 			|   int[] pos = getMyMazub().getPosition()
+	 * 			| 	if ((pos[0] - getWindowPosition()[0]) < 200)
+	 * 			|   	if (canHaveAsWindowPosition(pos[0]-200, getWindowPosition()[1]))
+	 * 			| 			setWindowPosition(pos[0]-200, getWindowPosition()[1])
+	 * 			|		else
+	 * 			|			setWindowPosition(0,getWindowPosition()[1])
+	 * 			|  else if (((getWindowPosition()[0] + getWindowSize()[0]) - pos[0]) < 200+getMyMazub().getWidth())
+	 * 			|	   if (canHaveAsWindowPosition(pos[0]-getWindowSize()[0]+200+getMyMazub().getWidth(), getWindowPosition()[1]))
+	 * 			|			setWindowPosition(pos[0]-getWindowSize()[0]+200+getMyMazub().getWidth(), getWindowPosition()[1])
+	 * 			|		else
+	 * 			|			setWindowPosition(getXLimit() - getWindowSize()[0], getWindowPosition()[1])
+	 * 			|  if ((pos[1] - getWindowPosition()[1]) < 200)
+	 * 			|	   if (canHaveAsWindowPosition(getWindowPosition()[0], pos[1]-200))
+	 * 			|			setWindowPosition(getWindowPosition()[0], pos[1]-200)
+	 * 			|	   else
+	 * 			|	   		setWindowPosition(getWindowPosition()[0], 0)
+	 * 			|  else if (((getWindowPosition()[1] + getWindowSize()[1]) - pos[1]) < 200+getMyMazub().getHeight())
+	 * 			|	   if (canHaveAsWindowPosition(getWindowPosition()[0], pos[1]-getWindowSize()[1] + 200+getMyMazub().getHeight()))
+	 * 			|			setWindowPosition(getWindowPosition()[0],  pos[1]-getWindowSize()[1] + 200+getMyMazub().getHeight())
+	 * 			|	   else
+	 * 			|			setWindowPosition(getWindowPosition()[0], getYLimit() - getWindowSize()[1])
+	 * 			| 
+	 */
 	public void adjustWindow() {
-		if(getMyMazub() == null) return;
+		if (getMyMazub() == null) return;
 		int[] pos = getMyMazub().getPosition();
 		if ((pos[0] - getWindowPosition()[0]) < 200) {
 			if (canHaveAsWindowPosition(pos[0]-200, getWindowPosition()[1]))
@@ -418,6 +460,7 @@ public class World {
 			else
 				setWindowPosition(getXLimit() - getWindowSize()[0], getWindowPosition()[1]);
 		}
+		
 		if ((pos[1] - getWindowPosition()[1]) < 200) {
 			if (canHaveAsWindowPosition(getWindowPosition()[0], pos[1]-200))
 				setWindowPosition(getWindowPosition()[0], pos[1]-200);
@@ -433,39 +476,78 @@ public class World {
 		}
 	}
 	
-	private int targetTileX;
+	/**
+	 * Variable registering the x position of the target tile.
+	 */
+	private final int TARGET_TILE_X;
+	
+	/**
+	 * Return the x position of the target tile.
+	 */
+	@Basic @Immutable
 	public int getTargetTileX() {
-		return targetTileX;
-	}
-	public void setTargetTileX(int targetTileX) {
-		this.targetTileX = targetTileX;
+		return TARGET_TILE_X;
 	}
 
-	private int targetTileY;
+	/**
+	 * Variable registering the x position of the target tile.
+	 */
+	private final int TARGET_TILE_Y;
+	
+	/**
+	 * Return the y position of the target tile.
+	 */
+	@Basic @Immutable
 	public int getTargetTileY() {
-		return targetTileY;
-	}
-	public void setTargetTileY(int targetTileY) {
-		this.targetTileY = targetTileY;
+		return TARGET_TILE_Y;
 	}
 
+	/**
+	 * Variable registering whether the game in this world is over.
+	 */
 	private boolean gameOver;
 
+	/**
+	 * Return whether the game is over.
+	 */
+	@Basic
 	public boolean isGameOver() {
 		return gameOver;
 	}
 
-	private void setGameOver(boolean gameOver) {
-		this.gameOver = gameOver;
+	/**
+	 * Set whether the game is over.
+	 * 
+	 * @param flag
+	 * 		  The new game over state of this world
+	 * @post  | new.isGameOver() == flag
+	 * 
+	 */
+	private void setGameOver(boolean flag) {
+		this.gameOver = flag;
 	}
 	
+	/**
+	 * Variable registering whether the player won.
+	 */
 	private boolean didPlayerWin;
 
+	/**
+	 * Return whether the player has won the game.
+	 */
+	@Basic
 	public boolean getDidPlayerWin() {
 		return didPlayerWin;
 	}
 
-	private void setDidPlayerWin(boolean didPlayerWin) {
+	/**
+	 * Set whether the player has won the game.
+	 * 
+	 * @param flag
+	 * 		  The new player's winning state of this world
+	 * @post  | new.getDidPlayerWin() == flag
+	 */
+	private void setDidPlayerWin(boolean flag) {
 		this.didPlayerWin = didPlayerWin;
 	}
 	
@@ -479,8 +561,6 @@ public class World {
 	 * 
 	 * @return  | result == ! (x > getXLimit() || (x < 0) || (y > getYLimit()) || (y < 0))
 	 */
-	
-	//moet ik nog fixen
 	public boolean isInsideBoundaries(int x, int y) {
 		return ! ( (x > getXLimit()) || (x < 0) || (y > getYLimit()) || (y < 0) );
 	}

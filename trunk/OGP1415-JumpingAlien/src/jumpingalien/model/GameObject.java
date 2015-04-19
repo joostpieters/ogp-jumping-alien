@@ -446,8 +446,8 @@ public abstract class GameObject {
 	 */
 	protected void setPosition(double x, double y) {
 //		assert canHaveAsPosition((int) x,(int)y);
-//		deze assertion zorgt voor problemen als ge helemaal bovenaan op een slime gaat staan
-//		en dan tegen het plafond springt
+//		deze assertion kan voor problemen zorgen als ge (bv. helemaal bovenaan op een slime gaat staan
+//		en dan) tegen het plafond springt
 		this.x = x;
 		this.y = y;
 	}
@@ -486,6 +486,7 @@ public abstract class GameObject {
 	
 	/**
 	 * Set the termination state of this game object to the given flag.
+	 * 
 	 * @param flag
 	 * 		  The new termination state for this game object.
 	 * @post  | new.isTerminated() == flag
@@ -498,6 +499,7 @@ public abstract class GameObject {
 	//insta wil zeggen object meteen verwijderen uit gamewereld in volgende advancetime
 	/**
 	 * Terminate this game object.
+	 * 
 	 * @param insta
 	 * 		  determines whether this game object should be 
 	 *		  terminated instantly (insta == true) or after a certain amount of time (insta == false).
@@ -601,6 +603,7 @@ public abstract class GameObject {
 		
 	/**
 	 * Return the game object of the given class that touches this game object.
+	 * 
 	 * @param className
 	 * 		  The class of game objects for which to return a possible touching object.
 	 * @return | if (for a certain obj of myWorld.getGameObjects()
@@ -659,6 +662,7 @@ public abstract class GameObject {
 	
 	/**
 	 * Check whether this game object touches the given type of terrain.
+	 * 
 	 * @param terrainType
 	 * 		  The terrainType to check.
 	 * @return
