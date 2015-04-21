@@ -9,6 +9,8 @@ import be.kuleuven.cs.som.annotate.*;
  * A class of slimes as special kinds of automatic game objects, with an association
  * with the class School.
  * 
+ * @invar	| this.getSchool() != null
+ * 
  * @author 	Andreas Schryvers & Jonathan Oostvogels
  * 			2e Bachelor ingenieurswetenschappen
  * 			Subversion repository: https://code.google.com/p/ogp-jumping-alien/
@@ -16,8 +18,10 @@ import be.kuleuven.cs.som.annotate.*;
 public class Slime extends AutomaticObject {
 
 	/**
+	 * Initialize this new slime with the given parameters.
+	 * 
 	 * @param world
-	 * 		  The world of this slime.
+	 * 		  The world of this new slime.
 	 * @param x
 	 *		  The initial x position for this new slime. 
 	 * @param y
@@ -31,8 +35,6 @@ public class Slime extends AutomaticObject {
 	 * @effect | super(world, x, y, 100, 100, sprites, 100, 0, 250, 250, 70, 1000, true)
 	 * @effect | setSchool(school)
 	 */
-	//fout om @effect zo te gebruiken? waarden mogen niet in super weergegeven worden?
-	
 	public Slime(World world, double x, double y, Sprite[] sprites, School school) {
 		super(world, x, y, 100, 100, sprites, 100, 0, 250, 250, 70, 1000, true);
 		assert school != null;
@@ -56,6 +58,7 @@ public class Slime extends AutomaticObject {
 	 * @post  	| new.getSchool() == school
 	 * @effect 	| school.addAsSlime(this)
 	 */
+	@Raw
 	private void setSchool(School school) {
 		this.school = school;
 		school.addAsSlime(this);
@@ -107,15 +110,25 @@ public class Slime extends AutomaticObject {
 	 */
 	private School school;
 	
+
 	/**
 	 * Subtract the given number of hitpoints from the current number of hitpoints.
 	 * 
+	 * @param hitPoints
+	 * 		  The number of hitpoints to be subtracted.
+	 * @param propagate
+	 * 		  True if other colleagues in the same school as this slime should
+	 * 		  be affected by the subtraction of this slime's hitpoints.
+	 * 		  If other colleageas are affected, they also lose a hitpoints.
+	 * 
+	 * @pre	   | hitPoints >= 0 //moet hier waarschijnlijk niet want zit al in super.subtractHitPoints ...
 	 * @effect | super.subtractHitPoints(hitPoints)
-	 * @post   | for each colleague in getSchool().getSlimes()
-	 * 		   |    if (colleague != this)
-	 *		   |       colleague.substractHitPoints(1);
+	 * @effect | 	if (propagate == true) {
+	 * 		   |		for each colleague in getSchool().getSlimes()
+	 * 		   |   		if (colleague != this)
+	 *		   |      	colleague.substractHitPoints(1);
+	 *		   |    }
 	 */
-
 	public void substractHitPoints(int hitPoints, boolean propagate) {
 		super.substractHitPoints(hitPoints);
 		if(propagate == true) {
@@ -126,12 +139,19 @@ public class Slime extends AutomaticObject {
 		}
 	}
 	
+	/**
+	 * Subtract the given number of hitpoints from the current number of hitpoints.
+	 * 
+	 * @param hitPoints
+	 * 		  The number of hitpoints to be subtracted.
+	 * @effect  | subtractHitPoints(hitPoints, true)
+	 */
 	@Override
 	public void substractHitPoints(int hitPoints) {
 		substractHitPoints(hitPoints, true);
 	}
 
-	
+	//nodig om overriding methods te commentarieren?
 
 	/**
 	 * onduidelijk of documentatie nodig is //
@@ -165,8 +185,7 @@ public class Slime extends AutomaticObject {
 		setGoal(2+(5.8-2)*generator.nextDouble());
 	}
 
-
-
+	//no documentatio needed
 	@Override
 	public Sprite getCurrentSprite() {
 		//Staat niet in opgave
@@ -176,9 +195,15 @@ public class Slime extends AutomaticObject {
 			return getSprites()[1];
 	}
 
+	
+	/**
+	 * Handle the interaction of this game object with other game objects.
+	 * 
+	 * @param 	duration
+	 * 			The duration for which the interaction should be handled.
+	 */
 	@Override
 	public void handleInteraction(double duration) {
-		
 		
 		Slime object0 = (Slime) this.touches(Slime.class);
 		if (object0 != null && getTimeToBeImmune() == 0) {
@@ -187,8 +212,7 @@ public class Slime extends AutomaticObject {
 					object0.transferToSchool(this.getSchool());
 				else if(this.getSchool().getNbSlimes() < object0.getSchool().getNbSlimes())
 					this.transferToSchool(object0.getSchool());
-			}
-				
+			}	
 		}
 		
 		Mazub object1 = (Mazub) this.touches(Mazub.class);

@@ -131,7 +131,9 @@ public class Mazub extends GameObject {
 
 	/**
 	 * Handle the interaction of this Mazub charachter with other objects for the given time duration.
-	 *
+	 * 
+	 * @param duration
+	 * 		  The duration for which the interaction should be handled. 
 	 */
 	//hoe documentatie fixen?
 	public void handleInteraction(double duration) {

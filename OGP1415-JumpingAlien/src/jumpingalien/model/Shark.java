@@ -8,16 +8,29 @@ import jumpingalien.util.Sprite;
 import be.kuleuven.cs.som.annotate.*;
 
 /**
+ * A class of sharks as special kinds of automatic game objects.
+ * 
  * @author 	Andreas Schryvers & Jonathan Oostvogels
  * 			2e Bachelor ingenieurswetenschappen
  * 			Subversion repository: https://code.google.com/p/ogp-jumping-alien/
  */
 public class Shark extends AutomaticObject {
 
+
 	/**
+	 * Inizialize this new shark with the given parameters.
+	 * 
 	 * @param world
+	 * 		  The world of this new shark.
 	 * @param x
+	 *		  The initial x position for this new shark. 
 	 * @param y
+	 * 		  The initial y position for this new shark. 
+	 * @param sprites
+	 * 		  The series of initial sprites for this new shark.
+	 * 
+	 * @effect  | super(world, x, y, 100, 100, sprites, 100, 200, 400, 400, 150, 1000, true)
+	 * @effect  | setCounter(0)
 	 */
 	public Shark(World world, double x, double y, Sprite[] sprites) {
 		super(world, x, y, 100, 100, sprites, 100, 200, 400, 400, 150, 1000, true);
@@ -39,7 +52,22 @@ public class Shark extends AutomaticObject {
 			setYVelocity(0);
 		}
 	}
-	
+
+	/**
+	 * Start a new movement of this shark.
+	 * 
+	 * @effect	| setTimer(0)
+	 * @effect	| endMove()
+	 * @effect  | //trycatch aanvullen
+	 * @effect	| setGoal(1+generator.nextDouble()*(3.8-1))
+	 * @effect  | if(generator.nextDouble() < 0.5)
+	 * 			|	 startMove(Direction.LEFT)
+	 * 			| else
+	 * 			|   startMove(Direction.RIGHT)
+	 * @effect  | //trycatch aanvullen
+	 * @effect  | setDivingAcceleration(100*(-0.2+0.4*generator.nextDouble()))
+	 * @effect  | setCounter((getCounter() + 1)%5)
+	 */
 	@Override
 	protected void startNewMovement() {
 		setTimer(0);
@@ -112,10 +140,11 @@ public class Shark extends AutomaticObject {
 			this.substractHitPoints(50);
 			this.setTimeToBeImmune(0.6);
 		}
-		
-		
 	}
 	
+	/**
+	 * Check whether this shark can jump.
+	 */
 	@Override
 	public boolean canJump() {
 		boolean touchesWater = false;
@@ -126,18 +155,45 @@ public class Shark extends AutomaticObject {
 		return ((super.canJump()) || touchesWater);		
 	}
 
-
-
+	/**
+	 * Return the counter of this shark.
+	 */
+	@Basic
 	public int getCounter() {
 		return counter;
 	}
 	
+	/**
+	 * Set the counter of this shark to the given value.
+	 * 
+	 * @param counter
+	 * 		  The new counter for this shark.
+	 * @post  | new.getCounter() == counter
+	 */
+	@Raw
 	private void setCounter(int counter) {
 		this.counter = counter;
 	}
 	
+	/**
+	 * Variable registering the counter of this shark.
+	 */
 	private int counter;
 	
+	/**
+	 * Return the acceleration in the y direction of this shark.
+	 * 
+	 * @return  | if (getCounter() == 0) {
+				|	if (isSubmerged())
+				|		result == 0
+				|	else
+				|		result == -getY_ACCELERATION()
+				| }
+				| else if (isSubmerged())
+				|   result == getDivingAcceleration()
+			    | else
+			    |   result == -getY_ACCELERATION()
+	 */
 	@Override
 	public double getYAcceleration() {
 		if (getCounter() == 0) {
@@ -152,6 +208,15 @@ public class Shark extends AutomaticObject {
 		
 	}
 
+	/**
+	 * Check whether this shark is submerged in water.
+	 * 
+	 * @return  | for(int i = 0; i < getWidth(); i++) {
+	 * 			|  if (getMyWorld().getTerrainAt(getPosition()[0] + i, getPosition()[1] + getHeight() -1) == TerrainType.WATER)
+	 * 		    |	  result == true
+	 * 			| }
+	 * 			|result == false
+	 */
 	public boolean isSubmerged() {
 		for(int i = 0; i < getWidth(); i++) {
 			if (getMyWorld().getTerrainAt(getPosition()[0] + i, getPosition()[1] + getHeight() -1) == TerrainType.WATER)
@@ -160,12 +225,26 @@ public class Shark extends AutomaticObject {
 		return false;
 	}
 	
+	/**
+	 * Variable registering the y acceleration when a shark is diving (i.e. submerged in water).
+	 */
 	private double divingAcceleration;
 
+	/**
+	 * Return the diving acceleration of this shark.
+	 */
+	@Basic
 	public double getDivingAcceleration() {
 		return divingAcceleration;
 	}
 
+	/**
+	 * Set the diving acceleration of this shark to the given value.
+	 * 
+	 * @param divingAcceleration
+	 * 		  The new diving acceleration for this shark.
+	 * @post  | new.getDivingAcceleration() == divingAccleration
+	 */
 	private void setDivingAcceleration(double divingAcceleration) {
 		this.divingAcceleration = divingAcceleration;
 	}

@@ -209,6 +209,7 @@ public abstract class GameObject {
 	 * @pre	  |  getMyWorld() == null
 	 * @post  |  new.getMyWorld() == myWorld
 	 */
+	@Raw
 	public void setMyWorld(World myWorld) {
 		assert getMyWorld() == null;
 		this.myWorld = myWorld;
@@ -256,6 +257,7 @@ public abstract class GameObject {
 	 *		  | else
 	 *		  |		new.getHitPoints = hitPoints;
 	 */
+	@Raw
 	protected void setHitPoints(int hitPoints) {
 		if (hitPoints < 0)
 			this.hitPoints = 0;
@@ -283,7 +285,7 @@ public abstract class GameObject {
 	 * 
 	 * @param	hitPoints
 	 * 			The number of hitpoints to be subtracted from the current number of hitpoints.
-	 * @pre		| hitpoints >= 0
+	 * @pre		| hitPoints >= 0
 	 * @effect	| setHitPoints(getHitPoints() - hitPoints)
 	 */
 	protected void substractHitPoints(int hitPoints) {
@@ -444,6 +446,7 @@ public abstract class GameObject {
 	 * @pre	  canHaveAsPosition(x,y)
 	 * @post  | new.getX() == x && new.getY() == y
 	 */
+	@Raw
 	protected void setPosition(double x, double y) {
 //		assert canHaveAsPosition((int) x,(int)y);
 //		deze assertion kan voor problemen zorgen als ge (bv. helemaal bovenaan op een slime gaat staan
@@ -491,6 +494,7 @@ public abstract class GameObject {
 	 * 		  The new termination state for this game object.
 	 * @post  | new.isTerminated() == flag
 	 */
+	@Raw
 	private void setTerminated(boolean flag) {
 		this.isTerminated = flag;	
 	}
@@ -1428,6 +1432,7 @@ public abstract class GameObject {
 	 * 		  The new value for the watertimer
 	 * @post  | new.getWaterTimer() == waterTimer
 	 */
+	@Raw
 	protected void setWaterTimer(double waterTimer) {
 		this.waterTimer = waterTimer;
 	}
@@ -1452,6 +1457,7 @@ public abstract class GameObject {
 	 * 		  The new value for the magmaTimer
 	 * @post  | new.getMagmaTimer() == magmaTimer
 	 */
+	@Raw
 	protected void setMagmaTimer(double magmaTimer) {
 		this.magmaTimer = magmaTimer;
 	}
@@ -1476,6 +1482,7 @@ public abstract class GameObject {
 	 * 		  The new value for the airTimer
 	 * @post  | new.getAirTimer() == airTimer
 	 */
+	@Raw
 	protected void setAirTimer(double airTimer) {
 		this.airTimer = airTimer;
 	}
