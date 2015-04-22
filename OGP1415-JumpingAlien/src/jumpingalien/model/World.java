@@ -12,9 +12,6 @@ import be.kuleuven.cs.som.annotate.*;
  * A class of worlds involving several properties. 
  * This class has an association with the class of game objects.
  * 
- * @invar 	| for each object in this.getGameObjects()
- * 			| object.canHaveAsPosition(object.getPosition()[0],object.getPosition()[1])
- * 
  * @author 	Andreas Schryvers & Jonathan Oostvogels
  * 			2e Bachelor ingenieurswetenschappen
  * 			Subversion repository: https://code.google.com/p/ogp-jumping-alien/
@@ -45,18 +42,15 @@ public class World {
 	 * @post	| new.getTileLength() == tileLength
 	 * @post	| new.getTargetTileX() == targetTileX
 	 * @post	| new.getTargetTileY() == targetTileY
-	 * @post	| new.getGameObjects() == HashSet<GameObject>
-	 * @effect  | for all pixels in this world with coordinates x and y
-	 * 			| 	setTerrainAt(i,j,TerrainType.AIR)
-	 * @effect  | setWindowSize(windowSize[0],windowSize[1]);
-	 * @effect 	| setWindowPosition(0,0);
-	 * @effect 	| adjustWindow();
-	 * @effect 	| setGameOver(false);
-	 * @effect 	| setDidPlayerWin(false);
-	 * 
+	 * @post	| new.getGameObjects() == HashSet<GameObject>()
+	 * @post	| for all pixels in this world with coordinates x and y
+	 * 			| 	getTerrainAt(x,y) == TerrainType.AIR
+	 * @effect  | setWindowSize(windowSize[0],windowSize[1])
+	 * @effect 	| setWindowPosition(0,0)
+	 * @effect 	| adjustWindow()
+	 * @effect 	| setGameOver(false)
+	 * @effect 	| setDidPlayerWin(false)
 	 */
-	//is het nodig om ook ook te zeggen dat gameover op false gezet wordt?!
-	
 	public World(int xLimit, int yLimit, int tileLength,
 						int[] windowSize, int targetTileX, int targetTileY) {
 		assert xLimit > 0;
@@ -89,7 +83,7 @@ public class World {
 	 * @effect  | obj.setMyWorld(this)
 	 * @effect  | getGameObjects().add(obj)
 	 * @effect	| if (obj instanceof Mazub)
-	 * @effect	|	setMyMazub((Mazub) obj)
+	 * 			|	setMyMazub((Mazub) obj)
 	 */
 	public void addObject(GameObject obj) {
 		obj.setMyWorld(this);
@@ -102,12 +96,12 @@ public class World {
 	 * Return a set of all the game objects of a certain class.
 	 * 
 	 * @param c
-	 * 		  The class from which to get the objects from.
+	 * 		  The class from which to retrieve the game objects.
 	 * @return | for each obj in getGameObjects()
 	 * 		   |    if(c.isInstance(obj))
-	 * 		   | 	   result.add(obj)
+	 * 		   | 	   result.contains(obj)
 	 */
-	public Set getAllInstancesOf(Class c) { //Set<GameObject> mag niet van de facade
+	public Set getAllInstancesOf(Class c) { 
 		Set<GameObject> result = new HashSet<>();
 		for(GameObject obj : getGameObjects()) {
 			if(c.isInstance(obj))
@@ -165,7 +159,6 @@ public class World {
 	 * @effect | getGameObjects().remove(obj)
 	 */
 	public void removeObject(GameObject obj) {
-
 		getGameObjects().remove(obj);
 	}
 	
@@ -182,37 +175,37 @@ public class World {
 	 */
 	private Set<GameObject> gameObjects;
 	
-	//no documentation needed
-	public void advanceTime(double duration) throws IllegalArgumentException {
-		//if ((duration < 0) || (duration >= 0.2))
-			//throw new IllegalArgumentException("Illegal time duration!");
-		getMyMazub().advanceTime(duration);
-		int[] new_pos1 = myMazub.getPosition();
-		if ( !((new_pos1[0] <= getXLimit()) && (new_pos1[0] >= 0) ) ||
-				(! ((new_pos1[1] <= getYLimit()) && (new_pos1[1] >= 0))))
-			myMazub.terminate(true);
+    //no documentation needed
+    public void advanceTime(double duration) throws IllegalArgumentException {
+            //if ((duration < 0) || (duration >= 0.2))
+                    //throw new IllegalArgumentException("Illegal time duration!");
+            getMyMazub().advanceTime(duration);
+            int[] new_pos1 = myMazub.getPosition();
+            if ( !((new_pos1[0] <= getXLimit()) && (new_pos1[0] >= 0) ) ||
+                            (! ((new_pos1[1] <= getYLimit()) && (new_pos1[1] >= 0))))
+                    myMazub.terminate(true);
 
 
-		if(GameObject.rectanglesCollide(new_pos1[0],new_pos1[1],getMyMazub().getWidth(),getMyMazub().getHeight(),
-				getTargetTileX()*getTileLength(),getTargetTileY()*getTileLength(),(getTargetTileX() + 1)*getTileLength(),(getTargetTileY() + 1)*getTileLength())) {
-			myMazub.terminate(true);
-			setDidPlayerWin(true);
-		}
-			
-		adjustWindow();
+            if(GameObject.rectanglesCollide(new_pos1[0],new_pos1[1],getMyMazub().getWidth(),getMyMazub().getHeight(),
+                            getTargetTileX()*getTileLength(),getTargetTileY()*getTileLength(),(getTargetTileX() + 1)*getTileLength(),(getTargetTileY() + 1)*getTileLength())) {
+                    myMazub.terminate(true);
+                    setDidPlayerWin(true);
+            }
+                    
+            adjustWindow();
 
-		Set<GameObject> copySet = new HashSet<>();
-		copySet.addAll(getGameObjects());
-		for(GameObject obj: copySet) {
-						if(! (obj instanceof Mazub))  {
-							obj.advanceTime(duration);
-							int[] new_pos2 = obj.getPosition();
-							if ( new_pos2[0] < 0 || new_pos2[0] > getXLimit() ||
-									new_pos2[1] < 0 || new_pos2[1] > getYLimit() )
-								obj.terminate(true);
-						}
-		}
-	}
+            Set<GameObject> copySet = new HashSet<>();
+            copySet.addAll(getGameObjects());
+            for(GameObject obj: copySet) {
+                                            if(! (obj instanceof Mazub))  {
+                                                    obj.advanceTime(duration);
+                                                    int[] new_pos2 = obj.getPosition();
+                                                    if ( new_pos2[0] < 0 || new_pos2[0] > getXLimit() ||
+                                                                    new_pos2[1] < 0 || new_pos2[1] > getYLimit() )
+                                                            obj.terminate(true);
+                                            }
+            }
+    }
 	
 	/**
 	 * Return the Mazub that is associated with this world.
@@ -227,7 +220,7 @@ public class World {
 	 * 
 	 * @param myMazub
 	 * 		  The new Mazub for this world.
-	 * @post  new.getMyMazub() == myMazub
+	 * @post  | new.getMyMazub() == myMazub
 	 */
 	private void setMyMazub(Mazub myMazub) {
 		this.myMazub = myMazub;
@@ -253,7 +246,7 @@ public class World {
 	 * 		  The new width for this world.
 	 * @param height
 	 * 		  The new height for this world.
-	 * @post  new.getWindowSize() == {width,height}
+	 * @post  | new.getWindowSize() == {width,height}
 	 */
 	public void setWindowSize(int width, int height) {
 		this.windowSize[0] = width;
@@ -279,8 +272,9 @@ public class World {
 	 * 		  The new x position of the windows size for this world.
 	 * @param y
 	 * 		  The new y position of the windows size for this world
-	 * @pre	  | canHaveAsWindowPosition(x, y)	 * 
-	 * @post  | new.getWindowPosition() == {x,y}
+	 * @pre	  | canHaveAsWindowPosition(x, y)
+	 * @post  | new.getWindowPosition()[0] == x
+	 * 		  | new.getWindowPosition()[1] == y
 	 */
 	@Raw
 	private void setWindowPosition(int x, int y) {
@@ -309,10 +303,9 @@ public class World {
 	 */
 	public boolean canHaveAsWindowPosition(int x, int y) {
 		return ( x >= 0 && 
-				 x <= (getXLimit() - getWindowSize()[0]) &&
+				 x <= (getXLimit() - getWindowSize()[0] + 1) &&
 				 y >= 0 &&
-				 y <= (getYLimit() - getWindowSize()[1]) );
-				
+				 y <= (getYLimit() - getWindowSize()[1] + 1) );
 	}
 	
 	/**
@@ -322,7 +315,7 @@ public class World {
 	 * 		  The x coordinate of the position
 	 * @param y
 	 * 		  The y coordinate of the position
-	 * @return  | if ! isInsideBoundaries(x,y)
+	 * @return  | if (! isInsideBoundaries(x,y))
 	 * 			|	 then result == TerrainType.AIR
 	 * 			| else
 	 * 			|    result == tiles.[getMatchingTile(x,y)[0]][getMatchingTile(x,y)[1]]
@@ -343,12 +336,11 @@ public class World {
 	 * 		  The y position for the new terrain type
 	 * @param terrain
 	 * 		  The new terrain type for this position
-	 * 
-	 * @pre	  | ! (x > getXLimit() || (x < 0) || (y > getYLimit()) || (y < 0))
-	 * @post  | new.getTerrainAt(x,y) == terrain
+	 * @pre	  | isInsideBoundaries(x*getTileLength(),y*getTileLength())
+	 * @post  | new.getTerrainAt(x*getTileLength(),y*getTileLength()) == terrain
 	 */
 	public void setTerrainAt(int x, int y, TerrainType terrain) {
-		assert isInsideBoundaries(x, y);
+		assert isInsideBoundaries(x*getTileLength(),y*getTileLength());
 		this.tiles[x][y] = terrain;
 	}
 	
@@ -359,8 +351,7 @@ public class World {
 	 * 		  The x position from where to retrieve the tile
 	 * @param y
 	 * 		  The y position from where to retrieve the tile
-	 * 
-	 * @pre	   | ! (x > getXLimit() || (x < 0) || (y > getYLimit()) || (y < 0))
+	 * @pre	   | isInsideBoundaries(x, y)
 	 * @return | result == {x/getTileLength(),y/getTileLength()}
 	 */
 	public int[] getMatchingTile(int x, int y) {
@@ -417,30 +408,30 @@ public class World {
 	/**
 	 * Adjust the window position to the position of Mazub.
 	 * 
-	 * @effect	| if (getMyMazub() == null)
-	 * 			|    return;
-	 * 			| else
-	 * 			|   int[] pos = getMyMazub().getPosition()
-	 * 			| 	if ((pos[0] - getWindowPosition()[0]) < 200)
-	 * 			|   	if (canHaveAsWindowPosition(pos[0]-200, getWindowPosition()[1]))
-	 * 			| 			setWindowPosition(pos[0]-200, getWindowPosition()[1])
-	 * 			|		else
-	 * 			|			setWindowPosition(0,getWindowPosition()[1])
-	 * 			|  else if (((getWindowPosition()[0] + getWindowSize()[0]) - pos[0]) < 200+getMyMazub().getWidth())
-	 * 			|	   if (canHaveAsWindowPosition(pos[0]-getWindowSize()[0]+200+getMyMazub().getWidth(), getWindowPosition()[1]))
-	 * 			|			setWindowPosition(pos[0]-getWindowSize()[0]+200+getMyMazub().getWidth(), getWindowPosition()[1])
-	 * 			|		else
-	 * 			|			setWindowPosition(getXLimit() - getWindowSize()[0], getWindowPosition()[1])
-	 * 			|  if ((pos[1] - getWindowPosition()[1]) < 200)
-	 * 			|	   if (canHaveAsWindowPosition(getWindowPosition()[0], pos[1]-200))
-	 * 			|			setWindowPosition(getWindowPosition()[0], pos[1]-200)
-	 * 			|	   else
-	 * 			|	   		setWindowPosition(getWindowPosition()[0], 0)
-	 * 			|  else if (((getWindowPosition()[1] + getWindowSize()[1]) - pos[1]) < 200+getMyMazub().getHeight())
-	 * 			|	   if (canHaveAsWindowPosition(getWindowPosition()[0], pos[1]-getWindowSize()[1] + 200+getMyMazub().getHeight()))
-	 * 			|			setWindowPosition(getWindowPosition()[0],  pos[1]-getWindowSize()[1] + 200+getMyMazub().getHeight())
-	 * 			|	   else
-	 * 			|			setWindowPosition(getWindowPosition()[0], getYLimit() - getWindowSize()[1])
+//	 * @effect	| if (getMyMazub() == null)
+//	 * 			|    return;
+//	 * 			| else
+//	 * 			|   int[] pos = getMyMazub().getPosition()
+//	 * 			| 	if ((pos[0] - getWindowPosition()[0]) < 200)
+//	 * 			|   	if (canHaveAsWindowPosition(pos[0]-200, getWindowPosition()[1]))
+//	 * 			| 			setWindowPosition(pos[0]-200, getWindowPosition()[1])
+//	 * 			|		else
+//	 * 			|			setWindowPosition(0,getWindowPosition()[1])
+//	 * 			|  else if (((getWindowPosition()[0] + getWindowSize()[0]) - pos[0]) < 200+getMyMazub().getWidth())
+//	 * 			|	   if (canHaveAsWindowPosition(pos[0]-getWindowSize()[0]+200+getMyMazub().getWidth(), getWindowPosition()[1]))
+//	 * 			|			setWindowPosition(pos[0]-getWindowSize()[0]+200+getMyMazub().getWidth(), getWindowPosition()[1])
+//	 * 			|		else
+//	 * 			|			setWindowPosition(getXLimit() - getWindowSize()[0], getWindowPosition()[1])
+//	 * 			|  if ((pos[1] - getWindowPosition()[1]) < 200)
+//	 * 			|	   if (canHaveAsWindowPosition(getWindowPosition()[0], pos[1]-200))
+//	 * 			|			setWindowPosition(getWindowPosition()[0], pos[1]-200)
+//	 * 			|	   else
+//	 * 			|	   		setWindowPosition(getWindowPosition()[0], 0)
+//	 * 			|  else if (((getWindowPosition()[1] + getWindowSize()[1]) - pos[1]) < 200+getMyMazub().getHeight())
+//	 * 			|	   if (canHaveAsWindowPosition(getWindowPosition()[0], pos[1]-getWindowSize()[1] + 200+getMyMazub().getHeight()))
+//	 * 			|			setWindowPosition(getWindowPosition()[0],  pos[1]-getWindowSize()[1] + 200+getMyMazub().getHeight())
+//	 * 			|	   else
+//	 * 			|			setWindowPosition(getWindowPosition()[0], getYLimit() - getWindowSize()[1])
 	 * 			| 
 	 */
 	public void adjustWindow() {
@@ -451,7 +442,6 @@ public class World {
 				setWindowPosition(pos[0]-200, getWindowPosition()[1]);
 			else
 				setWindowPosition(0,getWindowPosition()[1]);
-			
 		}
 		
 		else if (((getWindowPosition()[0] + getWindowSize()[0]) - pos[0]) < 200+getMyMazub().getWidth()) {
@@ -548,7 +538,7 @@ public class World {
 	 * @post  | new.getDidPlayerWin() == flag
 	 */
 	private void setDidPlayerWin(boolean flag) {
-		this.didPlayerWin = didPlayerWin;
+		this.didPlayerWin = flag;
 	}
 	
 	/**
@@ -559,7 +549,7 @@ public class World {
 	 * @param y
 	 * 		  The y position to check
 	 * 
-	 * @return  | result == ! (x > getXLimit() || (x < 0) || (y > getYLimit()) || (y < 0))
+	 * @return  | result == ! ( (x > getXLimit()) || (x < 0) || (y > getYLimit()) || (y < 0) )
 	 */
 	public boolean isInsideBoundaries(int x, int y) {
 		return ! ( (x > getXLimit()) || (x < 0) || (y > getYLimit()) || (y < 0) );

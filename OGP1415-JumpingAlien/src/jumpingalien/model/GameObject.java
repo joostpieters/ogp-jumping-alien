@@ -81,9 +81,6 @@ public abstract class GameObject {
 	 * @post   | new.getXInitialVelocity() == xInitialVelocity
 	 * @post   | new.isSolid() == solid
 	 * @post   | new.getDuckedVelocityLimit() == duckedVelocityLimit
-	 * 
-	 * 		  AANVULLEN
-	 * 			Waarom geen @ effect hierboven?
 	 */
 	@Raw
 	public GameObject(World world, double x, double y, 
@@ -129,11 +126,9 @@ public abstract class GameObject {
 			assert this.canHaveAsPosition((int) x, (int) y);
 		
 		this.setTerminated(false);
-		
-	
 	}
 	
-	//geen commentaar nodig
+	//geen documentatie nodig
 	public abstract Sprite getCurrentSprite();
 	
 	/**
@@ -306,12 +301,12 @@ public abstract class GameObject {
 	 * 		  | else if (y<0)
 	 * 		  |  then result == false
 	 * 		  | else if (for each obj in myWorld.getGameObjects()
-	 * 		  | 		 if obj.isSolid()
+	 * 		  | 		 if (obj.isSolid()))
 	 * 		  |			 	if rectanglesCollide(obj.getPosition()[0]+1,obj.getPosition()[1]+1,obj.getWidth()-1,obj.getHeight()-1,
 	 *		  |				x+1,y+1,this.getWidth()-1,this.getHeight()-1)))
 	 * 		  |   			 then result == false
-	 * 		  | else if (for a pixel of the lower border, or upper border, or left border, or right border
-	 * 		  |			! (myWorld.getTerrainAt(pixel).isPassable())
+	 * 		  | else if (for a corner pixel
+	 * 		  |			! (myWorld.getTerrainAt(pixel).isPassable()))
 	 * 		  |				 then result == false
 	 * 		  | else
 	 * 		  |	 result == true
@@ -409,10 +404,10 @@ public abstract class GameObject {
 	 * @param height
 	 * 		  The height of the rectangle
 	 * @return
-	 *		  if (RectX <= x && x <= RectX+width-1 && RectY <= y && y <= RectY+height-1)
-	 *		       then result == true
-	 *		  else
-	 *			   result == false 
+	 *		 | if (RectX <= x && x <= RectX+width-1 && RectY <= y && y <= RectY+height-1)
+	 *		 |     then result == true
+	 *		 | else
+	 *		 |	   result == false 
 	 */
 	public static boolean pointInRectangle(int x,int y, int RectX, int RectY, int width, int height) {
 		if(RectX <= x && x <= RectX+width-1 && RectY <= y && y <= RectY+height-1)
@@ -443,14 +438,10 @@ public abstract class GameObject {
 	 * 		  The new x position of this game object.
 	 * @param y
 	 * 		  The new y position of this game object.
-	 * @pre	  canHaveAsPosition(x,y)
 	 * @post  | new.getX() == x && new.getY() == y
 	 */
 	@Raw
 	protected void setPosition(double x, double y) {
-//		assert canHaveAsPosition((int) x,(int)y);
-//		deze assertion kan voor problemen zorgen als ge (bv. helemaal bovenaan op een slime gaat staan
-//		en dan) tegen het plafond springt
 		this.x = x;
 		this.y = y;
 	}
@@ -468,7 +459,8 @@ public abstract class GameObject {
 	/**
 	 * Return the position of this game object.
 	 * 
-	 * @return  | result == {(int) getX(), (int) getY()}
+	 * @return  | result[0] == (int) getX()
+	 * 			| result[1] == (int) getY()
 	 */
 	public int[] getPosition() {
 		int[] result = {(int) getX(), (int) getY()};
@@ -483,6 +475,7 @@ public abstract class GameObject {
 	/**
 	 * Return the termination state of this game object.
 	 */
+	@Basic
 	public boolean isTerminated() {
 		return this.isTerminated;
 	}
@@ -499,18 +492,18 @@ public abstract class GameObject {
 		this.isTerminated = flag;	
 	}
 	
-	
-	//insta wil zeggen object meteen verwijderen uit gamewereld in volgende advancetime
 	/**
 	 * Terminate this game object.
 	 * 
 	 * @param insta
-	 * 		  determines whether this game object should be 
+	 * 		  Determines whether this game object should be 
 	 *		  terminated instantly (insta == true) or after a certain amount of time (insta == false).
-	 * @post   |  if (isTerminated())
-	 *		   | 	result ==
 	 * @effect |  if (! isTerminad())
 	 * 		   |    setTerminated(true)
+	 * @effect | if (insta)
+	 * 		   | 	setTimeSinceTermination(0.7)
+	 * 		   | else
+	 * 		   |	setTimeSinceTermination(0)
 	 */
 	public void terminate(boolean insta) {
 		if (isTerminated())
@@ -540,14 +533,12 @@ public abstract class GameObject {
 	 * 
 	 * @param timeSinceTermination
 	 * 		  The new time since termination
-	 * 
 	 * @post  | new.getTimeSinceTermination() == timeSinceTermination
 	 */
 	public void setTimeSinceTermination(double timeSinceTermination) {
 		this.timeSinceTermination = timeSinceTermination;
 	}
 	
-	//onduidelijk of er documentatie nodig is voor deze methode
 	public void advanceTime(double duration) {
 		if(duration > 0.2 || duration < 0) return;
 		//Bij het laden van het level loopt het zonder deze regel soms mis (veel te grote duration)
@@ -563,8 +554,6 @@ public abstract class GameObject {
 			timeSlice = duration;
 		double fragments = ceil(duration/timeSlice);
 		double adjustedDuration = duration/fragments;
-		
-		
 		
 		if(getHitPoints() == 0)
 			this.terminate(false);
@@ -595,12 +584,9 @@ public abstract class GameObject {
 		else
 			setTimeSinceLastRunningImage(0);
 
-		 
 		 if (getToEndDuck() == true)
 			 endDuck();
-		 
-		 
-
+		
 		setTimeToBeImmune(getTimeToBeImmune()-duration);
 		
 	}
@@ -610,15 +596,14 @@ public abstract class GameObject {
 	 * 
 	 * @param className
 	 * 		  The class of game objects for which to return a possible touching object.
-	 * @return | if (for a certain obj of myWorld.getGameObjects()
-	 * 		   |   	(obj != this && className.isInstance(obj)) &&
-	 *		   |	(rectanglesCollide(obj.getPosition()[0],obj.getPosition()[1],obj.getWidth(),obj.getHeight(),
-	 *         |	this.getPosition()[0],this.getPosition()[1],this.getWidth(),this.getHeight()))
-	 *         |    result == obj
+	 * @return | if for some obj in getMyWorld().getGameObjects()
+	 * 		   |   if (obj != this && className.isInstance(obj)) &&
+	 *		   |			(rectanglesCollide(obj.getPosition()[0],obj.getPosition()[1],obj.getWidth(),obj.getHeight(),
+	 *         |			this.getPosition()[0],this.getPosition()[1],this.getWidth(),this.getHeight()))
+	 *         |    			result == obj
 	 *         | else 
 	 *         |	result == null
 	 */
-	//wat gebeurt er als er twee objecten tegelijk worden aangeraakt?
 	public GameObject touches(Class<?> className) {
 		
 		for(GameObject obj : myWorld.getGameObjects()) {
@@ -627,41 +612,8 @@ public abstract class GameObject {
 					this.getPosition()[0],this.getPosition()[1],this.getWidth(),this.getHeight()))
 							return obj;
 			}
-			
 		}
 		return null;
-	
-//		for(GameObject obj: myWorld.getGameObjects()) {
-//			if(className.isInstance(obj) && obj != this) {
-//					if(obj.overlapsWith(this))
-//						return obj
-//				}	
-//			}
-//			
-//		}
-			
-//		int[] pos = this.getPosition();
-//		int x = pos[0];
-//		int y = pos[1];
-//		int height = this.getHeight();
-//		int width = this.getWidth();
-//		
-//		for (int k = 0; k <= 1; k++) {
-//			for (int i = 0; i < width; i++) {
-//				if (className.isInstance(myWorld.getObjectAt(x + i, y, k)))
-//					return myWorld.getObjectAt(x + i, y, k);
-//				if	(className.isInstance(myWorld.getObjectAt(x+i, y+height-1, k)))
-//					return myWorld.getObjectAt(x+i, y+height-1, k); 
-//			}
-//			
-//			for (int j = 1; j < height-1; j++) {
-//				if (className.isInstance(myWorld.getObjectAt(x,y+j,k)))
-//					return myWorld.getObjectAt(x,y+j,k);
-//				if (className.isInstance(myWorld.getObjectAt(x+width-1,y+j,k)))
-//					return myWorld.getObjectAt(x+width-1,y+j,k);
-//			}
-//		}
-		//return null;
 	}
 	
 	/**
@@ -669,11 +621,12 @@ public abstract class GameObject {
 	 * 
 	 * @param terrainType
 	 * 		  The terrainType to check.
-	 * @return
-	 */
-	
-	//return specifieren
-	
+	 * @return | if for each border pixel (x,y) of this GameObject
+	 * 		   |	if getMyWorld().getTerrainAt(x,y) == terrainType
+	 * 		   |		result == true
+	 * 		   | else
+	 * 		   |	result == false
+	 */	
 	public boolean touches(TerrainType terrainType) {
 		int[] pos = this.getPosition();
 		int x = pos[0];
@@ -945,8 +898,7 @@ public abstract class GameObject {
 	/**
 	 * Return the acceleration in the y direction of this game object.
 	 * 
-	 * @return 	
-	 * 			| if (isJumping())
+	 * @return 	| if (isJumping())
 	 * 			| 	then result == -Y_ACCELERATION
 	 * 			| else
 	 * 			|	result == 0
@@ -964,9 +916,9 @@ public abstract class GameObject {
 	 * 
 	 * @param 	direction
 	 * 			The direction in which the game object should move.
-	 * @pre	  | (direction == Direction.LEFT) || (direction == Direction.RIGHT)
-	 * @post  | new.getXDirection() == direction
-	 * @post  | abs(new.getXVelocity()) == getXInitialVelocity()
+	 * @pre	   | (direction == Direction.LEFT) || (direction == Direction.RIGHT)
+	 * @effect | setXDirection(direction)
+	 * @post   | abs(new.getXVelocity()) == getXInitialVelocity()
 	 */
 	public void startMove(Direction direction) {
 		setStillMoving(true);
@@ -984,7 +936,6 @@ public abstract class GameObject {
 	 * Its sill moving state is set to false.2
 	 * 
 	 * @post | new.getXVelocity() == 0
-	 * @post | new.getStillMoving(false)
 	 */
 	public void endMove() {
 		setStillMoving(false);
@@ -1033,9 +984,8 @@ public abstract class GameObject {
 	
 	/**
 	 * Check whether this game object is jumping.
-	 * 
-	 * @return  | result == (getY() > 0)
 	 */
+	@Basic
 	public boolean isJumping() {
 		return isJumping;
 				
@@ -1108,7 +1058,6 @@ public abstract class GameObject {
 		else {
 			setToEndDuck(true);
 		}	
-		//this.terminate(true); //Staat hier niks te doen?
 	}
 	
 	/**
@@ -1126,9 +1075,10 @@ public abstract class GameObject {
 
 	/**
 	 * Set the toEndDuck state of this game object to the given toEndDuck.
+	 * 
 	 * @param toEndDuck
 	 * 		  The new toEndDuck state of this game object.
-	 * @post  new.getToEndDuck() == toEndDuck
+	 * @post  | new.getToEndDuck() == toEndDuck
 	 */
 	private void setToEndDuck(boolean toEndDuck) {
 		this.toEndDuck = toEndDuck;
@@ -1136,12 +1086,12 @@ public abstract class GameObject {
 	
 	/**
 	 * Check whether this game object can end its duck.
+	 * 
 	 * @return | if (canHaveAsPosition(getPosition()[0],getPosition()[1]) while setDucking(false) 
 	 * 		   |   result == true
 	 * 		   | else
 	 * 		   |   result == false
 	 */
-	//Hoe komt het dat we Mazub ni zien ontducken bij deze methode?
 	public boolean canEndDuck() {
 		boolean previous = isDucking();
 		setDucking(false);
@@ -1205,11 +1155,7 @@ public abstract class GameObject {
 	 * Variable registering the ducked state of this game object.
 	 */
 	private boolean isDucking;
-	
-	/**
-	 * Variable registering the velocity limit in the x direction while ducking.
-	 */
-	//WEG?!
+
 
 	/**
 	 * Return the timeSinceLastMove of this game object.
@@ -1316,7 +1262,6 @@ public abstract class GameObject {
 		else {
 			xNew = xCurrent + (getXVelocity()*duration + 0.5*getXAcceleration()*pow(duration,2));
 		}
-		
 				
 		if(! canHaveAsPosition((int) xNew,getPosition()[1])) {
 			vNew = 0;
@@ -1324,8 +1269,6 @@ public abstract class GameObject {
 			}
 		setPosition(xNew,getY());
 		setXVelocity(vNew);
-		
-
 	}
 	
 	/**
@@ -1343,9 +1286,10 @@ public abstract class GameObject {
 
 	/**
 	 * Set the isStillMoving variable of this game object to the given isStillMoving.
+	 * 
 	 * @param isStillMoving
 	 * 		  The new isStillMoving value
-	 * @post  new.isStillMoving() == isStillMoving
+	 * @post  | new.isStillMoving() == isStillMoving
 	 */
 	public void setStillMoving(boolean isStillMoving) {
 		this.isStillMoving = isStillMoving;
@@ -1371,8 +1315,6 @@ public abstract class GameObject {
 		double yNew;
 		
 		double vNew = vCurrent + duration*getYAcceleration();
-		
-		
 		yNew = yCurrent + vCurrent*duration + 0.5*getYAcceleration()*pow(duration,2.0);
 		
 		if(! canHaveAsPosition(getPosition()[0],(int) yNew)) {
@@ -1398,12 +1340,13 @@ public abstract class GameObject {
 
 	/**
 	 * Set the timeToBeImmune of this game object to the given timeToBeImmune.
+	 * 
 	 * @param timeToBeImmune
-	 * 		  The new timeToBeImmunw
+	 * 		  The new timeToBeImmune
 	 * @post  | if (timeToBeImmune < 0)
 			  |		new.getTimeToBeImmune() == 0
 			  | else
-			  | 	new.getTimeToBeImmune == timeToBeImmune
+			  | 	new.getTimeToBeImmune() == timeToBeImmune
 	 */
 	protected void setTimeToBeImmune(double timeToBeImmune) {
 		if (timeToBeImmune < 0)
@@ -1478,6 +1421,7 @@ public abstract class GameObject {
 	
 	/**
 	 * Set the airTimer of this game objecect to the given value.
+	 * 
 	 * @param airTimer
 	 * 		  The new value for the airTimer
 	 * @post  | new.getAirTimer() == airTimer
