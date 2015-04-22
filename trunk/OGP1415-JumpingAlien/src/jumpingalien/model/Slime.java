@@ -35,6 +35,7 @@ public class Slime extends AutomaticObject {
 	 * @effect | super(world, x, y, 100, 100, sprites, 100, 0, 250, 250, 70, 1000, true)
 	 * @effect | setSchool(school)
 	 */
+	@Raw
 	public Slime(World world, double x, double y, Sprite[] sprites, School school) {
 		super(world, x, y, 100, 100, sprites, 100, 0, 250, 250, 70, 1000, true);
 		assert school != null;
@@ -73,12 +74,12 @@ public class Slime extends AutomaticObject {
 	 * @effect  | getSchool().removeAsSlime(this)
 	 * @effect  | setSchool(school)
 	 * @effect  | school.addAsSlime(this)
-	 * @effect    | for each colleague in old.getSchool().getSlimes()
+	 * @effect  | for each colleague in old.getSchool().getSlimes()
 	 * 			| 	if  (colleague != this) {
 	 *			|		colleague.addHitPoints(1);
 	 *			|		this.substractHitPoints(1, false);
 	 *			|	}
-	 * @effect    | for each colleague in new.getSchool().getSlimes()
+	 * @effect  | for each colleague in new.getSchool().getSlimes()
 	 * 			| 	if  (colleague != this) {
 	 *			|		this.addHitPoints(1);
 	 *			|		colleague.substractHitPoints(1, false);
@@ -119,14 +120,12 @@ public class Slime extends AutomaticObject {
 	 * @param propagate
 	 * 		  True if other colleagues in the same school as this slime should
 	 * 		  be affected by the subtraction of this slime's hitpoints.
-	 * 		  If other colleageas are affected, they also lose a hitpoints.
-	 * 
-	 * @pre	   | hitPoints >= 0 //moet hier waarschijnlijk niet want zit al in super.subtractHitPoints ...
+	 * 		  If other colleagues are affected, they also lose a hitpoint.
 	 * @effect | super.subtractHitPoints(hitPoints)
 	 * @effect | 	if (propagate == true) {
 	 * 		   |		for each colleague in getSchool().getSlimes()
-	 * 		   |   		if (colleague != this)
-	 *		   |      	colleague.substractHitPoints(1);
+	 * 		   |   			if (colleague != this)
+	 *		   |      			colleague.substractHitPoints(1, false);
 	 *		   |    }
 	 */
 	public void substractHitPoints(int hitPoints, boolean propagate) {
@@ -151,11 +150,8 @@ public class Slime extends AutomaticObject {
 		substractHitPoints(hitPoints, true);
 	}
 
-	//nodig om overriding methods te commentarieren?
 
-	/**
-	 * onduidelijk of documentatie nodig is //
-	 */
+	@Override
 	public void advanceTime(double duration) {
 		super.advanceTime(duration);
 		setTimer(getTimer()+duration);
@@ -175,6 +171,7 @@ public class Slime extends AutomaticObject {
 	 * 		   |   startMove(Direction.RIGHT)
 	 * @effect | setGoal(2+(5.8-2)*generator.nextDouble())
 	 */
+	@Raw
 	protected void startNewMovement() {
 		endMove();
 		setTimer(0);
@@ -185,7 +182,7 @@ public class Slime extends AutomaticObject {
 		setGoal(2+(5.8-2)*generator.nextDouble());
 	}
 
-	//no documentatio needed
+	//no documentation needed
 	@Override
 	public Sprite getCurrentSprite() {
 		//Staat niet in opgave

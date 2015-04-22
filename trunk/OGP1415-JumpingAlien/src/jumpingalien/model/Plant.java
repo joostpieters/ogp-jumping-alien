@@ -23,7 +23,6 @@ public class Plant extends AutomaticObject {
 	 * 		  The initial y position for this new plant. 
 	 * @param sprites
 	 * 		  The series of initial sprites for this new plant
-	 * 
 	 * @effect	| super(world, x, y, 1, 1, sprites, 50, 0, 50, 50, 1, 0, false)
 	 */
 	public Plant(World world, double x, double y, Sprite[] sprites) {
@@ -31,7 +30,6 @@ public class Plant extends AutomaticObject {
 	}
 
 	//no documentation needed
-	// hoe werkt dit juist?
 	public void advanceTime(double duration) {
 		
 		if(getTimer()+duration > getGoal()) {
@@ -50,9 +48,7 @@ public class Plant extends AutomaticObject {
 	 * Handle the interaction of this plant with other game objects.
 	 * 
 	 * @param 	duration
-	 * 			The duration for which the interaction should be handled.
-	 * @effect  no effect since Mazub takes care of this
-	 * 		  
+	 * 			The duration for which the interaction should be handled.	 * 		  
 	 */
 	public void handleInteraction(double duration) {
 		//Handled by Mazub
@@ -88,6 +84,11 @@ public class Plant extends AutomaticObject {
 	
 
 	@Override
+	/**
+	 * @param insta
+	 * 		  Has no effect.
+	 * @effect | super.terminate(true)
+	 */
 	public void terminate(boolean insta) {
 		super.terminate(true);		
 	}

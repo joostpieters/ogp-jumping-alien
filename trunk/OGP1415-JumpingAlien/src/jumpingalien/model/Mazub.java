@@ -19,48 +19,20 @@ public class Mazub extends GameObject {
 	 * 
 	 * @effect	| super(world, x, y, 100, 500 ,sprites, 100, 800, 300, 100,	90, 1000, true);
 	 * 
-//	 * @param 	x
-//	 * 			The initial x position for this new Mazub character.
-//	 * @param 	y
-//	 * 			The initial y position for this new Mazub character.
-//	 * @param	sprites
-//	 * 			The series of initial sprites for this new Mazub character.
-// 	 * @param	world
-// 	 * 			The world for this new Mazub character.
-//	 * @param 	xInitialVelocity
-//	 * 			The initial velocity in the x direction for this new Mazub character.
-//	 * @param 	xVelocityLimit
-//	 * 			The velocity limit in the x direction for this new Mazub character.
-//	 * @pre		The given initial x position must be a valid x position for any Mazub character.
-//	 * 		  | isValidX(x)
-//	 * @pre		The given initial y position must be a valid y position for any Mazub character.
-//	 * 		  | isValidY(y)
-//	 * @pre		The given series of sprites must be effective.
-//	 * 		  | sprites != null
-//	 * @pre		This new Mazub character can have the  given xInitialVelocity as its initial velocity in the x direction.
-//	 * 			This new Mazub character can have the  given xVelocityLimit as its velocity limit in the x direction.
-//	 * 		  | isValidXInitialVelocityAndXVelocityLimit(xInitialVelocity, xVelocityLimit)
-//	 * @post	The new x position of this Mazub character is equal to the given x position.
-//	 * 		  | new.getX() == x
-//	 * @post	The new y position of this Mazub character is equal to the given y position.
-//	 * 		  | new.getY() == y
-//	 * @post	The new series of sprites of this Mazub character is equal to the given sprites.
-//	 * 		  | new.getSprites() == sprites
-//	 * @post	The new initial velocity in the x direction of this Mazub character is equal to
-//	 * 			the given xInitialVelocity.
-//	 * 		  | new.getXInitialVelocity() == xInitialVelocity
-//	 * @post	The new velocity limit in the x direction of this Mazub character is equal to
-//	 * 			the given xVelocityLimit.
-//	 * 		  | new.getXVelocityLimit() == xVelocityLimit
-//	 */
+	 * @param 	x
+	 * 			The initial x position for this new Mazub character.
+	 * @param 	y
+	 * 			The initial y position for this new Mazub character.
+	 * @param	sprites
+	 * 			The series of initial sprites for this new Mazub character.
+ 	 * @param	world
+ 	 * 			The world for this new Mazub character.
+	 */
 	@Raw
 	public Mazub(World world, double x, double y, Sprite[] sprites) {
-	
 		super(world, x, y, 100, 500 ,sprites, 
 				100, 800, 300, 100,
-								90, 1000, true);
-
-		
+								90, 1000, true);		
 	}
 	
 	/**
@@ -68,11 +40,11 @@ public class Mazub extends GameObject {
 	 * 
 	 * @param 	duration
 	 * 			The duration for which advanceTime should work.
-	 * @effect	super.advanceTime(duration)
+	 * @effect	| super.advanceTime(duration)
 	 * @throws 	IllegalArgumentException
 	 * 			The given duration is not a valid duration. A duration is not valid
 	 * 			if it is smaller than 0 or greater than or equal to 0.2.
-	 * 		  | (duration < 0) || (duration >= 0.2)	
+	 * 		    | (duration < 0) || (duration >= 0.2)	
 	 */
 	public void advanceTime(double duration) throws IllegalArgumentException {
 		super.advanceTime(duration);
@@ -135,7 +107,6 @@ public class Mazub extends GameObject {
 	 * @param duration
 	 * 		  The duration for which the interaction should be handled. 
 	 */
-	//hoe documentatie fixen?
 	public void handleInteraction(double duration) {
 		Plant object0 = (Plant) this.touches(Plant.class);
 		if (object0 != null && this.getHitPoints() != this.getMaxHitPoints()) {

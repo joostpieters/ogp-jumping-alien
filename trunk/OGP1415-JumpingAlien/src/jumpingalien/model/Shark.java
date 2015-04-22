@@ -38,9 +38,6 @@ public class Shark extends AutomaticObject {
 	}
 	
 
-	/**
-	 * @post |getTimer() <= getGoal()
-	 */
 	@Override
 	public void advanceTime(double duration) {
 		super.advanceTime(duration);
@@ -58,13 +55,16 @@ public class Shark extends AutomaticObject {
 	 * 
 	 * @effect	| setTimer(0)
 	 * @effect	| endMove()
-	 * @effect  | //trycatch aanvullen
+	 * @effect  | if isJumping()
+	 * 			|    endJump()
 	 * @effect	| setGoal(1+generator.nextDouble()*(3.8-1))
 	 * @effect  | if(generator.nextDouble() < 0.5)
 	 * 			|	 startMove(Direction.LEFT)
 	 * 			| else
 	 * 			|   startMove(Direction.RIGHT)
-	 * @effect  | //trycatch aanvullen
+	 * @effect  | if (getCounter() == 0)
+	 * 			|     if (canJump())
+	 * 			|		startJump()
 	 * @effect  | setDivingAcceleration(100*(-0.2+0.4*generator.nextDouble()))
 	 * @effect  | setCounter((getCounter() + 1)%5)
 	 */
@@ -144,6 +144,12 @@ public class Shark extends AutomaticObject {
 	
 	/**
 	 * Check whether this shark can jump.
+	 * 
+	 * @return | if for some bottom pixel (x,y) of this shark 
+	 * 		   |    getMyWorld().getTerrainAt(x,y) == TerrainType.WATER
+	 * 		   |    	result == true
+	 * 		   | else
+	 * 		   |	result == false
 	 */
 	@Override
 	public boolean canJump() {
@@ -184,15 +190,17 @@ public class Shark extends AutomaticObject {
 	 * Return the acceleration in the y direction of this shark.
 	 * 
 	 * @return  | if (getCounter() == 0) {
-				|	if (isSubmerged())
-				|		result == 0
-				|	else
-				|		result == -getY_ACCELERATION()
-				| }
-				| else if (isSubmerged())
-				|   result == getDivingAcceleration()
-			    | else
-			    |   result == -getY_ACCELERATION()
+	 *			|	if (isSubmerged())
+	 *			|		result == 0
+	 *			|	else
+	 *			|		result == -getY_ACCELERATION()
+	 *			| }
+	 *			| else if (isSubmerged())
+	 *			|   result == getDivingAcceleration()
+	 *		    | else
+	 *		    |   result == -getY_ACCELERATION()
+	 *
+	 * @note    Deze functie schendt het Liskov substitutieprincipe. Moet nog opgelost worden.
 	 */
 	@Override
 	public double getYAcceleration() {
@@ -211,11 +219,11 @@ public class Shark extends AutomaticObject {
 	/**
 	 * Check whether this shark is submerged in water.
 	 * 
-	 * @return  | for(int i = 0; i < getWidth(); i++) {
-	 * 			|  if (getMyWorld().getTerrainAt(getPosition()[0] + i, getPosition()[1] + getHeight() -1) == TerrainType.WATER)
+	 * @return  | if for some top border pixel (x,y) of this shark
+	 * 			|   getMyWorld().getTerrainAt(x,y) == TerrainType.WATER
 	 * 		    |	  result == true
-	 * 			| }
-	 * 			|result == false
+	 * 			| else
+	 * 			|     result == false
 	 */
 	public boolean isSubmerged() {
 		for(int i = 0; i < getWidth(); i++) {

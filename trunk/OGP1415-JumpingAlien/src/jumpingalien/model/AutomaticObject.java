@@ -53,7 +53,9 @@ Initialize this new game object with the given parameters.
 	 *		   | xInitialVelocity, yInitialVelocity, xVelocityLimit,
 	 * 		   | duckedVelocityLimit, xAcceleration, yAcceleration, solid)
 	 * @effect | startNewMovement()
+	 * @effect | setTimer(0)
 	 */
+	@Raw
 	public AutomaticObject(World world, double x, double y,
 			int initialHitPoints, int maxHitPoints, Sprite[] sprites,
 			double xInitialVelocity, double yInitialVelocity,
@@ -105,6 +107,7 @@ Initialize this new game object with the given parameters.
 	 * 		  The new value for the this object's timer.
 	 * @post  | new.getTimer() == time
 	 */
+	@Raw
 	protected void setTimer(double time) {
 		this.timer = time;
 	}
@@ -115,16 +118,17 @@ Initialize this new game object with the given parameters.
 	private double timer;
 	
 	/**
-	 * Get the goal of this automatic game object. The goal reflects 
+	 * Get the goal of this automatic game object. The goal reflects the time that has to pass before
+	 * an automatic game objects starts a new movement.
 	 */
 	@Basic
-	//commentaar aanvullen
 	public double getGoal() {
 		return goal;
 	}
 
 	/**
 	 * Set the goal of this object to the given value.
+	 * 
 	 * @param goal
 	 * 		  The new goal for this automatic game object.
 	 * @post  | new.getGoal() == goal

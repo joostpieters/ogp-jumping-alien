@@ -21,9 +21,6 @@ public class School {
 	public School() {
 		slimes = new HashSet<Slime>();
 	}
-	//klopt bovenstaande postconditie?
-	//als er geen slimes meer in een school zitten, wat gebeurt er dan?
-	
 	
 	/**
 	 * Return the slimes that belong to this school.
@@ -40,7 +37,6 @@ public class School {
 	 * 		  The slime to check
 	 * @return  | result == getSlimes().contains(slime)
 	 */
-	@Basic
 	public boolean hasAsSlime(Slime slime) {
 		return getSlimes().contains(slime);
 	}
@@ -76,10 +72,9 @@ public class School {
 	
 	/**
 	 * Return the number of slimes of this school.
+	 * 
 	 * @return | result == getSlimes().size()
 	 */
-	@Basic
-	// zeker dat het basic is?
 	public int getNbSlimes() {
 		return getSlimes().size();
 	}
@@ -89,14 +84,14 @@ public class School {
 	 * 
 	 * @param slime
 	 * 		  The slime to check.
-	 * @return	| result == slime != null
+	 * @return	| result == (slime != null0
 	 */
 	public boolean canHaveAsSlime(Slime slime) {
 		return slime != null;
 	}
 	
 	/**
-	 * Varible registering the slimes of this school.
+	 * Variable registering the slimes of this school.
 	 */
 	private Set<Slime> slimes;
 
