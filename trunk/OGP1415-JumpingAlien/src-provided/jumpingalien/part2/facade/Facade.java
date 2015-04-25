@@ -2,7 +2,6 @@ package jumpingalien.part2.facade;
 
 import java.util.Collection;
 
-import jumpingalien.model.GameObject;
 import jumpingalien.model.JumpingException;
 import jumpingalien.model.Mazub;
 import jumpingalien.model.Plant;
@@ -53,7 +52,7 @@ public class Facade implements IFacadePart2 {
 			alien.startJump();
 		}
 		catch (JumpingException exc) {
-			throw new ModelException(exc); //Hide orange bar
+			//throw new ModelException(exc); //Hide orange bar
 		}
 	}
 
@@ -63,7 +62,7 @@ public class Facade implements IFacadePart2 {
 			alien.endJump();
 		}
 		catch (JumpingException exc) {
-			throw new ModelException(exc); //Hide orange bar
+			//throw new ModelException(exc); //Hide orange bar
 		}
 	}
 

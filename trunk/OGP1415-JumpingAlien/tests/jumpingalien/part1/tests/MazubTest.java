@@ -10,7 +10,6 @@ import jumpingalien.model.JumpingException;
 import jumpingalien.model.Mazub;
 import jumpingalien.model.World;
 import jumpingalien.util.Sprite;
-import static java.lang.Math.abs;
 import static org.junit.Assert.*;
 
 import org.junit.Before;
