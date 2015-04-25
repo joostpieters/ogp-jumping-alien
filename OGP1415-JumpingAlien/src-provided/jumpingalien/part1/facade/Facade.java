@@ -5,11 +5,9 @@ package jumpingalien.part1.facade;
 
 import jumpingalien.util.ModelException;
 import jumpingalien.util.Sprite;
-import jumpingalien.model.GameObject;
 import jumpingalien.model.JumpingException;
 import jumpingalien.model.Mazub;
 import jumpingalien.model.World;
-import jumpingalien.model.World.TerrainType;
 
 /**
  * @author Andreas Schrvyers & Jonathan Oostvogels

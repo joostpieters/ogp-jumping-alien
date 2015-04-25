@@ -142,7 +142,8 @@ public class WorldTest {
 	public void canHaveAsWindowPositionTest() {
 		assertTrue(world.canHaveAsWindowPosition(0, 0));
 		assertTrue(world.canHaveAsWindowPosition(4500, 4500));
-		assertFalse(world.canHaveAsWindowPosition(4500, 4501));
+		assertTrue(world.canHaveAsWindowPosition(4501, 4501));
+		assertFalse(world.canHaveAsWindowPosition(4502, 4501));
 		assertFalse(world.canHaveAsWindowPosition(-1, 0));
 	}
 	
