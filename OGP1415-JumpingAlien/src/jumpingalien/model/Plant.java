@@ -25,23 +25,32 @@ public class Plant extends AutomaticObject {
 	 * 		  The series of initial sprites for this new plant
 	 * @effect	| super(world, x, y, 1, 1, sprites, 50, 0, 50, 50, 1, 0, false)
 	 */
-	public Plant(World world, double x, double y, Sprite[] sprites) {
-		super(world, x, y, 1, 1, sprites, 50, 0, 50, 50, 1, 0, false);
+	@Raw
+	public Plant(World world, double x, double y, Sprite[] sprites, String program) {
+		super(world, x, y, 1, 1, sprites, 50, 0, 50, 50, 1, 0, false, program);
 	}
 
 	//no documentation needed
 	public void advanceTime(double duration) {
 		
-		if(getTimer()+duration > getGoal()) {
-			super.advanceTime(getGoal()-getTimer());
-			startNewMovement();
-			super.advanceTime(duration-(getGoal()-getTimer()));
-			setTimer(getTimer()+duration-getGoal());	
-		}
-		else {
+
+		if (getProgram() != null) {
 			super.advanceTime(duration);
-			setTimer(getTimer()+duration);
-		}	
+			getProgram().advanceTime(duration);
+		}
+		
+		else {
+			if(getTimer()+duration > getGoal()) {
+				super.advanceTime(getGoal()-getTimer());
+				startNewMovement();
+				super.advanceTime(duration-(getGoal()-getTimer()));
+				setTimer(getTimer()+duration-getGoal());	
+			}
+			else {
+				super.advanceTime(duration);
+				setTimer(getTimer()+duration);
+			}
+		}
 	}
 	
 	/**

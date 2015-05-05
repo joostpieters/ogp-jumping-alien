@@ -60,10 +60,10 @@ Initialize this new game object with the given parameters.
 			int initialHitPoints, int maxHitPoints, Sprite[] sprites,
 			double xInitialVelocity, double yInitialVelocity,
 			double xVelocityLimit, double duckedVelocityLimit,
-			double xAcceleration, double yAcceleration, boolean solid) {
+			double xAcceleration, double yAcceleration, boolean solid, String program) {
 		super(world, x, y, initialHitPoints, maxHitPoints, sprites,
 				xInitialVelocity, yInitialVelocity, xVelocityLimit,
-				duckedVelocityLimit, xAcceleration, yAcceleration, solid);
+				duckedVelocityLimit, xAcceleration, yAcceleration, solid, program);
 		generator = new Random();
 		setTimer(0);
 		startNewMovement();
