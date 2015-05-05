@@ -36,8 +36,8 @@ public class Slime extends AutomaticObject {
 	 * @effect | setSchool(school)
 	 */
 	@Raw
-	public Slime(World world, double x, double y, Sprite[] sprites, School school) {
-		super(world, x, y, 100, 100, sprites, 100, 0, 250, 250, 70, 1000, true);
+	public Slime(World world, double x, double y, Sprite[] sprites, School school, String program) {
+		super(world, x, y, 100, 100, sprites, 100, 0, 250, 250, 70, 1000, true, program);
 		assert school != null;
 		this.setSchool(school);
 		startNewMovement();
@@ -154,10 +154,17 @@ public class Slime extends AutomaticObject {
 	@Override
 	public void advanceTime(double duration) {
 		super.advanceTime(duration);
-		setTimer(getTimer()+duration);
-		//Goals of 5.8 - 6 sec are less likely, but implementation is easier
-		if(getTimer() > getGoal())
-			startNewMovement();
+		
+		if (getProgram() != null) {
+			getProgram().advanceTime(duration);
+		}
+		
+		else {
+			setTimer(getTimer()+duration);
+			//Goals of 5.8 - 6 sec are less likely, but implementation is easier
+			if(getTimer() > getGoal())
+				startNewMovement();
+		}
 	}
 	
 	/**

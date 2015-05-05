@@ -87,7 +87,7 @@ public abstract class GameObject {
 							int initialHitPoints, int maxHitPoints, Sprite[] sprites,
 								double xInitialVelocity, double yInitialVelocity,
 									double xVelocityLimit,  double duckedVelocityLimit,
-										double xAcceleration, double yAcceleration, boolean solid) {
+										double xAcceleration, double yAcceleration, boolean solid, String program) {
 		
 		assert sprites != null;
 		assert isValidXInitialVelocityAndXVelocityLimit(xInitialVelocity, xVelocityLimit);
@@ -126,6 +126,11 @@ public abstract class GameObject {
 			assert this.canHaveAsPosition((int) x, (int) y);
 		
 		this.setTerminated(false);
+		
+		if(program != null)
+			this.PROGRAM = new Program(program,this);
+		else
+			this.PROGRAM = null;
 	}
 	
 	//geen documentatie nodig
@@ -150,6 +155,12 @@ public abstract class GameObject {
 	@Basic @Immutable
 	public double getDuckedVelocityLimit() {
 		return this.DUCKED_VELOCITY_LIMIT;
+	}
+	
+	private final Program PROGRAM;
+
+	public Program getProgram() {
+		return PROGRAM;
 	}
 
 	/**
@@ -567,7 +578,6 @@ public abstract class GameObject {
 		}
 		
 		for(int i = 0; i < fragments; i++) {
-			
 			moveX(adjustedDuration);
 			setJumping(canHaveAsPosition(getPosition()[0],getPosition()[1] - 1));
 			moveY(adjustedDuration);

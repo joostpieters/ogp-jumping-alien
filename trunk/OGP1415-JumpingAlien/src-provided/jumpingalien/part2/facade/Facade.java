@@ -232,7 +232,7 @@ public class Facade implements IFacadePart2 {
 
 	@Override
 	public Plant createPlant(int x, int y, Sprite[] sprites) {
-		return new Plant(null,(double) x, (double) y, sprites);
+		return new Plant(null,(double) x, (double) y, sprites, null);
 	}
 
 	@Override
@@ -257,7 +257,7 @@ public class Facade implements IFacadePart2 {
 
 	@Override
 	public Shark createShark(int x, int y, Sprite[] sprites) {
-		return new Shark(null, x, y, sprites);
+		return new Shark(null, x, y, sprites, null);
 	}
 
 	@Override
@@ -288,7 +288,7 @@ public class Facade implements IFacadePart2 {
 
 	@Override
 	public Slime createSlime(int x, int y, Sprite[] sprites, School school) {
-		return new Slime(null, x, y, sprites, school);
+		return new Slime(null, x, y, sprites, school, null);
 	}
 
 	@Override
