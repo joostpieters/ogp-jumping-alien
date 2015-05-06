@@ -26,4 +26,9 @@ public class Program {
 		return;
 	}
 
+	public Object getVariableValue(String param) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }
