@@ -3,30 +3,23 @@ import be.kuleuven.cs.som.annotate.*;
 
 public class Program {
 
-	public Program(String program, GameObject gameObject) {
-		this.GAME_OBJECT = gameObject;
-		this.STRING = program;
+	public Program() {
+		
 	}
 	
-	public final GameObject GAME_OBJECT;
+	public GameObject GAME_OBJECT;
 	
-	@Immutable
+	
 	public GameObject getGameObject() {
 		return GAME_OBJECT;
 	}
 
-	public final String STRING;
-	
-	@Immutable
-	public String getString() {
-		return STRING;
-	}
-	
+
 	public void advanceTime(double duration) {
 		return;
 	}
 
-	public Object getVariableValue(String param) {
+	public Object getVariableValue(String param, Type type) {
 		// TODO Auto-generated method stub
 		return null;
 	}

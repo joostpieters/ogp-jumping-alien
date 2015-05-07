@@ -1456,5 +1456,17 @@ public abstract class GameObject {
 	public boolean hasProperWorld() {
 		return (getMyWorld() != null);
 	}
+
+	public GameObject getSearchObject(
+			jumpingalien.part3.programs.IProgramFactory.Direction eval) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public Object isMoving(
+			jumpingalien.part3.programs.IProgramFactory.Direction direction) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 	
 }
