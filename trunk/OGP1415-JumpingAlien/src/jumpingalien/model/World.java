@@ -179,7 +179,9 @@ public class World {
     public void advanceTime(double duration) throws IllegalArgumentException {
             //if ((duration < 0) || (duration >= 0.2))
                     //throw new IllegalArgumentException("Illegal time duration!");
+    		
             getMyMazub().advanceTime(duration);
+            
             int[] new_pos1 = myMazub.getPosition();
             if ( !((new_pos1[0] <= getXLimit()) && (new_pos1[0] >= 0) ) ||
                             (! ((new_pos1[1] <= getYLimit()) && (new_pos1[1] >= 0))))
