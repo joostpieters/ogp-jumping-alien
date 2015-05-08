@@ -429,32 +429,29 @@ public class ProgramFactory<E,S,T,P> implements IProgramFactory<E,S,T,P> {
 
 	@Override
 	public T getDoubleType() {
-		// TODO Auto-generated method stub
-		return null;
+		return (T) Type.DOUBLE;
 	}
 
 	@Override
 	public T getBoolType() {
-		// TODO Auto-generated method stub
-		return null;
+		return (T) Type.BOOLEAN;
 	}
 
 	@Override
 	public T getGameObjectType() {
-		// TODO Auto-generated method stub
-		return null;
+		return (T) Type.GAME_OBJECT;
 	}
 
 	@Override
 	public T getDirectionType() {
-		// TODO Auto-generated method stub
-		return null;
+		return (T) Type.DIRECTION;
 	}
 
 	@Override
 	public P createProgram(S mainStatement, Map<String, T> globalVariables) {
-		// TODO Auto-generated method stub
-		return null;
+		getMyProgram().setMainStatement((Statement) mainStatement);
+		getMyProgram().initialiseVariables((Map<String, Type>) globalVariables);
+		return (P) MY_PROGRAM;
 	}
 
 

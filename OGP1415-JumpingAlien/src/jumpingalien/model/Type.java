@@ -7,13 +7,6 @@ package jumpingalien.model;
  * @author Jonathan
  *
  */
-public class Type {
-
-	/**
-	 * 
-	 */
-	public Type() {
-		// TODO Auto-generated constructor stub
-	}
-
+public enum Type {
+	BOOLEAN, DOUBLE, GAME_OBJECT, DIRECTION;
 }

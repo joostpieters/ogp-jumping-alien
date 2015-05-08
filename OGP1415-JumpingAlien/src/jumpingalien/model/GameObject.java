@@ -128,7 +128,7 @@ public abstract class GameObject {
 		this.setTerminated(false);
 		
 		if(program != null)
-			this.PROGRAM = new Program(program,this);
+			this.PROGRAM = new Program();
 		else
 			this.PROGRAM = null;
 	}
@@ -1457,16 +1457,130 @@ public abstract class GameObject {
 		return (getMyWorld() != null);
 	}
 
-	public GameObject getSearchObject(
-			jumpingalien.part3.programs.IProgramFactory.Direction eval) {
-		// TODO Auto-generated method stub
-		return null;
+	public Object getSearchObject(jumpingalien.part3.programs.IProgramFactory.Direction direction) {
+		
+		Object result = null;
+		
+		if (direction == jumpingalien.part3.programs.IProgramFactory.Direction.LEFT) {
+			double maxX = 0;
+			for (GameObject obj : getMyWorld().getGameObjects()) {
+				if(obj != this && obj.getX() <= getX() && obj.getX()+obj.getWidth() > maxX
+						&& linesOverlap(obj.getY(), obj.getY() + obj.getHeight(),
+											this.getY(), this.getY() + this.getHeight())) {
+					maxX = obj.getX() + getWidth();
+					result = obj;
+				}
+			}
+			
+			double x = this.getX() - 1;
+			
+			while (x > maxX) {
+				double y = this.getY() + 1;
+				while (y < this.getY() + getHeight() - 1) {
+					if (! (getMyWorld().getTerrainAt((int) x, (int) y).isPassable()))
+						return getMyWorld().getTerrainAt((int) x, (int) y);		
+					y += getMyWorld().getTileLength();
+				}
+				x -= getMyWorld().getTileLength();
+			}
+			
+		}
+		
+		else if (direction == jumpingalien.part3.programs.IProgramFactory.Direction.RIGHT) {
+			double minX = getMyWorld().getXLimit()+1;
+			for (GameObject obj : getMyWorld().getGameObjects()) {
+				if(obj != this && obj.getX()+getWidth() >= getX() + getWidth() && obj.getX() < minX
+						&& linesOverlap(obj.getY(), obj.getY() + obj.getHeight(),
+											this.getY(), this.getY() + this.getHeight())) {
+					minX = obj.getX();
+					result = obj;
+				}
+			}
+			
+			double x = this.getX() + getWidth() + 1;
+			
+			while (x < minX) {
+				double y = this.getY() + 1;
+				while (y < this.getY() + getHeight() - 1) {
+					if (! (getMyWorld().getTerrainAt((int) x, (int) y).isPassable()))
+						return getMyWorld().getTerrainAt((int) x, (int) y);		
+					y += getMyWorld().getTileLength();
+				}
+				x += getMyWorld().getTileLength();
+			}
+			
+		}
+		
+		else if (direction == jumpingalien.part3.programs.IProgramFactory.Direction.DOWN) {
+			double maxY = 0;
+			for (GameObject obj : getMyWorld().getGameObjects()) {
+				if(obj != this && obj.getY() <= getY() && obj.getY()+obj.getHeight() > maxY
+						&& linesOverlap(obj.getX(), obj.getX() + obj.getWidth(),
+											this.getX(), this.getX() + this.getWidth())) {
+					maxY = obj.getY() + getHeight();
+					result = obj;
+				}
+			}
+			
+			double y = this.getY() - 1;
+			
+			while (y > maxY) {
+				double x = this.getX() + 1;
+				while (x < this.getX() + getWidth() - 1 + getMyWorld().getTileLength()) {
+					if (! (getMyWorld().getTerrainAt((int) x, (int) y).isPassable()))
+						return getMyWorld().getTerrainAt((int) x, (int) y);		
+					x += getMyWorld().getTileLength();
+				}
+				y -= getMyWorld().getTileLength();
+			}
+		}
+		
+		else if (direction == jumpingalien.part3.programs.IProgramFactory.Direction.UP) {
+			double minY = getMyWorld().getYLimit()+1;
+			for (GameObject obj : getMyWorld().getGameObjects()) {
+				if(obj != this && obj.getY()+getHeight() >= getY() + getHeight() && obj.getY() < minY
+						&& linesOverlap(obj.getX(), obj.getX() + obj.getWidth(),
+											this.getX(), this.getX() + this.getWidth())) {
+					minY = obj.getY();
+					result = obj;
+				}
+			}
+			
+			double y = this.getY() + getHeight() + 1;
+			
+			while (y < minY) {
+				double x = this.getX() + 1;
+				while (x < this.getX() + getWidth() - 1) {
+					if (! (getMyWorld().getTerrainAt((int) x, (int) y).isPassable()))
+						return getMyWorld().getTerrainAt((int) x, (int) y);		
+					x += getMyWorld().getTileLength();
+				}
+				y += getMyWorld().getTileLength()-1;
+			}
+			
+		}
+		
+		
+		
+		return result;
+		
 	}
 
-	public Object isMoving(
-			jumpingalien.part3.programs.IProgramFactory.Direction direction) {
-		// TODO Auto-generated method stub
-		return null;
+	public static boolean linesOverlap(double begin1, double end1, double begin2, double end2) {
+	    return  ( (begin1 >= begin2 && begin1 <= end2) ||   
+				(end1 >= begin2 && end1 <= end2) ||
+				(begin2 >= begin1 && begin2 <= end1) ||
+				(end2 >= begin1 && end2 <= end1) );
 	}
-	
+
+	public boolean isMoving(
+			jumpingalien.part3.programs.IProgramFactory.Direction direction) {
+		if (direction == jumpingalien.part3.programs.IProgramFactory.Direction.LEFT) 
+			return getXVelocity() < 0;
+		if (direction == jumpingalien.part3.programs.IProgramFactory.Direction.RIGHT)
+			return getXVelocity() > 0;
+		if (direction == jumpingalien.part3.programs.IProgramFactory.Direction.UP)
+			return getYVelocity() > 0;
+		return getYVelocity() < 0;
+	}
 }
