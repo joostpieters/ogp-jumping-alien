@@ -91,7 +91,7 @@ public abstract class Alien extends GameObject {
 //	public abstract void handleInteraction(double duration);
 	
 	/**
-	 * Handle the interaction of this Alien charachter with other objects for the given time duration.
+	 * Handle the interaction of this Alien character with other objects for the given time duration.
 	 * 
 	 * @param duration
 	 * 		  The duration for which the interaction should be handled. 

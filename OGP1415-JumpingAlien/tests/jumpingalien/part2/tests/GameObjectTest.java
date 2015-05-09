@@ -63,9 +63,9 @@ public class GameObjectTest {
 		int[] window = {1000,600};
 		world = new World(1023,768,1,window,500,500);
 		obj = new Mazub(world,0,0,sprites);
-		plant = new Plant(world, 0, 0, plantSprites);
+		plant = new Plant(world, 0, 0, plantSprites, null);
 		school = new School();
-		slime = new Slime(world, 100, 100, slimeSprites, school);
+		slime = new Slime(world, 100, 100, slimeSprites, school, null);
 		world.addObject(obj);
 		world.addObject(plant);
 		world.addObject(slime);
@@ -481,8 +481,11 @@ public class GameObjectTest {
 		assertTrue(obj.canJump());
 	}
 	
+	
+	//Test hieronder faalt door luie collision checkings
 	@Test
 	public void duckingTest() {
+		
 		world.setTerrainAt(obj.getPosition()[0]+obj.getWidth()+50,obj.getHeight()-5,TerrainType.SOLID_GROUND);
 		assertFalse(obj.isDucking());
 		obj.startMove(Direction.RIGHT);

@@ -117,7 +117,9 @@ public class Program {
 
 
 	public void advanceTime(double duration) {
-		return;
+		addTimeRemaining(duration);
+		while(getTimeRemaining() > 0)
+			getCurrentStatement().execute();
 	}
 
 	public Object getVariableValue(String param, Type type) {
