@@ -1,6 +1,10 @@
 package jumpingalien.model;
 
 import static org.junit.Assert.*;
+
+import java.util.HashMap;
+import java.util.Map;
+
 import jumpingalien.part3.programs.IProgramFactory;
 import jumpingalien.part3.programs.SourceLocation;
 
@@ -11,6 +15,9 @@ public class ProgramFactoryTest {
 
 	
 	IProgramFactory<Expression, Statement, Type, Program> factory = new ProgramFactory<>();
+	Program program = ((ProgramFactory)factory).MY_PROGRAM;
+	Map<String, Type> map = new HashMap<>();
+	
 	Expression e;
 	Expression e2;
 	Expression e3;
@@ -39,11 +46,28 @@ public class ProgramFactoryTest {
 		e9 = factory.createNot(e7, null);
 		e10 = factory.createNotEquals(e, e2, null);
 				
+		
+		map.put("aa", Type.DOUBLE);
+		map.put("bb", Type.DOUBLE);
+		program.initialiseVariables(map);
+		program.setVariableValue("aa", Type.DOUBLE, (Double) 5.0);
+		program.setVariableValue("bb", Type.DOUBLE, (Double) 7.0);
+		
+		e11 = factory.createReadVariable("aa", Type.DOUBLE, null);
+		e12 = factory.createReadVariable("bb", Type.DOUBLE, null);
+		e13 = factory.createAddition(e11, e12, null);
+		
+		//Moet aan eval nog een Programma meegegeven worden?
+		//Eruit gesloopt en werkt!
 	}
 	
 	@Test
 	public void test() {
-		System.out.println(e10.eval(new Program()));
+		System.out.println(e13.eval());
+		program.setVariableValue("aa", Type.DOUBLE, (Double) 55.0);
+		System.out.println(e13.eval());
+		//KLOPT WEL. LAMBDA'S LIJKEN VROEGEN TE BINDEN
+		
 
 	}
 

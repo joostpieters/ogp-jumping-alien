@@ -101,11 +101,11 @@ public class World {
 	 * 		   |    if(c.isInstance(obj))
 	 * 		   | 	   result.contains(obj)
 	 */
-	public Set getAllInstancesOf(Class c) { 
-		Set<GameObject> result = new HashSet<>();
+	public <T> Set<T> getAllInstancesOf(Class<T> c) { 
+		Set<T> result = new HashSet<>();
 		for(GameObject obj : getGameObjects()) {
 			if(c.isInstance(obj))
-				result.add(obj);
+				result.add((T) obj);
 		}
 		return result;
 	}

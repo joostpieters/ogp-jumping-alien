@@ -55,8 +55,8 @@ public class WorldTest {
 		world = new World(5000, 5000, 100, windowSize, 0, 0);
 		mazub = new Mazub(world, 110, 0, mazubSprites);
 		school = new School();
-		slime1 = new Slime(world, 200, 0, slimeSprites, school);
-		slime2 = new Slime(world, 300, 200, slimeSprites, school);
+		slime1 = new Slime(world, 200, 0, slimeSprites, school, null);
+		slime2 = new Slime(world, 300, 200, slimeSprites, school, null);
 	}
 
 	@Test
@@ -119,7 +119,7 @@ public class WorldTest {
 	public void advanceTimeTest() {
 		addObjectTest();
 		mazub.startMove(Direction.LEFT);
-		Slime slime3 = new Slime(world, 10000, 10000, slimeSprites, school);
+		Slime slime3 = new Slime(world, 10000, 10000, slimeSprites, school, null);
 		world.addObject(slime3);
 		assertFalse(world.getDidPlayerWin());
 		assertFalse(mazub.isTerminated());
