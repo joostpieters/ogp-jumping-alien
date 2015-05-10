@@ -18,6 +18,7 @@ public class Program {
 		boolMap = new HashMap<String, Boolean>();
 		setTimeRemaining(0);
 		setWaitTime(0);
+		setContainsError(false);
 	}
 
 	public GameObject getGameObject() {
@@ -114,10 +115,30 @@ public class Program {
 				doubleMap.put(key, 0.0);
 		}
 	}
+	
+	public boolean getContainsError() {
+		return containsError;
+	}
 
+	private void setContainsError(boolean containsError) {
+		this.containsError = containsError;
+	}
+	
+	private boolean containsError;
 
 	public void advanceTime(double duration) {
-		addTimeRemaining(duration);
+		double dt = duration;
+		if(getWaitTime() > 0) {
+			if(dt < getWaitTime()) {
+				substractWaitTime(dt);
+				dt = 0;
+			}
+			else {
+				dt -= getWaitTime();
+				setWaitTime(0);
+			}
+		}
+		addTimeRemaining(dt);
 		while(getTimeRemaining() > 0)
 			getCurrentStatement().execute();
 	}
