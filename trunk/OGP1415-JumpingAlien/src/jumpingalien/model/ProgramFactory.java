@@ -204,19 +204,19 @@ public class ProgramFactory implements IProgramFactory<Expression, Statement, Ty
 
 	@Override
 	public Expression createGetWidth(Expression expr, SourceLocation sourceLocation) {
-		return new Expression((Object[] a) -> ((GameElement)((Expression)a[0]).eval()).getWidth(), 
+		return new Expression((Object[] a) -> new Double(((GameElement)((Expression)a[0]).eval()).getWidth()), 
 				new Object[] {expr}, sourceLocation);	
 	}
 
 	@Override
 	public Expression createGetHeight(Expression expr, SourceLocation sourceLocation) {
-		return new Expression((Object[] a) -> ((GameElement)((Expression)a[0]).eval()).getHeight(), 
+		return new Expression((Object[] a) -> new Double (((GameElement)((Expression)a[0]).eval()).getHeight()), 
 				new Object[] {expr}, sourceLocation);	
 	}
 
 	@Override
 	public Expression createGetHitPoints(Expression expr, SourceLocation sourceLocation) {
-		return new Expression((Object[] a) -> ((GameObject)((Expression)a[0]).eval()).getHitPoints(), 
+		return new Expression((Object[] a) -> new Double (((GameObject)((Expression)a[0]).eval()).getHitPoints()), 
 				new Object[] {expr}, sourceLocation);	
 	}
 
