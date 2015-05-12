@@ -2,6 +2,8 @@ package jumpingalien.model;
 
 import static org.junit.Assert.*;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -31,6 +33,13 @@ public class ProgramFactoryTest {
 	Expression e11;
 	Expression e12;
 	Expression e13;
+	Statement s1;
+	Statement s2;
+	Statement s3;
+	Statement s4;
+	Statement s5;
+	List<Statement> lst;
+	
 
 	
 	@Before
@@ -57,16 +66,25 @@ public class ProgramFactoryTest {
 		e12 = factory.createReadVariable("bb", Type.DOUBLE, null);
 		e13 = factory.createAddition(e11, e12, null);
 		
+		
 		//Moet aan eval nog een Programma meegegeven worden?
 		//Eruit gesloopt en werkt!
+		
+		s1 = factory.createAssignment("aa", Type.DOUBLE, e, null);
+		s2 = factory.createPrint(e, null);
+		s3 = factory.createPrint(e2, null);
+		s4 = factory.createIf(e7, s2, s3, null);
+		lst = new ArrayList<Statement>();
+		lst.add(s4);
+		lst.add(factory.createPrint(e7, null));
+		s5 = factory.createSequence(lst, null);
+		
 	}
 	
 	@Test
 	public void test() {
-		System.out.println(e13.eval());
-		program.setVariableValue("aa", Type.DOUBLE, (Double) 55.0);
-		System.out.println(e13.eval());
-		//KLOPT WEL. LAMBDA'S LIJKEN VROEGEN TE BINDEN
+		program.setMainStatement(s5);
+		program.advanceTime(0.05);
 		
 
 	}

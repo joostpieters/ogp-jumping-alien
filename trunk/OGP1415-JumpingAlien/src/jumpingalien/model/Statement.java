@@ -3,16 +3,19 @@
  */
 package jumpingalien.model;
 
+import jumpingalien.part3.programs.SourceLocation;
+
 /**
  * @author Jonathan
  *
  */
-public class Statement {
+public abstract class Statement {
 
 	/**
 	 * 
 	 */
-	public Statement(Program caller) {
+	public Statement(Program caller, SourceLocation location) {
+		LOCATION = location;
 		CALLER = caller;
 	}
 	
@@ -21,13 +24,25 @@ public class Statement {
 	}
 	
 	private final Program CALLER;
-	private Expression condition;
-	private Statement nextIfTrue;
-	private Statement nextIfFalse;
-	private Statement parent;
-	
-	public void execute() {
-		return;
+
+	public SourceLocation getLocation() {
+		return LOCATION;
 	}
+	
+	private final SourceLocation LOCATION;
+	
+	public abstract void execute() throws ClassCastException;
+	
+	public Statement getNextStatement() {
+		if(nextStatement == null)
+			return getCaller().getMainStatement();
+		return nextStatement;
+	}
+	
+	protected void setNextStatement(Statement nextStatement) {
+		assert getNextStatement() == null;
+		this.nextStatement = nextStatement;
+	}
+	private Statement nextStatement;
 	
 }

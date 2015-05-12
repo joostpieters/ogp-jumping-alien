@@ -6,6 +6,7 @@ package jumpingalien.model;
 import java.util.HashSet;
 import java.util.Set;
 
+import jumpingalien.part3.programs.IProgramFactory.Direction;
 import be.kuleuven.cs.som.annotate.*;
 
 /**
@@ -60,14 +61,17 @@ public class World {
 		Y_LIMIT = yLimit;
 		TILE_LENGTH = tileLength;
 		gameObjects = new HashSet<GameObject>();
-		tiles = new TerrainType[(xLimit+1)/tileLength][(yLimit+1)/tileLength];
+		tiles = new GameTile[(xLimit+1)/tileLength][(yLimit+1)/tileLength];
 		TARGET_TILE_X = targetTileX;
 		TARGET_TILE_Y = targetTileY;
+		terrainObjectSet = new HashSet<>();
 		
-		for(int i = 0; i < (xLimit+1)/tileLength; i++)
-			for(int j = 0; j < (yLimit+1)/tileLength; j++)
-				setTerrainAt(i,j,TerrainType.AIR);
-		
+		for(int i = 0; i < (xLimit+1)/tileLength; i++) {
+			for(int j = 0; j < (yLimit+1)/tileLength; j++) {
+				tiles[i][j] = new GameTile((double)i*tileLength, (double) j*tileLength, this, TerrainType.AIR);
+				terrainObjectSet.add(tiles[i][j]);
+			}
+		}
 		setWindowSize(windowSize[0],windowSize[1]);
 		setWindowPosition(0,0);
 		adjustWindow();
@@ -179,8 +183,13 @@ public class World {
     public void advanceTime(double duration) throws IllegalArgumentException {
             //if ((duration < 0) || (duration >= 0.2))
                     //throw new IllegalArgumentException("Illegal time duration!");
-    		
-            getMyMazub().advanceTime(duration);
+//    		
+//            getMyMazub().advanceTime(duration);
+//            GameElement a = getMyMazub().getSearchObject(Direction.RIGHT);
+//            if(a instanceof GameTile)
+//            	System.out.println(((GameTile) a).getTerrainType());
+//            else
+//            	System.out.println(a);
             
             int[] new_pos1 = myMazub.getPosition();
             if ( !((new_pos1[0] <= getXLimit()) && (new_pos1[0] >= 0) ) ||
@@ -326,8 +335,21 @@ public class World {
 		if (! isInsideBoundaries(x,y))
 			return TerrainType.AIR;
 		int[] location = getMatchingTile(x,y);
+		return this.tiles[location[0]][location[1]].getTerrainType();
+	}
+	
+	public GameTile getTerrainObjectAt(int x, int y) {
+		//if (! isInsideBoundaries(x,y))
+			//return null;
+		int[] location = getMatchingTile(x,y);
 		return this.tiles[location[0]][location[1]];
 	}
+	
+	public Set<GameTile> getTerrainObjects() {
+		return terrainObjectSet;
+	}
+	
+	private Set<GameTile> terrainObjectSet;
 	
 	/**
 	 * Set the terrain at the given position to the given terrain type.
@@ -343,7 +365,7 @@ public class World {
 	 */
 	public void setTerrainAt(int x, int y, TerrainType terrain) {
 		assert isInsideBoundaries(x*getTileLength(),y*getTileLength());
-		this.tiles[x][y] = terrain;
+		this.tiles[x][y].setTerrainType(terrain);
 	}
 	
 	/**
@@ -365,7 +387,7 @@ public class World {
 	/**
 	 * Variable registering the terrain type on tiles.
 	 */
-	private TerrainType[][] tiles;
+	private GameTile[][] tiles;
 	
 	/**
 	 * An enumeration introducing different terrain types used to express the terrain of a tile.

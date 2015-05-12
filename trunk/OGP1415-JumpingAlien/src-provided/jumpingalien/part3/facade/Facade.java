@@ -1,20 +1,33 @@
 package jumpingalien.part3.facade;
 
 import java.util.Collection;
+import java.util.Optional;
+
+
+
+
+import org.antlr.v4.runtime.CharStream;
 
 import jumpingalien.model.Buzam;
 import jumpingalien.model.JumpingException;
 import jumpingalien.model.Mazub;
 import jumpingalien.model.Plant;
 import jumpingalien.model.Program;
+import jumpingalien.model.ProgramFactory;
 import jumpingalien.model.School;
 import jumpingalien.model.Shark;
 import jumpingalien.model.Slime;
 import jumpingalien.model.World;
 import jumpingalien.model.World.TerrainType;
+import jumpingalien.model.Statement;
+import jumpingalien.model.Type;
+import jumpingalien.model.Expression;
+import jumpingalien.part3.programs.IProgramFactory;
 import jumpingalien.part3.programs.ParseOutcome;
+import jumpingalien.part3.programs.ProgramParser;
 import jumpingalien.util.ModelException;
 import jumpingalien.util.Sprite;
+
 
 public class Facade implements IFacadePart3 {
 
@@ -321,28 +334,27 @@ public class Facade implements IFacadePart3 {
 
 	@Override
 	public Buzam createBuzam(int pixelLeftX, int pixelBottomY, Sprite[] sprites) {
-		Buzam myBuzam = new Buzam(null,(double) pixelLeftX, (double) pixelBottomY,sprites,null);
+		Buzam myBuzam = new Buzam(null,(double) pixelLeftX, (double) pixelBottomY,sprites, null);
 		return myBuzam;
 	}
 
 	@Override
 	public Buzam createBuzamWithProgram(int pixelLeftX, int pixelBottomY,
 			Sprite[] sprites, Program program) {
-		Buzam myBuzam = new Buzam(null,(double) pixelLeftX, (double) pixelBottomY,sprites,null);
+		Buzam myBuzam = new Buzam(null,(double) pixelLeftX, (double) pixelBottomY,sprites, program);
 		return myBuzam;
-		//aanpassen
 	}
 
 	@Override
 	public Plant createPlantWithProgram(int x, int y, Sprite[] sprites,
 			Program program) {
-		return new Plant(null,(double) x, (double) y, sprites, null);
+		return new Plant(null,(double) x, (double) y, sprites, program);
 	}
 
 	@Override
 	public Shark createSharkWithProgram(int x, int y, Sprite[] sprites,
 			Program program) {
-		return new Shark(null, x, y, sprites, null);
+		return new Shark(null, x, y, sprites, program);
 	}
 
 	@Override
@@ -353,8 +365,13 @@ public class Facade implements IFacadePart3 {
 
 	@Override
 	public ParseOutcome<?> parse(String text) {
-		// TODO Auto-generated method stub
-		return null;
+		IProgramFactory<Expression, Statement, Type, Program> factory = new ProgramFactory();
+		ProgramParser<Expression, Statement, Type, Program> parser = new ProgramParser<>(factory);
+		Optional<Program> parseResult = parser.parseString(text);
+		if(parseResult.isPresent())
+			return ParseOutcome.success(parseResult.get());
+		else
+			return ParseOutcome.failure(parser.getErrors());
 	}
 
 	@Override

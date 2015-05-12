@@ -1,6 +1,7 @@
 package jumpingalien.model;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Stack;
 
 import jumpingalien.part3.programs.IProgramFactory.Direction;
 import be.kuleuven.cs.som.annotate.*;
@@ -12,13 +13,14 @@ public class Program {
 	public Program() {
 		GAME_OBJECT = null;
 		MAIN_STATEMENT = null;
-		objMap = new HashMap<String, GameObject>();
+		objMap = new HashMap<String, GameElement>();
 		dirMap = new HashMap<String, Direction>();
 		doubleMap = new HashMap<String, Double>();
 		boolMap = new HashMap<String, Boolean>();
 		setTimeRemaining(0);
 		setWaitTime(0);
 		setContainsError(false);
+		loopStack = new Stack<Statement>();
 	}
 
 	public GameObject getGameObject() {
@@ -43,7 +45,7 @@ public class Program {
 	private GameObject GAME_OBJECT;
 	private Statement MAIN_STATEMENT;
 	
-	private Map<String, GameObject> objMap;
+	private Map<String, GameElement> objMap;
 	private Map<String, Direction> dirMap;
 	private Map<String, Double>	doubleMap;
 	private Map<String, Boolean> boolMap;
@@ -127,20 +129,15 @@ public class Program {
 	private boolean containsError;
 
 	public void advanceTime(double duration) {
-		double dt = duration;
-		if(getWaitTime() > 0) {
-			if(dt < getWaitTime()) {
-				substractWaitTime(dt);
-				dt = 0;
-			}
-			else {
-				dt -= getWaitTime();
-				setWaitTime(0);
-			}
-		}
+		double dt = duration;		
 		addTimeRemaining(dt);
-		while(getTimeRemaining() > 0)
-			getCurrentStatement().execute();
+		while(getTimeRemaining() > 0) {
+			double a = getWaitTime();
+			substractWaitTime(getTimeRemaining());
+			substractTimeRemaining(a);
+			if (getWaitTime() == 0 && getTimeRemaining() > 0)
+				getCurrentStatement().execute();
+		}
 	}
 
 	public Object getVariableValue(String param, Type type) {
@@ -157,13 +154,29 @@ public class Program {
 	
 	public void setVariableValue(String param, Type type, Object value) {
 		if (type == Type.GAME_OBJECT)
-			objMap.put(param,(GameObject) value);
+			objMap.put(param,(GameElement) value);
 		if (type == Type.DIRECTION)
 			dirMap.put(param,(Direction) value);
 		if (type == Type.DOUBLE)
 			doubleMap.put(param,(Double) value);
 		if (type == Type.BOOLEAN)
 			boolMap.put(param,(Boolean) value);
+	}
+	
+	private Stack<Statement> loopStack;
+
+	private Stack<Statement> getLoopStack() {
+		return loopStack;
+	}
+
+	protected void addLoop(Statement loop) {
+		loopStack.push(loop);
+	}
+	
+	protected Statement popLoop() {
+		if (loopStack.empty())
+			return null;
+		return getLoopStack().pop();
 	}
 
 }

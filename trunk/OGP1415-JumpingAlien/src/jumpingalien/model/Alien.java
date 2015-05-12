@@ -29,7 +29,7 @@ public abstract class Alien extends GameObject {
  	 * 			The world for this new Alien character.
 	 */
 	@Raw
-	public Alien(World world, double x, double y,int maxHitPoints, Sprite[] sprites, String program) {
+	public Alien(World world, double x, double y,int maxHitPoints, Sprite[] sprites, Program program) {
 		super(world, x, y, maxHitPoints, 500 ,sprites, 
 				100, 800, 300, 100,
 								90, 1000, true, program);		

@@ -29,7 +29,7 @@ import be.kuleuven.cs.som.annotate.*;
  * 			2e Bachelor ingenieurswetenschappen
  * 			Subversion repository: https://code.google.com/p/ogp-jumping-alien/
  */
-public abstract class GameObject {
+public abstract class GameObject implements GameElement{
 
 	/**
 	 * Initialize this new game object with the given parameters.
@@ -87,7 +87,7 @@ public abstract class GameObject {
 							int initialHitPoints, int maxHitPoints, Sprite[] sprites,
 								double xInitialVelocity, double yInitialVelocity,
 									double xVelocityLimit,  double duckedVelocityLimit,
-										double xAcceleration, double yAcceleration, boolean solid, String program) {
+										double xAcceleration, double yAcceleration, boolean solid, Program program) {
 		
 		assert sprites != null;
 		assert isValidXInitialVelocityAndXVelocityLimit(xInitialVelocity, xVelocityLimit);
@@ -126,11 +126,10 @@ public abstract class GameObject {
 			assert this.canHaveAsPosition((int) x, (int) y);
 		
 		this.setTerminated(false);
+		this.PROGRAM = program;
+		if(PROGRAM != null)
+			PROGRAM.setGameObject(this);
 		
-		if(program != null)
-			this.PROGRAM = new Program();
-		else
-			this.PROGRAM = null;
 	}
 	
 	//geen documentatie nodig
@@ -1457,9 +1456,9 @@ public abstract class GameObject {
 		return (getMyWorld() != null);
 	}
 
-	public Object getSearchObject(jumpingalien.part3.programs.IProgramFactory.Direction direction) {
+	public GameElement getSearchObject(jumpingalien.part3.programs.IProgramFactory.Direction direction) {
 		
-		Object result = null;
+		GameElement result = null;
 		
 		if (direction == jumpingalien.part3.programs.IProgramFactory.Direction.LEFT) {
 			double maxX = 0;
@@ -1478,7 +1477,7 @@ public abstract class GameObject {
 				double y = this.getY() + 1;
 				while (y < this.getY() + getHeight() - 1) {
 					if (! (getMyWorld().getTerrainAt((int) x, (int) y).isPassable()))
-						return getMyWorld().getTerrainAt((int) x, (int) y);		
+						return getMyWorld().getTerrainObjectAt((int) x, (int) y);		
 					y += getMyWorld().getTileLength();
 				}
 				x -= getMyWorld().getTileLength();
@@ -1503,7 +1502,7 @@ public abstract class GameObject {
 				double y = this.getY() + 1;
 				while (y < this.getY() + getHeight() - 1) {
 					if (! (getMyWorld().getTerrainAt((int) x, (int) y).isPassable()))
-						return getMyWorld().getTerrainAt((int) x, (int) y);		
+						return getMyWorld().getTerrainObjectAt((int) x, (int) y);		
 					y += getMyWorld().getTileLength();
 				}
 				x += getMyWorld().getTileLength();
@@ -1528,7 +1527,7 @@ public abstract class GameObject {
 				double x = this.getX() + 1;
 				while (x < this.getX() + getWidth() - 1 + getMyWorld().getTileLength()) {
 					if (! (getMyWorld().getTerrainAt((int) x, (int) y).isPassable()))
-						return getMyWorld().getTerrainAt((int) x, (int) y);		
+						return getMyWorld().getTerrainObjectAt((int) x, (int) y);		
 					x += getMyWorld().getTileLength();
 				}
 				y -= getMyWorld().getTileLength();
@@ -1552,7 +1551,7 @@ public abstract class GameObject {
 				double x = this.getX() + 1;
 				while (x < this.getX() + getWidth() - 1) {
 					if (! (getMyWorld().getTerrainAt((int) x, (int) y).isPassable()))
-						return getMyWorld().getTerrainAt((int) x, (int) y);		
+						return getMyWorld().getTerrainObjectAt((int) x, (int) y);		
 					x += getMyWorld().getTileLength();
 				}
 				y += getMyWorld().getTileLength()-1;
