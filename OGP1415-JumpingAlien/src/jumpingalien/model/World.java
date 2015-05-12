@@ -181,10 +181,11 @@ public class World {
 	
     //no documentation needed
     public void advanceTime(double duration) throws IllegalArgumentException {
+
             //if ((duration < 0) || (duration >= 0.2))
                     //throw new IllegalArgumentException("Illegal time duration!");
 //    		
-//            getMyMazub().advanceTime(duration);
+            getMyMazub().advanceTime(duration);
 //            GameElement a = getMyMazub().getSearchObject(Direction.RIGHT);
 //            if(a instanceof GameTile)
 //            	System.out.println(((GameTile) a).getTerrainType());

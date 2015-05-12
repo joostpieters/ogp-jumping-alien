@@ -552,6 +552,7 @@ public abstract class GameObject implements GameElement{
 	public void advanceTime(double duration) {
 		if(duration > 0.2 || duration < 0) return;
 		//Bij het laden van het level loopt het zonder deze regel soms mis (veel te grote duration)
+
 		
 		handleInteraction(duration);
 		
@@ -597,6 +598,7 @@ public abstract class GameObject implements GameElement{
 			 endDuck();
 		
 		setTimeToBeImmune(getTimeToBeImmune()-duration);
+		
 		
 	}
 		
