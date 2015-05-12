@@ -13,8 +13,8 @@ import jumpingalien.part3.programs.SourceLocation;
  * @author Jonathan
  *
  */
-@SuppressWarnings(value = {"unchecked" })
-public class ProgramFactory<E,S,T,P> implements IProgramFactory<E,S,T,P> {
+
+public class ProgramFactory implements IProgramFactory<Expression, Statement, Type, Program> {
 
 	
 	
@@ -31,202 +31,202 @@ public class ProgramFactory<E,S,T,P> implements IProgramFactory<E,S,T,P> {
 	
 	
 	@Override
-	public E createReadVariable(String variableName, T variableType,
+	public Expression createReadVariable(String variableName, Type variableType,
 			SourceLocation sourceLocation) {
-		return (E) new Expression((Object[] a) -> getMyProgram().getVariableValue((String) a[0], (Type) a[1]), 
+		return new Expression((Object[] a) -> getMyProgram().getVariableValue((String) a[0], (Type) a[1]), 
 											new Object[] {variableName,variableType}, sourceLocation);
 	}
 
 	@Override
-	public E createDoubleConstant(double value, SourceLocation sourceLocation) {
-		return (E) new Expression((Object[] a) -> a[0], new Double[] {new Double(value)}, sourceLocation);
+	public Expression createDoubleConstant(double value, SourceLocation sourceLocation) {
+		return new Expression((Object[] a) -> a[0], new Double[] {new Double(value)}, sourceLocation);
 	}
 
 	@Override
-	public E createTrue(SourceLocation sourceLocation) {
-		return (E) new Expression((Object[] a) -> a[0], new Boolean[] {new Boolean(true)}, sourceLocation);
+	public Expression createTrue(SourceLocation sourceLocation) {
+		return new Expression((Object[] a) -> a[0], new Boolean[] {new Boolean(true)}, sourceLocation);
 	}
 
 	@Override
-	public E createFalse(SourceLocation sourceLocation) {
-		return (E) new Expression((Object[] a) -> a[0], new Boolean[] {new Boolean(false)}, sourceLocation);
+	public Expression createFalse(SourceLocation sourceLocation) {
+		return new Expression((Object[] a) -> a[0], new Boolean[] {new Boolean(false)}, sourceLocation);
 	}
 
 	@Override
-	public E createNull(SourceLocation sourceLocation) {
-		return (E) new Expression((Object[] a) -> a[0], new Object[] {null}, sourceLocation);
+	public Expression createNull(SourceLocation sourceLocation) {
+		return new Expression((Object[] a) -> a[0], new Object[] {null}, sourceLocation);
 	}
 
 	@Override
-	public E createSelf(SourceLocation sourceLocation) {
-		return (E) new Expression((Object[] a) -> a[0], new Object[] {getMyProgram().getGameObject()}, sourceLocation);
+	public Expression createSelf(SourceLocation sourceLocation) {
+		return new Expression((Object[] a) -> a[0], new Object[] {getMyProgram().getGameObject()}, sourceLocation);
 	}
 
 	@Override
-	public E createDirectionConstant(
+	public Expression createDirectionConstant(
 			jumpingalien.part3.programs.IProgramFactory.Direction value,
 			SourceLocation sourceLocation) {
-		return (E) new Expression((Object[] a) -> a[0], new Direction[] {value}, sourceLocation);
+		return new Expression((Object[] a) -> a[0], new Direction[] {value}, sourceLocation);
 	}
 
 	@Override
-	public E createAddition(E left, E right, SourceLocation sourceLocation) {
-		return (E) new Expression((Object[] a) -> (Double)((Expression)a[0]).eval() + 
+	public Expression createAddition(Expression left, Expression right, SourceLocation sourceLocation) {
+		return new Expression((Object[] a) -> (Double)((Expression)a[0]).eval() + 
 														(Double)((Expression)a[1]).eval(),
 								new Object[] {left, right}, 
 									sourceLocation);
 	}
 
 	@Override
-	public E createSubtraction(E left, E right, SourceLocation sourceLocation) {
-		return (E) new Expression((Object[] a) -> (Double)((Expression)a[0]).eval() - 
+	public Expression createSubtraction(Expression left, Expression right, SourceLocation sourceLocation) {
+		return new Expression((Object[] a) -> (Double)((Expression)a[0]).eval() - 
 														(Double)((Expression)a[1]).eval(),
 								new Object[] {left, right}, 
 									sourceLocation);
 	}
 
 	@Override
-	public E createMultiplication(E left, E right, SourceLocation sourceLocation) {
-		return (E) new Expression((Object[] a) -> (Double)((Expression)a[0]).eval() *
+	public Expression createMultiplication(Expression left, Expression right, SourceLocation sourceLocation) {
+		return new Expression((Object[] a) -> (Double)((Expression)a[0]).eval() *
 														(Double)((Expression)a[1]).eval(),
 								new Object[] {left, right}, 
 									sourceLocation);
 	}
 
 	@Override
-	public E createDivision(E left, E right, SourceLocation sourceLocation) {
-		return (E) new Expression((Object[] a) -> (Double)((Expression)a[0]).eval() /
+	public Expression createDivision(Expression left, Expression right, SourceLocation sourceLocation) {
+		return new Expression((Object[] a) -> (Double)((Expression)a[0]).eval() /
 														(Double)((Expression)a[1]).eval(),
 								new Object[] {left, right}, 
 									sourceLocation);
 	}
 
 	@Override
-	public E createSqrt(E expr, SourceLocation sourceLocation) {
-		return (E) new Expression((Object[] a) -> Math.sqrt((Double)((Expression)a[0]).eval()),
+	public Expression createSqrt(Expression expr, SourceLocation sourceLocation) {
+		return new Expression((Object[] a) -> Math.sqrt((Double)((Expression)a[0]).eval()),
 				new Object[] {expr}, sourceLocation);
 	}
 
 	@Override
-	public E createRandom(E maxValue, SourceLocation sourceLocation) {
-		return (E) new Expression((Object[] a) -> (Double)((Expression)(a[0])).eval()*Math.random(),
+	public Expression createRandom(Expression maxValue, SourceLocation sourceLocation) {
+		return new Expression((Object[] a) -> (Double)((Expression)(a[0])).eval()*Math.random(),
 				new Object[] {maxValue}, sourceLocation);
 	}
 
 	@Override
-	public E createAnd(E left, E right, SourceLocation sourceLocation) {
-		return (E) new Expression((Object[] a) -> (Boolean)((Expression)a[0]).eval() &&
+	public Expression createAnd(Expression left, Expression right, SourceLocation sourceLocation) {
+		return new Expression((Object[] a) -> (Boolean)((Expression)a[0]).eval() &&
 				(Boolean)((Expression)a[1]).eval(),
 								new Object[] {left, right}, 
 									sourceLocation);
 	}
 
 	@Override
-	public E createOr(E left, E right, SourceLocation sourceLocation) {
-		return (E) new Expression((Object[] a) -> (Boolean)((Expression)a[0]).eval() ||
+	public Expression createOr(Expression left, Expression right, SourceLocation sourceLocation) {
+		return new Expression((Object[] a) -> (Boolean)((Expression)a[0]).eval() ||
 				(Boolean)((Expression)a[1]).eval(),
 								new Object[] {left, right}, 
 									sourceLocation);
 	}
 
 	@Override
-	public E createNot(E expr, SourceLocation sourceLocation) {
-		return (E) new Expression((Object[] a) -> ! (Boolean)((Expression)a[0]).eval(),
+	public Expression createNot(Expression expr, SourceLocation sourceLocation) {
+		return new Expression((Object[] a) -> ! (Boolean)((Expression)a[0]).eval(),
 								new Object[] {expr}, 
 									sourceLocation);
 	}
 
 	@Override
-	public E createLessThan(E left, E right, SourceLocation sourceLocation) {
-		return (E) new Expression((Object[] a) -> (Double)((Expression)a[0]).eval() <
+	public Expression createLessThan(Expression left, Expression right, SourceLocation sourceLocation) {
+		return new Expression((Object[] a) -> (Double)((Expression)a[0]).eval() <
 				(Double)((Expression)a[1]).eval(),
 								new Object[] {left, right}, 
 									sourceLocation);
 	}
 
 	@Override
-	public E createLessThanOrEqualTo(E left, E right,
+	public Expression createLessThanOrEqualTo(Expression left, Expression right,
 			SourceLocation sourceLocation) {
-		return (E) new Expression((Object[] a) -> (Double)((Expression)a[0]).eval() <=
+		return new Expression((Object[] a) -> (Double)((Expression)a[0]).eval() <=
 				(Double)((Expression)a[1]).eval(),
 								new Object[] {left, right}, 
 									sourceLocation);
 	}
 
 	@Override
-	public E createGreaterThan(E left, E right, SourceLocation sourceLocation) {
-		return (E) new Expression((Object[] a) -> (Double)((Expression)a[0]).eval() >
+	public Expression createGreaterThan(Expression left, Expression right, SourceLocation sourceLocation) {
+		return new Expression((Object[] a) -> (Double)((Expression)a[0]).eval() >
 				(Double)((Expression)a[1]).eval(),
 								new Object[] {left, right}, 
 									sourceLocation);
 	}
 
 	@Override
-	public E createGreaterThanOrEqualTo(E left, E right,
+	public Expression createGreaterThanOrEqualTo(Expression left, Expression right,
 			SourceLocation sourceLocation) {
-		return (E) new Expression((Object[] a) -> (Double)((Expression)a[0]).eval() >=
+		return new Expression((Object[] a) -> (Double)((Expression)a[0]).eval() >=
 				(Double)((Expression)a[1]).eval(),
 								new Object[] {left, right}, 
 									sourceLocation);
 	}
 
 	@Override
-	public E createEquals(E left, E right, SourceLocation sourceLocation) {
-		return (E) new Expression((Object[] a) -> ((Double)((Expression)a[0]).eval()).equals(
+	public Expression createEquals(Expression left, Expression right, SourceLocation sourceLocation) {
+		return new Expression((Object[] a) -> ((Double)((Expression)a[0]).eval()).equals(
 				(Double)((Expression)a[1]).eval()),
 								new Object[] {left, right}, 
 									sourceLocation);
 	}
 
 	@Override
-	public E createNotEquals(E left, E right, SourceLocation sourceLocation) {
-		return (E) new Expression((Object[] a) -> ! ((Double)((Expression)a[0]).eval()).equals(
+	public Expression createNotEquals(Expression left, Expression right, SourceLocation sourceLocation) {
+		return new Expression((Object[] a) -> ! ((Double)((Expression)a[0]).eval()).equals(
 				(Double)((Expression)a[1]).eval()),
 								new Object[] {left, right}, 
 									sourceLocation);
 	}
 
 	@Override
-	public E createGetX(E expr, SourceLocation sourceLocation) {
-		return (E) new Expression((Object[] a) -> ((GameObject)((Expression)a[0]).eval()).getX(), 
+	public Expression createGetX(Expression expr, SourceLocation sourceLocation) {
+		return new Expression((Object[] a) -> ((GameObject)((Expression)a[0]).eval()).getX(), 
 										new Object[] {expr}, sourceLocation);		
 	}
 
 	@Override
-	public E createGetY(E expr, SourceLocation sourceLocation) {
-		return (E) new Expression((Object[] a) -> ((GameObject)((Expression)a[0]).eval()).getY(), 
+	public Expression createGetY(Expression expr, SourceLocation sourceLocation) {
+		return new Expression((Object[] a) -> ((GameObject)((Expression)a[0]).eval()).getY(), 
 				new Object[] {expr}, sourceLocation);	
 	}
 
 	@Override
-	public E createGetWidth(E expr, SourceLocation sourceLocation) {
-		return (E) new Expression((Object[] a) -> ((GameObject)((Expression)a[0]).eval()).getWidth(), 
+	public Expression createGetWidth(Expression expr, SourceLocation sourceLocation) {
+		return new Expression((Object[] a) -> ((GameObject)((Expression)a[0]).eval()).getWidth(), 
 				new Object[] {expr}, sourceLocation);	
 	}
 
 	@Override
-	public E createGetHeight(E expr, SourceLocation sourceLocation) {
-		return (E) new Expression((Object[] a) -> ((GameObject)((Expression)a[0]).eval()).getHeight(), 
+	public Expression createGetHeight(Expression expr, SourceLocation sourceLocation) {
+		return new Expression((Object[] a) -> ((GameObject)((Expression)a[0]).eval()).getHeight(), 
 				new Object[] {expr}, sourceLocation);	
 	}
 
 	@Override
-	public E createGetHitPoints(E expr, SourceLocation sourceLocation) {
-		return (E) new Expression((Object[] a) -> ((GameObject)((Expression)a[0]).eval()).getHitPoints(), 
+	public Expression createGetHitPoints(Expression expr, SourceLocation sourceLocation) {
+		return new Expression((Object[] a) -> ((GameObject)((Expression)a[0]).eval()).getHitPoints(), 
 				new Object[] {expr}, sourceLocation);	
 	}
 
 	@Override
-	public E createGetTile(E x, E y, SourceLocation sourceLocation) {
-		return (E) new Expression((Object[] a) -> getMyProgram().getGameObject().getMyWorld().getTerrainAt
+	public Expression createGetTile(Expression x, Expression y, SourceLocation sourceLocation) {
+		return new Expression((Object[] a) -> getMyProgram().getGameObject().getMyWorld().getTerrainAt
 				((int)(((Expression)(a[0])).eval()),(int)(((Expression)(a[1])).eval())), 
 				new Object[] {x,y}, sourceLocation);		
 
 	}
 
 	@Override
-	public E createSearchObject(E direction, SourceLocation sourceLocation) {
-		return (E) new Expression(
+	public Expression createSearchObject(Expression direction, SourceLocation sourceLocation) {
+		return new Expression(
 				(Object[] a) ->	(getMyProgram().getGameObject().getSearchObject(
 								(Direction)
 								((Expression)a[0]).
@@ -238,220 +238,220 @@ public class ProgramFactory<E,S,T,P> implements IProgramFactory<E,S,T,P> {
 	}
 
 	@Override
-	public E createIsMazub(E expr, SourceLocation sourceLocation) {
-		return (E) new Expression(
+	public Expression createIsMazub(Expression expr, SourceLocation sourceLocation) {
+		return new Expression(
 				(Object[] a) -> ((Expression)a[0]).eval() instanceof Mazub, 
 					new Object[] {expr}, sourceLocation);
 	}
 
 	@Override
-	public E createIsShark(E expr, SourceLocation sourceLocation) {
-		return (E) new Expression(
+	public Expression createIsShark(Expression expr, SourceLocation sourceLocation) {
+		return new Expression(
 				(Object[] a) -> ((Expression)a[0]).eval() instanceof Shark, 
 					new Object[] {expr}, sourceLocation);
 	}
 
 	@Override
-	public E createIsSlime(E expr, SourceLocation sourceLocation) {
-		return (E) new Expression(
+	public Expression createIsSlime(Expression expr, SourceLocation sourceLocation) {
+		return new Expression(
 				(Object[] a) -> ((Expression)a[0]).eval() instanceof Slime, 
 					new Object[] {expr}, sourceLocation);
 	}
 
 	@Override
-	public E createIsPlant(E expr, SourceLocation sourceLocation) {
-		return (E) new Expression(
+	public Expression createIsPlant(Expression expr, SourceLocation sourceLocation) {
+		return new Expression(
 				(Object[] a) -> ((Expression)a[0]).eval() instanceof Plant, 
 					new Object[] {expr}, sourceLocation);
 	}
 
 	@Override
-	public E createIsDead(E expr, SourceLocation sourceLocation) {
-		return (E) new Expression(
+	public Expression createIsDead(Expression expr, SourceLocation sourceLocation) {
+		return new Expression(
 				(Object[] a) -> ((GameObject)((Expression)a[0]).eval()).isTerminated(), 
 					new Object[] {expr}, sourceLocation);
 	}
 
 	@Override
-	public E createIsTerrain(E expr, SourceLocation sourceLocation) {
-		return (E) new Expression(
+	public Expression createIsTerrain(Expression expr, SourceLocation sourceLocation) {
+		return new Expression(
 				(Object[] a) -> ((Expression)a[0]).eval() instanceof World.TerrainType, 
 				new Object[] {expr}, sourceLocation);
 	}
 
 	@Override
-	public E createIsPassable(E expr, SourceLocation sourceLocation) {
-		return (E) new Expression(
+	public Expression createIsPassable(Expression expr, SourceLocation sourceLocation) {
+		return new Expression(
 				(Object[] a) -> ((World.TerrainType)((Expression)a[0]).eval()).isPassable(), 
 				new Object[] {expr}, sourceLocation);
 	}
 
 	@Override
-	public E createIsWater(E expr, SourceLocation sourceLocation) {
-		return (E) new Expression(
+	public Expression createIsWater(Expression expr, SourceLocation sourceLocation) {
+		return new Expression(
 				(Object[] a) -> ((World.TerrainType)((Expression)a[0]).eval()) 
 										== World.TerrainType.WATER, 
 				new Object[] {expr}, sourceLocation);
 	}
 
 	@Override
-	public E createIsMagma(E expr, SourceLocation sourceLocation) {
-		return (E) new Expression(
+	public Expression createIsMagma(Expression expr, SourceLocation sourceLocation) {
+		return new Expression(
 				(Object[] a) -> ((World.TerrainType)((Expression)a[0]).eval()) 
 										== World.TerrainType.MAGMA, 
 				new Object[] {expr}, sourceLocation);
 	}
 
 	@Override
-	public E createIsAir(E expr, SourceLocation sourceLocation) {
-		return (E) new Expression(
+	public Expression createIsAir(Expression expr, SourceLocation sourceLocation) {
+		return new Expression(
 				(Object[] a) -> ((World.TerrainType)((Expression)a[0]).eval()) 
 										== World.TerrainType.AIR, 
 				new Object[] {expr}, sourceLocation);
 	}
 
 	@Override
-	public E createIsMoving(E expr, E direction, SourceLocation sourceLocation) {
-		return (E) new Expression((Object[] a) -> 
+	public Expression createIsMoving(Expression expr, Expression direction, SourceLocation sourceLocation) {
+		return new Expression((Object[] a) -> 
 									((GameObject)((Expression)a[0]).eval()).isMoving((Direction) a[1]), 
 				new Object[] {expr, direction}, sourceLocation);	
 	}
 
 	@Override
-	public E createIsDucking(E expr, SourceLocation sourceLocation) {
-		return (E) new Expression((Object[] a) -> ((GameObject)((Expression)a[0]).eval()).isDucking(), 
+	public Expression createIsDucking(Expression expr, SourceLocation sourceLocation) {
+		return new Expression((Object[] a) -> ((GameObject)((Expression)a[0]).eval()).isDucking(), 
 				new Object[] {expr}, sourceLocation);	
 	}
 
 	@Override
-	public E createIsJumping(E expr, SourceLocation sourceLocation) {
-		return (E) new Expression((Object[] a) -> ((GameObject)((Expression)a[0]).eval()).isJumping(), 
+	public Expression createIsJumping(Expression expr, SourceLocation sourceLocation) {
+		return new Expression((Object[] a) -> ((GameObject)((Expression)a[0]).eval()).isJumping(), 
 				new Object[] {expr}, sourceLocation);	
 	}
 
 	@Override
-	public S createAssignment(String variableName, T variableType, E value,
+	public Statement createAssignment(String variableName, Type variableType, Expression value,
 			SourceLocation sourceLocation) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public S createWhile(E condition, S body, SourceLocation sourceLocation) {
+	public Statement createWhile(Expression condition, Statement body, SourceLocation sourceLocation) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public S createForEach(
+	public Statement createForEach(
 			String variableName,
 			jumpingalien.part3.programs.IProgramFactory.Kind variableKind,
-			E where,
-			E sort,
+			Expression where,
+			Expression sort,
 			jumpingalien.part3.programs.IProgramFactory.SortDirection sortDirection,
-			S body, SourceLocation sourceLocation) {
+			Statement body, SourceLocation sourceLocation) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public S createBreak(SourceLocation sourceLocation) {
+	public Statement createBreak(SourceLocation sourceLocation) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public S createIf(E condition, S ifBody, S elseBody,
+	public Statement createIf(Expression condition, Statement ifBody, Statement elseBody,
 			SourceLocation sourceLocation) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public S createPrint(E value, SourceLocation sourceLocation) {
+	public Statement createPrint(Expression value, SourceLocation sourceLocation) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public S createStartRun(E direction, SourceLocation sourceLocation) {
+	public Statement createStartRun(Expression direction, SourceLocation sourceLocation) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public S createStopRun(E direction, SourceLocation sourceLocation) {
+	public Statement createStopRun(Expression direction, SourceLocation sourceLocation) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public S createStartJump(SourceLocation sourceLocation) {
+	public Statement createStartJump(SourceLocation sourceLocation) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public S createStopJump(SourceLocation sourceLocation) {
+	public Statement createStopJump(SourceLocation sourceLocation) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public S createStartDuck(SourceLocation sourceLocation) {
+	public Statement createStartDuck(SourceLocation sourceLocation) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public S createStopDuck(SourceLocation sourceLocation) {
+	public Statement createStopDuck(SourceLocation sourceLocation) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public S createWait(E duration, SourceLocation sourceLocation) {
+	public Statement createWait(Expression duration, SourceLocation sourceLocation) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public S createSkip(SourceLocation sourceLocation) {
+	public Statement createSkip(SourceLocation sourceLocation) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public S createSequence(List<S> statements, SourceLocation sourceLocation) {
+	public Statement createSequence(List<Statement> statements, SourceLocation sourceLocation) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T getDoubleType() {
-		return (T) Type.DOUBLE;
+	public Type getDoubleType() {
+		return Type.DOUBLE;
 	}
 
 	@Override
-	public T getBoolType() {
-		return (T) Type.BOOLEAN;
+	public Type getBoolType() {
+		return Type.BOOLEAN;
 	}
 
 	@Override
-	public T getGameObjectType() {
-		return (T) Type.GAME_OBJECT;
+	public Type getGameObjectType() {
+		return Type.GAME_OBJECT;
 	}
 
 	@Override
-	public T getDirectionType() {
-		return (T) Type.DIRECTION;
+	public Type getDirectionType() {
+		return Type.DIRECTION;
 	}
 
 	@Override
-	public P createProgram(S mainStatement, Map<String, T> globalVariables) {
+	public Program createProgram(Statement mainStatement, Map<String, Type> globalVariables) {
 		getMyProgram().setMainStatement((Statement) mainStatement);
 		getMyProgram().initialiseVariables((Map<String, Type>) globalVariables);
-		return (P) MY_PROGRAM;
+		return MY_PROGRAM;
 	}
 
 

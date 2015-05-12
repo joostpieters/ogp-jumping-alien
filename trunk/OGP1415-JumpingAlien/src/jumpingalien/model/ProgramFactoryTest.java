@@ -14,7 +14,7 @@ import org.junit.Test;
 public class ProgramFactoryTest {
 
 	
-	IProgramFactory<Expression, Statement, Type, Program> factory = new ProgramFactory<>();
+	IProgramFactory<Expression, Statement, Type, Program> factory = new ProgramFactory();
 	Program program = ((ProgramFactory)factory).MY_PROGRAM;
 	Map<String, Type> map = new HashMap<>();
 	

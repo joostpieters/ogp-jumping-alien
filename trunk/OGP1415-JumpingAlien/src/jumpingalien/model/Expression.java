@@ -4,7 +4,7 @@ import jumpingalien.part3.programs.SourceLocation;
 import be.kuleuven.cs.som.annotate.*;
 public class Expression {
 
-	
+	//Expression parametriseren
 	public Expression(ExpressionLambda myFunction, Object[] parameterArray, SourceLocation sourceLocation) {
 		MY_FUNCTION = myFunction;
 		PARAMETER_ARRAY = parameterArray;
