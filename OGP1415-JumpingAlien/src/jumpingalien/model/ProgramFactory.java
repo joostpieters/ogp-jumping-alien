@@ -59,7 +59,7 @@ public class ProgramFactory implements IProgramFactory<Expression, Statement, Ty
 
 	@Override
 	public Expression createSelf(SourceLocation sourceLocation) {
-		return new Expression((Object[] a) -> a[0], new Object[] {getMyProgram().getGameObject()}, sourceLocation);
+		return new Expression((Object[] a) -> ((Program)a[0]).getGameObject(), new Object[] {getMyProgram()}, sourceLocation);
 	}
 
 	@Override
@@ -172,41 +172,45 @@ public class ProgramFactory implements IProgramFactory<Expression, Statement, Ty
 
 	@Override
 	public Expression createEquals(Expression left, Expression right, SourceLocation sourceLocation) {
-		return new Expression((Object[] a) -> ((Double)((Expression)a[0]).eval()).equals(
-				(Double)((Expression)a[1]).eval()),
+		return new Expression((Object[] a) -> ((((Expression)a[0]).eval() == null && ((Expression)a[1]).eval() == null)) ||
+				((((Expression)a[0]).eval() != null) && 
+				((Object)((Expression)a[0]).eval()).equals(
+				(Object)((Expression)a[1]).eval())),
 								new Object[] {left, right}, 
 									sourceLocation);
 	}
 
 	@Override
 	public Expression createNotEquals(Expression left, Expression right, SourceLocation sourceLocation) {
-		return new Expression((Object[] a) -> ! ((Double)((Expression)a[0]).eval()).equals(
-				(Double)((Expression)a[1]).eval()),
+		return new Expression((Object[] a) ->  ((((Expression)a[0]).eval() == null && ((Expression)a[1]).eval() != null)) ||
+				((((Expression)a[0]).eval() != null) && 
+				!((Object)((Expression)a[0]).eval()).equals(
+				(Object)((Expression)a[1]).eval())),
 								new Object[] {left, right}, 
 									sourceLocation);
 	}
 
 	@Override
 	public Expression createGetX(Expression expr, SourceLocation sourceLocation) {
-		return new Expression((Object[] a) -> ((GameObject)((Expression)a[0]).eval()).getX(), 
+		return new Expression((Object[] a) -> ((GameElement)((Expression)a[0]).eval()).getX(), 
 										new Object[] {expr}, sourceLocation);		
 	}
 
 	@Override
 	public Expression createGetY(Expression expr, SourceLocation sourceLocation) {
-		return new Expression((Object[] a) -> ((GameObject)((Expression)a[0]).eval()).getY(), 
+		return new Expression((Object[] a) -> ((GameElement)((Expression)a[0]).eval()).getY(), 
 				new Object[] {expr}, sourceLocation);	
 	}
 
 	@Override
 	public Expression createGetWidth(Expression expr, SourceLocation sourceLocation) {
-		return new Expression((Object[] a) -> ((GameObject)((Expression)a[0]).eval()).getWidth(), 
+		return new Expression((Object[] a) -> ((GameElement)((Expression)a[0]).eval()).getWidth(), 
 				new Object[] {expr}, sourceLocation);	
 	}
 
 	@Override
 	public Expression createGetHeight(Expression expr, SourceLocation sourceLocation) {
-		return new Expression((Object[] a) -> ((GameObject)((Expression)a[0]).eval()).getHeight(), 
+		return new Expression((Object[] a) -> ((GameElement)((Expression)a[0]).eval()).getHeight(), 
 				new Object[] {expr}, sourceLocation);	
 	}
 
@@ -218,8 +222,8 @@ public class ProgramFactory implements IProgramFactory<Expression, Statement, Ty
 
 	@Override
 	public Expression createGetTile(Expression x, Expression y, SourceLocation sourceLocation) {
-		return new Expression((Object[] a) -> getMyProgram().getGameObject().getMyWorld().getTerrainAt
-				((int)(((Expression)(a[0])).eval()),(int)(((Expression)(a[1])).eval())), 
+		return new Expression((Object[] a) -> getMyProgram().getGameObject().getMyWorld().getTerrainObjectAt
+				(((Double)(((Expression)(a[0])).eval())).intValue(),(((Double)(((Expression)(a[1])).eval()))).intValue()), 
 				new Object[] {x,y}, sourceLocation);		
 
 	}
@@ -282,7 +286,7 @@ public class ProgramFactory implements IProgramFactory<Expression, Statement, Ty
 	@Override
 	public Expression createIsPassable(Expression expr, SourceLocation sourceLocation) {
 		return new Expression(
-				(Object[] a) -> ((World.TerrainType)((Expression)a[0]).eval()).isPassable(), 
+				(Object[] a) -> (((GameTile)(((Expression)a[0]).eval())).getTerrainType()).isPassable(), 
 				new Object[] {expr}, sourceLocation);
 	}
 
@@ -313,7 +317,9 @@ public class ProgramFactory implements IProgramFactory<Expression, Statement, Ty
 	@Override
 	public Expression createIsMoving(Expression expr, Expression direction, SourceLocation sourceLocation) {
 		return new Expression((Object[] a) -> 
-									((GameObject)((Expression)a[0]).eval()).isMoving((Direction) a[1]), 
+									((GameObject)((Expression)a[0]).eval()).
+									isMoving((Direction)((Expression)(a[1])).
+											eval()), 
 				new Object[] {expr, direction}, sourceLocation);	
 	}
 
@@ -332,14 +338,12 @@ public class ProgramFactory implements IProgramFactory<Expression, Statement, Ty
 	@Override
 	public Statement createAssignment(String variableName, Type variableType, Expression value,
 			SourceLocation sourceLocation) {
-		// TODO Auto-generated method stub
-		return null;
+		return new AssignmentStatement(getMyProgram(), sourceLocation, variableName, value, variableType);
 	}
 
 	@Override
 	public Statement createWhile(Expression condition, Statement body, SourceLocation sourceLocation) {
-		// TODO Auto-generated method stub
-		return null;
+		return new WhileStatement(getMyProgram(), sourceLocation, condition, body);
 	}
 
 	@Override
@@ -350,81 +354,68 @@ public class ProgramFactory implements IProgramFactory<Expression, Statement, Ty
 			Expression sort,
 			jumpingalien.part3.programs.IProgramFactory.SortDirection sortDirection,
 			Statement body, SourceLocation sourceLocation) {
-		// TODO Auto-generated method stub
-		return null;
+		return new ForEachStatement(getMyProgram(), sourceLocation, variableName, variableKind, where, sort, sortDirection, body);
 	}
 
 	@Override
 	public Statement createBreak(SourceLocation sourceLocation) {
-		// TODO Auto-generated method stub
-		return null;
+		return new BreakStatement(getMyProgram(), sourceLocation);
 	}
 
 	@Override
 	public Statement createIf(Expression condition, Statement ifBody, Statement elseBody,
 			SourceLocation sourceLocation) {
-		// TODO Auto-generated method stub
-		return null;
+		return new IfStatement(getMyProgram(), sourceLocation, condition, ifBody, elseBody);
 	}
 
 	@Override
 	public Statement createPrint(Expression value, SourceLocation sourceLocation) {
-		// TODO Auto-generated method stub
-		return null;
+		return new PrintStatement(getMyProgram(), sourceLocation, value);
 	}
 
 	@Override
 	public Statement createStartRun(Expression direction, SourceLocation sourceLocation) {
-		// TODO Auto-generated method stub
-		return null;
+		return new StartRunStatement(getMyProgram(), sourceLocation, direction);
 	}
 
 	@Override
 	public Statement createStopRun(Expression direction, SourceLocation sourceLocation) {
-		// TODO Auto-generated method stub
-		return null;
+		return new StopRunStatement(getMyProgram(), sourceLocation, direction);
 	}
 
 	@Override
 	public Statement createStartJump(SourceLocation sourceLocation) {
-		// TODO Auto-generated method stub
-		return null;
+		return new StartJumpStatement(getMyProgram(),sourceLocation);
 	}
 
 	@Override
 	public Statement createStopJump(SourceLocation sourceLocation) {
-		// TODO Auto-generated method stub
-		return null;
+		return new StopJumpStatement(getMyProgram(),sourceLocation);
 	}
 
 	@Override
 	public Statement createStartDuck(SourceLocation sourceLocation) {
-		// TODO Auto-generated method stub
-		return null;
+		return new StartDuckStatement(getMyProgram(), sourceLocation);
 	}
 
 	@Override
 	public Statement createStopDuck(SourceLocation sourceLocation) {
-		// TODO Auto-generated method stub
-		return null;
+		return new StopDuckStatement(getMyProgram(), sourceLocation);
 	}
 
 	@Override
 	public Statement createWait(Expression duration, SourceLocation sourceLocation) {
-		// TODO Auto-generated method stub
-		return null;
+		return new WaitStatement(getMyProgram(), sourceLocation, duration);
 	}
 
 	@Override
 	public Statement createSkip(SourceLocation sourceLocation) {
-		// TODO Auto-generated method stub
-		return null;
+		return new TrivialStatement(getMyProgram(), sourceLocation);
 	}
 
 	@Override
 	public Statement createSequence(List<Statement> statements, SourceLocation sourceLocation) {
-		// TODO Auto-generated method stub
-		return null;
+		return new SequenceStatement(getMyProgram(), sourceLocation, statements);
 	}
 
 	@Override
@@ -453,11 +444,4 @@ public class ProgramFactory implements IProgramFactory<Expression, Statement, Ty
 		getMyProgram().initialiseVariables((Map<String, Type>) globalVariables);
 		return MY_PROGRAM;
 	}
-
-
-	
-
-
-
-
 }

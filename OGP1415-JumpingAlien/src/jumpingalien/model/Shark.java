@@ -32,7 +32,7 @@ public class Shark extends AutomaticObject {
 	 * @effect  | super(world, x, y, 100, 100, sprites, 100, 200, 400, 400, 150, 1000, true)
 	 * @effect  | setCounter(0)
 	 */
-	public Shark(World world, double x, double y, Sprite[] sprites, String program) {
+	public Shark(World world, double x, double y, Sprite[] sprites, Program program) {
 		super(world, x, y, 100, 100, sprites, 100, 200, 400, 400, 150, 1000, true, program);
 		setCounter(0);
 	}

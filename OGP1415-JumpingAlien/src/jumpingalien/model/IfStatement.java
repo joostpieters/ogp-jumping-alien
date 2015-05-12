@@ -1,0 +1,49 @@
+package jumpingalien.model;
+
+import jumpingalien.part3.programs.SourceLocation;
+
+public class IfStatement extends Statement {
+
+	public IfStatement(Program caller, SourceLocation location, Expression expression,
+			Statement ifBody, Statement elseBody) {
+		super(caller, location);
+		EXPRESSION = expression;
+		IF_BODY = ifBody;
+		ELSE_BODY = elseBody;
+	}
+
+	public Expression getExpression() {
+		return EXPRESSION;
+	}
+
+	public Statement getIfBody() {
+		return IF_BODY;
+	}
+
+	public Statement getElseBody() {
+		return ELSE_BODY;
+	}
+
+	private final Expression EXPRESSION;
+	private final Statement IF_BODY;
+	private final Statement ELSE_BODY;
+
+	@Override
+	public void execute() throws ClassCastException {
+		getCaller().substractTimeRemaining(0.001);
+		if ((boolean)(getExpression().eval()) == true) {
+			getCaller().setCurrentStatement(getIfBody());
+			//het huidige statement van het programma wordt op de if body gezet
+			getIfBody().setNextStatement(getNextStatement());
+			//getNextStatement() is het volgende statement van het if-else-geheel
+		}
+		else if (getElseBody() != null) {
+			getCaller().setCurrentStatement(getElseBody());
+			getElseBody().setNextStatement(getNextStatement());
+			//getNextStatement() is het volgende statement van het if-else-geheel
+		}
+		else
+			getCaller().setCurrentStatement(getNextStatement());
+	}
+
+}

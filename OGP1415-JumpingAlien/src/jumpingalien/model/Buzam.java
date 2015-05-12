@@ -13,7 +13,7 @@ public class Buzam extends Alien {
 	 * @param y
 	 * @param sprites
 	 */
-	public Buzam(World world, double x, double y, Sprite[] sprites, String program) {
+	public Buzam(World world, double x, double y, Sprite[] sprites, Program program) {
 		super(world, x, y, 500, sprites, program);
 	}
 

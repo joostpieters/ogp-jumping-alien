@@ -32,8 +32,13 @@ public class Expression {
 		return SOURCE_LOCATION;
 	}
 	
-	public Object eval() {
+	public Object eval() throws ClassCastException {
+		//try {
 		return getMyFunction().f(getParameterArray());
+		//}
+		//catch (NullPointerException exc) {
+			//return true;
+		//}
 	}
 	
 }
