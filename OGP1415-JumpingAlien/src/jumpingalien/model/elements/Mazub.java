@@ -31,21 +31,5 @@ public class Mazub extends Alien {
 	@Raw
 	public Mazub(World world, double x, double y, Sprite[] sprites) {
 		super(world, x, y, 100, sprites, null);		
-	}
-	
-//	/**
-//	 * This Mazub character's properties are updated for the given time duration.
-//	 * 
-//	 * @param 	duration
-//	 * 			The duration for which advanceTime should work.
-//	 * @effect	| super.advanceTime(duration)
-//	 * @throws 	IllegalArgumentException
-//	 * 			The given duration is not a valid duration. A duration is not valid
-//	 * 			if it is smaller than 0 or greater than or equal to 0.2.
-//	 * 		    | (duration < 0) || (duration >= 0.2)	
-//	 */
-//	public void advanceTime(double duration) throws IllegalArgumentException {
-//		super.advanceTime(duration);
-//	}
-	
+	}	
 }

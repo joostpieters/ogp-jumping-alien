@@ -9,9 +9,10 @@ import jumpingalien.model.Program;
 import jumpingalien.model.elements.GameObject;
 import jumpingalien.part3.programs.SourceLocation;
 
-/**
- * @author Andreas
- *
+/** 
+ * @author 	Andreas Schryvers & Jonathan Oostvogels
+ * 			2e Bachelor ingenieurswetenschappen
+ * 			Subversion repository: https://code.google.com/p/ogp-jumping-alien/
  */
 public class StartRunStatement extends TrivialStatement {
 

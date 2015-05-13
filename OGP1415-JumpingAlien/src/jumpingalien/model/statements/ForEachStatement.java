@@ -18,6 +18,11 @@ import jumpingalien.part3.programs.IProgramFactory.Kind;
 import jumpingalien.part3.programs.IProgramFactory.SortDirection;
 import jumpingalien.part3.programs.SourceLocation;
 
+/** 
+ * @author 	Andreas Schryvers & Jonathan Oostvogels
+ * 			2e Bachelor ingenieurswetenschappen
+ * 			Subversion repository: https://code.google.com/p/ogp-jumping-alien/
+ */
 public class ForEachStatement extends Statement {
 
 	public ForEachStatement(Program caller, SourceLocation location, String variableName,

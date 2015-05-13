@@ -7,25 +7,20 @@ import jumpingalien.model.Program;
 import jumpingalien.model.World;
 import jumpingalien.util.Sprite;
 
+/** 
+ * @author 	Andreas Schryvers & Jonathan Oostvogels
+ * 			2e Bachelor ingenieurswetenschappen
+ * 			Subversion repository: https://code.google.com/p/ogp-jumping-alien/
+ */
 public class Buzam extends Alien {
 
-	/**
-	 * @param world
-	 * @param x
-	 * @param y
-	 * @param sprites
-	 */
 	public Buzam(World world, double x, double y, Sprite[] sprites, Program program) {
 		super(world, x, y, 500, sprites, program);
 	}
 
-	/* (non-Javadoc)
-	 * @see jumpingalien.model.Alien#handleInteraction(double)
-	 */
 	@Override
 	public void handleInteraction(double duration) {
 		super.handleInteraction(duration);
-
 		Mazub object1 = (Mazub) this.touches(Mazub.class);
 		if (object1 != null && getTimeToBeImmune() == 0) {
 			this.substractHitPoints(50);
@@ -40,5 +35,4 @@ public class Buzam extends Alien {
 			getProgram().advanceTime(duration);
 		}
 	}
-
 }

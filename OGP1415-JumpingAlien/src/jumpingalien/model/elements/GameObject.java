@@ -38,7 +38,7 @@ public abstract class GameObject implements GameElement{
 	 * Initialize this new game object with the given parameters.
 	 * 
 	 * @param world
-	 * 		  The world of this game object.
+	 * 		  The world for this new game object.
 	 * @param x
 	 *		  The initial x position for this new game object. 
 	 * @param y
@@ -63,6 +63,8 @@ public abstract class GameObject implements GameElement{
 	 * 		  The acceleration in the y directions for this new game object.
 	 * @param solid
 	 * 		  The solid state for this new game object.
+	 * @param program
+	 * 		  The program for this new game object.
 	 * 
 	 * @pre	  |  if (getMyWorld() != null)
 	 * 		  |	 	canHaveAsPosition((int) x, (int) y)
@@ -77,6 +79,8 @@ public abstract class GameObject implements GameElement{
 	 * @effect | setHitPoints(initialHitPoints)
 	 * @effect | setMyWorld(world)
 	 * @effect | setTerminated(false)
+	 * @effect | if (program != null)
+	 * 		   |     program.setGameObject(this)
 	 * @post   | new.X_ACCELERATION = xAcceleration
 	 * @post   | new.Y_ACCELERATION = yAcceleration
 	 * @post   | new.X_INITIAL_VELOCITY = xInitialVelocity
@@ -84,6 +88,7 @@ public abstract class GameObject implements GameElement{
 	 * @post   | new.getXInitialVelocity() == xInitialVelocity
 	 * @post   | new.isSolid() == solid
 	 * @post   | new.getDuckedVelocityLimit() == duckedVelocityLimit
+	 * @post   | new.getProgram() == program
 	 */
 	@Raw
 	public GameObject(World world, double x, double y, 
@@ -159,8 +164,15 @@ public abstract class GameObject implements GameElement{
 		return this.DUCKED_VELOCITY_LIMIT;
 	}
 	
+	/**
+	 * Variable registering the program of this game object.
+	 */
 	private final Program PROGRAM;
 
+	/**
+	 * Return the program of this game object.
+	 */
+	@Basic @Immutable
 	public Program getProgram() {
 		return PROGRAM;
 	}
@@ -1487,7 +1499,6 @@ public abstract class GameObject implements GameElement{
 				}
 				x -= getMyWorld().getTileLength();
 			}
-			
 		}
 		
 		else if (direction == jumpingalien.part3.programs.IProgramFactory.Direction.RIGHT) {
@@ -1512,7 +1523,6 @@ public abstract class GameObject implements GameElement{
 				}
 				x += getMyWorld().getTileLength();
 			}
-			
 		}
 		
 		else if (direction == jumpingalien.part3.programs.IProgramFactory.Direction.DOWN) {
@@ -1560,12 +1570,8 @@ public abstract class GameObject implements GameElement{
 					x += getMyWorld().getTileLength();
 				}
 				y += getMyWorld().getTileLength()-1;
-			}
-			
+			}	
 		}
-		
-		
-		
 		return result;
 		
 	}

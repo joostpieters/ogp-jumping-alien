@@ -32,11 +32,11 @@ import jumpingalien.model.statements.WhileStatement;
 import jumpingalien.part3.programs.IProgramFactory;
 import jumpingalien.part3.programs.SourceLocation;
 
-/**
- * @author Jonathan
- *
+/** 
+ * @author 	Andreas Schryvers & Jonathan Oostvogels
+ * 			2e Bachelor ingenieurswetenschappen
+ * 			Subversion repository: https://code.google.com/p/ogp-jumping-alien/
  */
-
 public class ProgramFactory implements IProgramFactory<Expression, Statement, Type, Program> {
 
 	

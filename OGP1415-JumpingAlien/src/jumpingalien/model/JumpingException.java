@@ -6,8 +6,9 @@ import be.kuleuven.cs.som.annotate.*;
  * 
  * A class of exceptions signaling illegal jumping behavior.
  * 
- * @author Andreas Schryvers & Jonathan Oostvogels
- *
+ * @author 	Andreas Schryvers & Jonathan Oostvogels
+ * 			2e Bachelor ingenieurswetenschappen
+ * 			Subversion repository: https://code.google.com/p/ogp-jumping-alien/
  */
 public class JumpingException extends RuntimeException {
 
