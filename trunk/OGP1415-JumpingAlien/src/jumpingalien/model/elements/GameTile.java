@@ -3,6 +3,11 @@ package jumpingalien.model.elements;
 import jumpingalien.model.World;
 import jumpingalien.model.World.TerrainType;
 
+/** 
+ * @author 	Andreas Schryvers & Jonathan Oostvogels
+ * 			2e Bachelor ingenieurswetenschappen
+ * 			Subversion repository: https://code.google.com/p/ogp-jumping-alien/
+ */
 public class GameTile implements GameElement {
 
 	public GameTile(double x, double y, World world, TerrainType terrain) {

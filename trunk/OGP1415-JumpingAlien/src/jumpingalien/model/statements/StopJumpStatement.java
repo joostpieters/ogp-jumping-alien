@@ -5,9 +5,10 @@ import jumpingalien.model.JumpingException;
 import jumpingalien.model.Program;
 import jumpingalien.part3.programs.SourceLocation;
 
-/**
- * @author Andreas
- *
+/** 
+ * @author 	Andreas Schryvers & Jonathan Oostvogels
+ * 			2e Bachelor ingenieurswetenschappen
+ * 			Subversion repository: https://code.google.com/p/ogp-jumping-alien/
  */
 public class StopJumpStatement extends TrivialStatement {
 

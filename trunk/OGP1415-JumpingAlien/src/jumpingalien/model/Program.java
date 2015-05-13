@@ -9,6 +9,11 @@ import jumpingalien.model.statements.Statement;
 import jumpingalien.part3.programs.IProgramFactory.Direction;
 import be.kuleuven.cs.som.annotate.*;
 
+/** 
+ * @author 	Andreas Schryvers & Jonathan Oostvogels
+ * 			2e Bachelor ingenieurswetenschappen
+ * 			Subversion repository: https://code.google.com/p/ogp-jumping-alien/
+ */
 public class Program {
 	
 	

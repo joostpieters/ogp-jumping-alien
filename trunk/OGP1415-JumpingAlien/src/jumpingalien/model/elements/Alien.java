@@ -9,18 +9,19 @@ import jumpingalien.model.World;
 import jumpingalien.model.World.TerrainType;
 import jumpingalien.util.Sprite;
 
-/**
- * @author Andreas
- *
+/** 
+ * @author 	Andreas Schryvers & Jonathan Oostvogels
+ * 			2e Bachelor ingenieurswetenschappen
+ * 			Subversion repository: https://code.google.com/p/ogp-jumping-alien/
  */
 public abstract class Alien extends GameObject {
 
 	/**
 	 * Initialize this new Alien character with given x position, given y position, given
-	 * sprites and given world.
+	 * sprites, given world, given maxHitPoints and given program.
 	 * 
-	 * @effect	| super(world, x, y, 100, 500 ,sprites, 100, 800, 300, 100,	90, 1000, true);
-	 * 
+	 * @effect	| super(world, x, y, maxHitPoints, 500 ,sprites, 100, 800, 300, 100, 90, 1000, true, program);
+	 * 	
 	 * @param 	x
 	 * 			The initial x position for this new Alien character.
 	 * @param 	y
@@ -29,6 +30,10 @@ public abstract class Alien extends GameObject {
 	 * 			The series of initial sprites for this new Alien character.
  	 * @param	world
  	 * 			The world for this new Alien character.
+ 	 * @param	program
+ 	 * 			The program for this new Alien character.
+ 	 * @param	maxHitPoints
+ 	 * 			The maximum number of hitpoints for this new Alien character.
 	 */
 	@Raw
 	public Alien(World world, double x, double y,int maxHitPoints, Sprite[] sprites, Program program) {
@@ -88,9 +93,6 @@ public abstract class Alien extends GameObject {
 	public int getM() {
 		return (this.getSprites().length-10)/2;
 	}
-
-//	@Override
-//	public abstract void handleInteraction(double duration);
 	
 	/**
 	 * Handle the interaction of this Alien character with other objects for the given time duration.
@@ -135,10 +137,8 @@ public abstract class Alien extends GameObject {
 				setMagmaTimer(getMagmaTimer() - 0.2);
 			}
 		}
-
-		else
-			setMagmaTimer(0.2);
 		
+		else
+			setMagmaTimer(0.2);	
 	}
-
 }

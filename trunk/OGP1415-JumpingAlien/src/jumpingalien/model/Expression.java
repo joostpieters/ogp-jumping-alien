@@ -2,6 +2,12 @@ package jumpingalien.model;
 
 import jumpingalien.part3.programs.SourceLocation;
 import be.kuleuven.cs.som.annotate.*;
+
+/** 
+ * @author 	Andreas Schryvers & Jonathan Oostvogels
+ * 			2e Bachelor ingenieurswetenschappen
+ * 			Subversion repository: https://code.google.com/p/ogp-jumping-alien/
+ */
 public class Expression {
 
 	//Expression klasse is geparametriseerd in T. T geeft aan naar welk type de expressie zal evalueren.
