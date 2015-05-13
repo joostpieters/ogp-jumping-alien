@@ -4,11 +4,12 @@ import jumpingalien.part3.programs.SourceLocation;
 import be.kuleuven.cs.som.annotate.*;
 public class Expression {
 
-	//Expression parametriseren
-	public Expression(ExpressionLambda myFunction, Object[] parameterArray, SourceLocation sourceLocation) {
+	//Expression klasse is geparametriseerd in T. T geeft aan naar welk type de expressie zal evalueren.
+	public Expression (ExpressionLambda myFunction, Object[] parameterArray, SourceLocation sourceLocation, Type type) {
 		MY_FUNCTION = myFunction;
 		PARAMETER_ARRAY = parameterArray;
 		SOURCE_LOCATION = sourceLocation;
+		TYPE = type;
 	}
 	
 	private final ExpressionLambda MY_FUNCTION;
@@ -32,6 +33,12 @@ public class Expression {
 		return SOURCE_LOCATION;
 	}
 	
+	public Type getType() {
+		return TYPE;
+	}
+	
+	private final Type TYPE;
+
 	public Object eval() throws ClassCastException {
 		//try {
 		return getMyFunction().f(getParameterArray());

@@ -21,6 +21,7 @@ public class Program {
 		setWaitTime(0);
 		setContainsError(false);
 		loopStack = new Stack<Statement>();
+		setWellFormed(true);
 	}
 
 	public GameObject getGameObject() {
@@ -40,6 +41,10 @@ public class Program {
 		assert MAIN_STATEMENT == null;
 		MAIN_STATEMENT = statement;
 		setCurrentStatement(statement);
+		if (statement.containsBreakOutsideLoop()) {
+			setWellFormed(false);
+			System.out.println("Program " + this +  " is not well formed!");
+		}
 	}
 	
 	private GameObject GAME_OBJECT;
@@ -122,21 +127,35 @@ public class Program {
 		return containsError;
 	}
 
-	private void setContainsError(boolean containsError) {
+	void setContainsError(boolean containsError) {
 		this.containsError = containsError;
 	}
 	
 	private boolean containsError;
 
 	public void advanceTime(double duration) {
+		if (getContainsError())
+			return;
 		double dt = duration;		
 		addTimeRemaining(dt);
 		while(getTimeRemaining() > 0) {
 			double a = getWaitTime();
 			substractWaitTime(getTimeRemaining());
 			substractTimeRemaining(a);
-			if (getWaitTime() == 0 && getTimeRemaining() > 0)
-				getCurrentStatement().execute();
+			if (getWaitTime() == 0 && getTimeRemaining() > 0) {
+				Statement temp = getCurrentStatement();
+				 try {
+					 getCurrentStatement().execute();
+				 }
+				 catch (ClassCastException exc) {
+					 this.setContainsError(true);
+					 System.out.println("Runtime Type Error in program for");
+					 System.out.println(getGameObject());
+					 System.out.println(temp.getLocation());
+					 getGameObject().endMove();
+					 return;
+				 }
+			}
 		}
 	}
 
@@ -178,5 +197,16 @@ public class Program {
 			return null;
 		return getLoopStack().pop();
 	}
+	
+	private boolean isWellFormed;
 
+	public boolean isWellFormed() {
+		return isWellFormed;
+	}
+
+	public void setWellFormed(boolean isWellFormed) {
+		if (! isWellFormed)
+			setContainsError(true);
+		this.isWellFormed = isWellFormed;
+	}
 }

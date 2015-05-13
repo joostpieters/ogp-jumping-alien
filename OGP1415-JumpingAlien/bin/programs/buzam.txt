@@ -14,7 +14,6 @@ double oy;
 double distance;
 object o;
 
-
 while true do
 
 
@@ -72,8 +71,7 @@ while true do
       start_jump;
     fi
   fi
-
-
+  
   x := getx self;
   y := gety self;
   nearestSS := null;
@@ -91,9 +89,8 @@ while true do
           distanceToNearestSS := distance;
         fi
       fi
-    fi
+    fi       
   done
 
 
 done
-

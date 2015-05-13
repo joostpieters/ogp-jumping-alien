@@ -34,140 +34,156 @@ public class ProgramFactory implements IProgramFactory<Expression, Statement, Ty
 	public Expression createReadVariable(String variableName, Type variableType,
 			SourceLocation sourceLocation) {
 		return new Expression((Object[] a) -> getMyProgram().getVariableValue((String) a[0], (Type) a[1]), 
-											new Object[] {variableName,variableType}, sourceLocation);
+											new Object[] {variableName,variableType}, sourceLocation, variableType);
 	}
 
 	@Override
 	public Expression createDoubleConstant(double value, SourceLocation sourceLocation) {
-		return new Expression((Object[] a) -> a[0], new Double[] {new Double(value)}, sourceLocation);
+		return new Expression((Object[] a) -> a[0], new Double[] {new Double(value)}, sourceLocation,Type.DOUBLE);
 	}
 
 	@Override
 	public Expression createTrue(SourceLocation sourceLocation) {
-		return new Expression((Object[] a) -> a[0], new Boolean[] {new Boolean(true)}, sourceLocation);
+		return new Expression((Object[] a) -> a[0], new Boolean[] {new Boolean(true)}, sourceLocation,Type.BOOLEAN);
 	}
 
 	@Override
 	public Expression createFalse(SourceLocation sourceLocation) {
-		return new Expression((Object[] a) -> a[0], new Boolean[] {new Boolean(false)}, sourceLocation);
+		return new Expression((Object[] a) -> a[0], new Boolean[] {new Boolean(false)}, sourceLocation,Type.BOOLEAN);
 	}
 
 	@Override
 	public Expression createNull(SourceLocation sourceLocation) {
-		return new Expression((Object[] a) -> a[0], new Object[] {null}, sourceLocation);
+		return new Expression((Object[] a) -> a[0], new Object[] {null}, sourceLocation,Type.GAME_OBJECT);
 	}
 
 	@Override
 	public Expression createSelf(SourceLocation sourceLocation) {
-		return new Expression((Object[] a) -> ((Program)a[0]).getGameObject(), new Object[] {getMyProgram()}, sourceLocation);
+		return new Expression((Object[] a) -> ((Program)a[0]).getGameObject(), new Object[] {getMyProgram()}, sourceLocation,
+				Type.GAME_OBJECT);
 	}
 
 	@Override
 	public Expression createDirectionConstant(
 			jumpingalien.part3.programs.IProgramFactory.Direction value,
 			SourceLocation sourceLocation) {
-		return new Expression((Object[] a) -> a[0], new Direction[] {value}, sourceLocation);
+		return new Expression((Object[] a) -> a[0], new Direction[] {value}, sourceLocation,Type.DIRECTION);
 	}
 
 	@Override
 	public Expression createAddition(Expression left, Expression right, SourceLocation sourceLocation) {
-		return new Expression((Object[] a) -> (Double)((Expression)a[0]).eval() + 
+		checkArguments(Type.DOUBLE, left, right);
+		return new Expression ((Object[] a) -> (Double)((Expression)a[0]).eval() + 
 														(Double)((Expression)a[1]).eval(),
-								new Object[] {left, right}, 
-									sourceLocation);
+								new Object[] {(Expression) left, (Expression) right}, 
+									sourceLocation, Type.DOUBLE);
 	}
+
+	
 
 	@Override
 	public Expression createSubtraction(Expression left, Expression right, SourceLocation sourceLocation) {
+		checkArguments(Type.DOUBLE, left, right);
 		return new Expression((Object[] a) -> (Double)((Expression)a[0]).eval() - 
 														(Double)((Expression)a[1]).eval(),
 								new Object[] {left, right}, 
-									sourceLocation);
+									sourceLocation, Type.DOUBLE);
 	}
 
 	@Override
 	public Expression createMultiplication(Expression left, Expression right, SourceLocation sourceLocation) {
+		checkArguments(Type.DOUBLE, left, right);
 		return new Expression((Object[] a) -> (Double)((Expression)a[0]).eval() *
 														(Double)((Expression)a[1]).eval(),
 								new Object[] {left, right}, 
-									sourceLocation);
+									sourceLocation, Type.DOUBLE);
 	}
 
 	@Override
 	public Expression createDivision(Expression left, Expression right, SourceLocation sourceLocation) {
+		checkArguments(Type.DOUBLE, left, right);
 		return new Expression((Object[] a) -> (Double)((Expression)a[0]).eval() /
 														(Double)((Expression)a[1]).eval(),
 								new Object[] {left, right}, 
-									sourceLocation);
+									sourceLocation, Type.DOUBLE);
 	}
 
 	@Override
 	public Expression createSqrt(Expression expr, SourceLocation sourceLocation) {
+		checkArguments(Type.DOUBLE, expr);
 		return new Expression((Object[] a) -> Math.sqrt((Double)((Expression)a[0]).eval()),
-				new Object[] {expr}, sourceLocation);
+				new Object[] {expr}, sourceLocation, Type.DOUBLE);
 	}
 
 	@Override
 	public Expression createRandom(Expression maxValue, SourceLocation sourceLocation) {
+		checkArguments(Type.DOUBLE, maxValue);
 		return new Expression((Object[] a) -> (Double)((Expression)(a[0])).eval()*Math.random(),
-				new Object[] {maxValue}, sourceLocation);
+				new Object[] {maxValue}, sourceLocation, Type.DOUBLE);
 	}
 
 	@Override
 	public Expression createAnd(Expression left, Expression right, SourceLocation sourceLocation) {
+		checkArguments(Type.BOOLEAN, left, right);
 		return new Expression((Object[] a) -> (Boolean)((Expression)a[0]).eval() &&
 				(Boolean)((Expression)a[1]).eval(),
 								new Object[] {left, right}, 
-									sourceLocation);
+									sourceLocation, Type.BOOLEAN);
 	}
 
 	@Override
 	public Expression createOr(Expression left, Expression right, SourceLocation sourceLocation) {
+		checkArguments(Type.BOOLEAN, left, right);
 		return new Expression((Object[] a) -> (Boolean)((Expression)a[0]).eval() ||
 				(Boolean)((Expression)a[1]).eval(),
 								new Object[] {left, right}, 
-									sourceLocation);
+									sourceLocation, Type.BOOLEAN);
 	}
 
 	@Override
 	public Expression createNot(Expression expr, SourceLocation sourceLocation) {
+		checkArguments(Type.BOOLEAN, expr);
 		return new Expression((Object[] a) -> ! (Boolean)((Expression)a[0]).eval(),
 								new Object[] {expr}, 
-									sourceLocation);
+									sourceLocation, Type.BOOLEAN);
 	}
 
 	@Override
 	public Expression createLessThan(Expression left, Expression right, SourceLocation sourceLocation) {
+		checkArguments(Type.DOUBLE, left, right);
 		return new Expression((Object[] a) -> (Double)((Expression)a[0]).eval() <
 				(Double)((Expression)a[1]).eval(),
 								new Object[] {left, right}, 
-									sourceLocation);
+									sourceLocation, Type.BOOLEAN);
 	}
 
 	@Override
 	public Expression createLessThanOrEqualTo(Expression left, Expression right,
 			SourceLocation sourceLocation) {
+		checkArguments(Type.DOUBLE, left, right);
 		return new Expression((Object[] a) -> (Double)((Expression)a[0]).eval() <=
 				(Double)((Expression)a[1]).eval(),
 								new Object[] {left, right}, 
-									sourceLocation);
+									sourceLocation, Type.BOOLEAN);
 	}
 
 	@Override
 	public Expression createGreaterThan(Expression left, Expression right, SourceLocation sourceLocation) {
+		checkArguments(Type.DOUBLE, left, right);
 		return new Expression((Object[] a) -> (Double)((Expression)a[0]).eval() >
 				(Double)((Expression)a[1]).eval(),
 								new Object[] {left, right}, 
-									sourceLocation);
+									sourceLocation, Type.BOOLEAN);
 	}
 
 	@Override
 	public Expression createGreaterThanOrEqualTo(Expression left, Expression right,
 			SourceLocation sourceLocation) {
+		checkArguments(Type.DOUBLE, left, right);
 		return new Expression((Object[] a) -> (Double)((Expression)a[0]).eval() >=
 				(Double)((Expression)a[1]).eval(),
 								new Object[] {left, right}, 
-									sourceLocation);
+									sourceLocation, Type.BOOLEAN);
 	}
 
 	@Override
@@ -177,7 +193,7 @@ public class ProgramFactory implements IProgramFactory<Expression, Statement, Ty
 				((Object)((Expression)a[0]).eval()).equals(
 				(Object)((Expression)a[1]).eval())),
 								new Object[] {left, right}, 
-									sourceLocation);
+									sourceLocation, Type.BOOLEAN);
 	}
 
 	@Override
@@ -187,49 +203,56 @@ public class ProgramFactory implements IProgramFactory<Expression, Statement, Ty
 				!((Object)((Expression)a[0]).eval()).equals(
 				(Object)((Expression)a[1]).eval())),
 								new Object[] {left, right}, 
-									sourceLocation);
+									sourceLocation, Type.BOOLEAN);
 	}
 
 	@Override
 	public Expression createGetX(Expression expr, SourceLocation sourceLocation) {
+		checkArguments(Type.GAME_OBJECT, expr);
 		return new Expression((Object[] a) -> ((GameElement)((Expression)a[0]).eval()).getX(), 
-										new Object[] {expr}, sourceLocation);		
+										new Object[] {expr}, sourceLocation, Type.DOUBLE);		
 	}
 
 	@Override
 	public Expression createGetY(Expression expr, SourceLocation sourceLocation) {
+		checkArguments(Type.GAME_OBJECT, expr);
 		return new Expression((Object[] a) -> ((GameElement)((Expression)a[0]).eval()).getY(), 
-				new Object[] {expr}, sourceLocation);	
+				new Object[] {expr}, sourceLocation, Type.DOUBLE);	
 	}
 
 	@Override
 	public Expression createGetWidth(Expression expr, SourceLocation sourceLocation) {
+		checkArguments(Type.GAME_OBJECT, expr);
 		return new Expression((Object[] a) -> new Double(((GameElement)((Expression)a[0]).eval()).getWidth()), 
-				new Object[] {expr}, sourceLocation);	
+				new Object[] {expr}, sourceLocation, Type.DOUBLE);	
 	}
 
 	@Override
 	public Expression createGetHeight(Expression expr, SourceLocation sourceLocation) {
+		checkArguments(Type.GAME_OBJECT, expr);
 		return new Expression((Object[] a) -> new Double (((GameElement)((Expression)a[0]).eval()).getHeight()), 
-				new Object[] {expr}, sourceLocation);	
+				new Object[] {expr}, sourceLocation, Type.DOUBLE);	
 	}
 
 	@Override
 	public Expression createGetHitPoints(Expression expr, SourceLocation sourceLocation) {
+		checkArguments(Type.GAME_OBJECT, expr);
 		return new Expression((Object[] a) -> new Double (((GameObject)((Expression)a[0]).eval()).getHitPoints()), 
-				new Object[] {expr}, sourceLocation);	
+				new Object[] {expr}, sourceLocation, Type.DOUBLE);	
 	}
 
 	@Override
 	public Expression createGetTile(Expression x, Expression y, SourceLocation sourceLocation) {
+		checkArguments(Type.DOUBLE, x,y);
 		return new Expression((Object[] a) -> getMyProgram().getGameObject().getMyWorld().getTerrainObjectAt
 				(((Double)(((Expression)(a[0])).eval())).intValue(),(((Double)(((Expression)(a[1])).eval()))).intValue()), 
-				new Object[] {x,y}, sourceLocation);		
+				new Object[] {x,y}, sourceLocation, Type.GAME_OBJECT);		
 
 	}
 
 	@Override
 	public Expression createSearchObject(Expression direction, SourceLocation sourceLocation) {
+		checkArguments(Type.DIRECTION, direction);
 		return new Expression(
 				(Object[] a) ->	(getMyProgram().getGameObject().getSearchObject(
 								(Direction)
@@ -238,111 +261,126 @@ public class ProgramFactory implements IProgramFactory<Expression, Statement, Ty
 								)
 								)
 								,
-				new Object[] {direction}, sourceLocation);
+				new Object[] {direction}, sourceLocation, Type.GAME_OBJECT);
 	}
 
 	@Override
 	public Expression createIsMazub(Expression expr, SourceLocation sourceLocation) {
+		checkArguments(Type.GAME_OBJECT, expr);
 		return new Expression(
 				(Object[] a) -> ((Expression)a[0]).eval() instanceof Mazub, 
-					new Object[] {expr}, sourceLocation);
+					new Object[] {expr}, sourceLocation, Type.BOOLEAN);
 	}
 
 	@Override
 	public Expression createIsShark(Expression expr, SourceLocation sourceLocation) {
+		checkArguments(Type.GAME_OBJECT, expr);
 		return new Expression(
 				(Object[] a) -> ((Expression)a[0]).eval() instanceof Shark, 
-					new Object[] {expr}, sourceLocation);
+					new Object[] {expr}, sourceLocation, Type.BOOLEAN);
 	}
 
 	@Override
 	public Expression createIsSlime(Expression expr, SourceLocation sourceLocation) {
+		checkArguments(Type.GAME_OBJECT, expr);
 		return new Expression(
 				(Object[] a) -> ((Expression)a[0]).eval() instanceof Slime, 
-					new Object[] {expr}, sourceLocation);
+					new Object[] {expr}, sourceLocation, Type.BOOLEAN);
 	}
 
 	@Override
 	public Expression createIsPlant(Expression expr, SourceLocation sourceLocation) {
+		checkArguments(Type.GAME_OBJECT, expr);
 		return new Expression(
 				(Object[] a) -> ((Expression)a[0]).eval() instanceof Plant, 
-					new Object[] {expr}, sourceLocation);
+					new Object[] {expr}, sourceLocation, Type.BOOLEAN);
 	}
 
 	@Override
 	public Expression createIsDead(Expression expr, SourceLocation sourceLocation) {
+		checkArguments(Type.GAME_OBJECT, expr);
 		return new Expression(
 				(Object[] a) -> ((GameObject)((Expression)a[0]).eval()).isTerminated(), 
-					new Object[] {expr}, sourceLocation);
+					new Object[] {expr}, sourceLocation, Type.BOOLEAN);
 	}
 
 	@Override
 	public Expression createIsTerrain(Expression expr, SourceLocation sourceLocation) {
+		checkArguments(Type.GAME_OBJECT, expr);
 		return new Expression(
 				(Object[] a) -> ((Expression)a[0]).eval() instanceof World.TerrainType, 
-				new Object[] {expr}, sourceLocation);
+				new Object[] {expr}, sourceLocation, Type.BOOLEAN);
 	}
 
 	@Override
 	public Expression createIsPassable(Expression expr, SourceLocation sourceLocation) {
+		checkArguments(Type.GAME_OBJECT, expr);
 		return new Expression(
 				(Object[] a) -> (((GameTile)(((Expression)a[0]).eval())).getTerrainType()).isPassable(), 
-				new Object[] {expr}, sourceLocation);
+				new Object[] {expr}, sourceLocation, Type.BOOLEAN);
 	}
 
 	@Override
 	public Expression createIsWater(Expression expr, SourceLocation sourceLocation) {
+		checkArguments(Type.GAME_OBJECT, expr);
 		return new Expression(
 				(Object[] a) -> ((World.TerrainType)((Expression)a[0]).eval()) 
 										== World.TerrainType.WATER, 
-				new Object[] {expr}, sourceLocation);
+				new Object[] {expr}, sourceLocation, Type.BOOLEAN);
 	}
 
 	@Override
 	public Expression createIsMagma(Expression expr, SourceLocation sourceLocation) {
+		checkArguments(Type.GAME_OBJECT, expr);
 		return new Expression(
 				(Object[] a) -> ((World.TerrainType)((Expression)a[0]).eval()) 
 										== World.TerrainType.MAGMA, 
-				new Object[] {expr}, sourceLocation);
+				new Object[] {expr}, sourceLocation, Type.BOOLEAN);
 	}
 
 	@Override
 	public Expression createIsAir(Expression expr, SourceLocation sourceLocation) {
+		checkArguments(Type.GAME_OBJECT, expr);
 		return new Expression(
 				(Object[] a) -> ((World.TerrainType)((Expression)a[0]).eval()) 
 										== World.TerrainType.AIR, 
-				new Object[] {expr}, sourceLocation);
+				new Object[] {expr}, sourceLocation, Type.BOOLEAN);
 	}
 
 	@Override
 	public Expression createIsMoving(Expression expr, Expression direction, SourceLocation sourceLocation) {
+		checkArguments(Type.GAME_OBJECT, expr);
 		return new Expression((Object[] a) -> 
 									((GameObject)((Expression)a[0]).eval()).
 									isMoving((Direction)((Expression)(a[1])).
 											eval()), 
-				new Object[] {expr, direction}, sourceLocation);	
+				new Object[] {expr, direction}, sourceLocation, Type.BOOLEAN);	
 	}
 
 	@Override
 	public Expression createIsDucking(Expression expr, SourceLocation sourceLocation) {
+		checkArguments(Type.GAME_OBJECT, expr);
 		return new Expression((Object[] a) -> ((GameObject)((Expression)a[0]).eval()).isDucking(), 
-				new Object[] {expr}, sourceLocation);	
+				new Object[] {expr}, sourceLocation, Type.BOOLEAN);	
 	}
 
 	@Override
 	public Expression createIsJumping(Expression expr, SourceLocation sourceLocation) {
+		checkArguments(Type.GAME_OBJECT, expr);
 		return new Expression((Object[] a) -> ((GameObject)((Expression)a[0]).eval()).isJumping(), 
-				new Object[] {expr}, sourceLocation);	
+				new Object[] {expr}, sourceLocation, Type.BOOLEAN);	
 	}
 
 	@Override
 	public Statement createAssignment(String variableName, Type variableType, Expression value,
 			SourceLocation sourceLocation) {
+		checkArguments(variableType, value);
 		return new AssignmentStatement(getMyProgram(), sourceLocation, variableName, value, variableType);
 	}
 
 	@Override
 	public Statement createWhile(Expression condition, Statement body, SourceLocation sourceLocation) {
+		checkArguments(Type.BOOLEAN, condition);
 		return new WhileStatement(getMyProgram(), sourceLocation, condition, body);
 	}
 
@@ -354,6 +392,7 @@ public class ProgramFactory implements IProgramFactory<Expression, Statement, Ty
 			Expression sort,
 			jumpingalien.part3.programs.IProgramFactory.SortDirection sortDirection,
 			Statement body, SourceLocation sourceLocation) {
+		checkArguments(Type.BOOLEAN, where, sort);
 		return new ForEachStatement(getMyProgram(), sourceLocation, variableName, variableKind, where, sort, sortDirection, body);
 	}
 
@@ -365,6 +404,7 @@ public class ProgramFactory implements IProgramFactory<Expression, Statement, Ty
 	@Override
 	public Statement createIf(Expression condition, Statement ifBody, Statement elseBody,
 			SourceLocation sourceLocation) {
+		checkArguments(Type.BOOLEAN, condition);
 		return new IfStatement(getMyProgram(), sourceLocation, condition, ifBody, elseBody);
 	}
 
@@ -375,11 +415,13 @@ public class ProgramFactory implements IProgramFactory<Expression, Statement, Ty
 
 	@Override
 	public Statement createStartRun(Expression direction, SourceLocation sourceLocation) {
+		checkArguments(Type.DIRECTION, direction);
 		return new StartRunStatement(getMyProgram(), sourceLocation, direction);
 	}
 
 	@Override
 	public Statement createStopRun(Expression direction, SourceLocation sourceLocation) {
+		checkArguments(Type.DIRECTION, direction);
 		return new StopRunStatement(getMyProgram(), sourceLocation, direction);
 	}
 
@@ -405,12 +447,13 @@ public class ProgramFactory implements IProgramFactory<Expression, Statement, Ty
 
 	@Override
 	public Statement createWait(Expression duration, SourceLocation sourceLocation) {
+		checkArguments(Type.DOUBLE, duration);
 		return new WaitStatement(getMyProgram(), sourceLocation, duration);
 	}
 
 	@Override
 	public Statement createSkip(SourceLocation sourceLocation) {
-		return new TrivialStatement(getMyProgram(), sourceLocation);
+		return new SkipStatement(getMyProgram(), sourceLocation);
 	}
 
 	@Override
@@ -443,5 +486,15 @@ public class ProgramFactory implements IProgramFactory<Expression, Statement, Ty
 		getMyProgram().setMainStatement((Statement) mainStatement);
 		getMyProgram().initialiseVariables((Map<String, Type>) globalVariables);
 		return MY_PROGRAM;
+	}
+	
+	
+	public void checkArguments(Type t, Expression... e) {
+		for(Expression expr : e) {
+			if(expr != null && expr.getType() != t) {
+				getMyProgram().setContainsError(true);
+				System.out.println("Type error, expression at " + expr.getSourceLocation() + " is not a " + t +".");
+			}
+		}
 	}
 }

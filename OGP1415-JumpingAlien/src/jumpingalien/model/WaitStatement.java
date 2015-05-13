@@ -7,6 +7,7 @@ public class WaitStatement extends TrivialStatement {
 	public WaitStatement(Program caller, SourceLocation location, Expression duration) {
 		super(caller, location);
 		EXPRESSION = duration;
+		setContainsAction(true);
 	}
 
 	private final Expression EXPRESSION;

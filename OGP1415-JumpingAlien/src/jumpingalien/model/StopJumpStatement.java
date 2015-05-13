@@ -12,6 +12,7 @@ public class StopJumpStatement extends TrivialStatement {
 
 	public StopJumpStatement(Program caller, SourceLocation location) {
 		super(caller, location);
+		setContainsAction(true);
 	}
 	
 	//voldoet aan Liskov, gooit excpetion minder

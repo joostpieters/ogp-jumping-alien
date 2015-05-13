@@ -11,6 +11,7 @@ public class StopDuckStatement extends TrivialStatement {
 
 	public StopDuckStatement(Program caller, SourceLocation location) {
 		super(caller, location);
+		setContainsAction(true);
 	}
 	
 	//voldoet aan Liskov, gooit excpetion minder

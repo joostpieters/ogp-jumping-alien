@@ -11,8 +11,17 @@ public class SequenceStatement extends Statement {
 		super(caller, location);
 		this.statements = statements;
 		for (int i = 0; i < getNbStatements()-1; i++) {
+			if (getStatementAt(i).containsAction())
+				this.setContainsAction(true);
+			if (getStatementAt(i).containsBreakOutsideLoop())
+				this.setContainsBreakOutsideLoop(true);
 			getStatementAt(i).setNextStatement(getStatementAt(i+1));
 		}
+		if (getStatementAt(getNbStatements()-1).containsAction())
+			this.setContainsAction(true);
+		if (getStatementAt(getNbStatements()-1).containsBreakOutsideLoop())
+			this.setContainsBreakOutsideLoop(true);
+		
 	}
 
 	private List<Statement> statements;

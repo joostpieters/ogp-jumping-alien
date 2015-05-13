@@ -6,6 +6,7 @@ public class BreakStatement extends Statement {
 
 	public BreakStatement(Program caller, SourceLocation location) {
 		super(caller, location);
+		setContainsBreakOutsideLoop(true);
 	}
 
 	@Override
