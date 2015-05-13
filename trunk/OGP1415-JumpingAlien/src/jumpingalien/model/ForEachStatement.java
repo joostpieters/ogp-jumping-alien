@@ -16,6 +16,11 @@ public class ForEachStatement extends Statement {
 			Kind variableKind,
 			Expression where, Expression sort, SortDirection sortDirection, Statement body) {
 		super(caller, location);
+		setContainsAction(body.containsAction());
+		if (this.containsAction()) {
+			caller.setWellFormed(false);
+			System.out.println("For each statement at " + location + " is not well formed!");
+		}
 		VARIABLE_NAME = variableName;
 		VARIABLE_KIND = variableKind;
 		WHERE = where;

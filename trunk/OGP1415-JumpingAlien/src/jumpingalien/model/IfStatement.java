@@ -7,6 +7,18 @@ public class IfStatement extends Statement {
 	public IfStatement(Program caller, SourceLocation location, Expression expression,
 			Statement ifBody, Statement elseBody) {
 		super(caller, location);
+		if (ifBody != null) {
+			if (ifBody.containsAction())
+				setContainsAction(true);
+			if (ifBody.containsBreakOutsideLoop())
+				setContainsBreakOutsideLoop(true);
+		}
+		if (elseBody != null) {
+			if (elseBody.containsAction())
+				setContainsAction(true);
+			if (ifBody.containsBreakOutsideLoop())
+				setContainsBreakOutsideLoop(true);
+		}
 		EXPRESSION = expression;
 		IF_BODY = ifBody;
 		ELSE_BODY = elseBody;

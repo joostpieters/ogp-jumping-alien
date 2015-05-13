@@ -13,6 +13,7 @@ public class StartDuckStatement extends TrivialStatement {
 
 	public StartDuckStatement(Program caller, SourceLocation location) {
 		super(caller, location);
+		setContainsAction(true);
 	}
 	
 	//voldoet aan Liskov, gooit excpetion minder

@@ -6,6 +6,7 @@ public class WhileStatement extends Statement {
 
 	public WhileStatement(Program caller, SourceLocation location, Expression expression, Statement body) {
 		super(caller, location);
+		setContainsAction(body.containsAction());
 		EXPRESSION = expression;
 		BODY = body;
 		setIterating(false);

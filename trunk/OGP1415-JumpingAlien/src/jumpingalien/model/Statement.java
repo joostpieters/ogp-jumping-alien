@@ -17,6 +17,8 @@ public abstract class Statement {
 	public Statement(Program caller, SourceLocation location) {
 		LOCATION = location;
 		CALLER = caller;
+		setContainsAction(false);
+		setContainsBreakOutsideLoop(false);
 	}
 	
 	public Program getCaller() {
@@ -40,9 +42,28 @@ public abstract class Statement {
 	}
 	
 	protected void setNextStatement(Statement nextStatement) {
-		assert getNextStatement() == null;
 		this.nextStatement = nextStatement;
 	}
 	private Statement nextStatement;
 	
+	
+	private boolean containsAction;
+
+	public boolean containsAction() {
+		return containsAction;
+	}
+
+	protected void setContainsAction(boolean containsAction) {
+		this.containsAction = containsAction;
+	}
+	
+	private boolean containsBreakOutsideLoop;
+
+	public boolean containsBreakOutsideLoop() {
+		return containsBreakOutsideLoop;
+	}
+
+	protected void setContainsBreakOutsideLoop(boolean containsBreakOutsideLoop) {
+		this.containsBreakOutsideLoop = containsBreakOutsideLoop;
+	}
 }

@@ -19,6 +19,7 @@ public class StartRunStatement extends TrivialStatement {
 	public StartRunStatement(Program caller, SourceLocation location, Expression direction) {
 		super(caller, location);
 		DIRECTION = direction;
+		setContainsAction(true);
 	}
 
 	private final Expression DIRECTION;

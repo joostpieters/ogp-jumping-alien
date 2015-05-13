@@ -451,7 +451,7 @@ public abstract class GameObject implements GameElement{
 	 * @post  | new.getX() == x && new.getY() == y
 	 */
 	@Raw
-	protected void setPosition(double x, double y) {
+	private void setPosition(double x, double y) {
 		this.x = x;
 		this.y = y;
 	}

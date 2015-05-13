@@ -9,7 +9,7 @@ import jumpingalien.part3.programs.SourceLocation;
  * @author Andreas
  *
  */
-public class TrivialStatement extends Statement {
+public abstract class TrivialStatement extends Statement {
 
 	/**
 	 * @param caller
