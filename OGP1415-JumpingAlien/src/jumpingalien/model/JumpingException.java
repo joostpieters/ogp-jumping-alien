@@ -1,4 +1,5 @@
 package jumpingalien.model;
+import jumpingalien.model.elements.GameObject;
 import be.kuleuven.cs.som.annotate.*;
 
 /**
@@ -9,6 +10,7 @@ import be.kuleuven.cs.som.annotate.*;
  *
  */
 public class JumpingException extends RuntimeException {
+
 	/**
 	 * Initialize this new JumpingException with a given amount and a given game object.
 	 * 
@@ -42,4 +44,7 @@ public class JumpingException extends RuntimeException {
 	 * Variable referencing the game object of this JumpingException.
 	 */
 	private final GameObject character;
+	
+	private static final long serialVersionUID = 1L;
+
 }

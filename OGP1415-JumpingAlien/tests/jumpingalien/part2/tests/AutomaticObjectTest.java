@@ -2,9 +2,9 @@ package jumpingalien.part2.tests;
 
 import static org.junit.Assert.*;
 import jumpingalien.common.sprites.JumpingAlienSprites;
-import jumpingalien.model.Mazub;
-import jumpingalien.model.Plant;
 import jumpingalien.model.World;
+import jumpingalien.model.elements.Mazub;
+import jumpingalien.model.elements.Plant;
 import jumpingalien.part2.internal.Resources;
 import jumpingalien.util.Sprite;
 
@@ -36,7 +36,7 @@ public class AutomaticObjectTest {
 	public void setUp() throws Exception {
 		world = new World(5000, 5000, 10, new int[] {500, 500}, 0, 0);
 		mazub = new Mazub(world, 0, 0, mazubSprites);
-		plant = new Plant(world, 250, 0, plantSprites);
+		plant = new Plant(world, 250, 0, plantSprites, null);
 		
 		world.addObject(plant);
 		world.addObject(mazub);

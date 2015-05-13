@@ -2,6 +2,8 @@ package jumpingalien.model;
 
 import java.util.HashSet;
 import java.util.Set;
+
+import jumpingalien.model.elements.Slime;
 import be.kuleuven.cs.som.annotate.*;
 
 /**

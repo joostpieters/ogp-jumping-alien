@@ -4,7 +4,7 @@ import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
-import jumpingalien.model.Mazub;
+import jumpingalien.model.elements.Mazub;
 import jumpingalien.util.ModelException;
 import ogp.framework.command.Command;
 import ogp.framework.game.Game;

@@ -2,10 +2,10 @@ package jumpingalien.part2.tests;
 
 import static org.junit.Assert.*;
 import jumpingalien.common.sprites.JumpingAlienSprites;
-import jumpingalien.model.Mazub;
 import jumpingalien.model.School;
-import jumpingalien.model.Slime;
 import jumpingalien.model.World;
+import jumpingalien.model.elements.Mazub;
+import jumpingalien.model.elements.Slime;
 import jumpingalien.part2.internal.Resources;
 import jumpingalien.util.Sprite;
 
@@ -48,7 +48,7 @@ public class SchoolTest {
 	
 	@Test
 	public void addAsSlimeTest() {
-		slime1 = new Slime(world, 70, 0, slimeSprites, school);
+		slime1 = new Slime(world, 70, 0, slimeSprites, school, null);
 		assertEquals(1,school.getNbSlimes());
 		assertTrue(school.hasAsSlime(slime1));
 		assertFalse(school.hasAsSlime(slime2));
@@ -56,8 +56,8 @@ public class SchoolTest {
 	
 	@Test
 	public void removeAsSlimeTest() {
-		slime1 = new Slime(world, 70, 0, slimeSprites, school);
-		slime2 = new Slime(world, 70, 200, slimeSprites, school);
+		slime1 = new Slime(world, 70, 0, slimeSprites, school, null);
+		slime2 = new Slime(world, 70, 200, slimeSprites, school, null);
 		School otherSchool = new School();
 		slime1.transferToSchool(otherSchool);
 		assertFalse(school.hasAsSlime(slime1));
@@ -67,7 +67,7 @@ public class SchoolTest {
 	
 	@Test
 	public void canHaveAsSlimeTest() {
-		slime3 = new Slime(world, 70, 500, slimeSprites, school);
+		slime3 = new Slime(world, 70, 500, slimeSprites, school, null);
 		assertFalse(school.canHaveAsSlime(null));
 		assertTrue(school.canHaveAsSlime(slime3));
 	}

@@ -5,12 +5,12 @@ package jumpingalien.part2.tests;
 
 import static org.junit.Assert.*;
 import jumpingalien.common.sprites.JumpingAlienSprites;
-import jumpingalien.model.Mazub;
 import jumpingalien.model.School;
-import jumpingalien.model.Shark;
-import jumpingalien.model.Slime;
 import jumpingalien.model.World;
 import jumpingalien.model.World.TerrainType;
+import jumpingalien.model.elements.Mazub;
+import jumpingalien.model.elements.Shark;
+import jumpingalien.model.elements.Slime;
 import jumpingalien.part2.internal.Resources;
 import jumpingalien.util.Sprite;
 
@@ -50,7 +50,7 @@ public class SharkTest {
 	public void setUp() throws Exception {
 		
 		world = new World(5000, 5000, 10, new int[] {500, 500}, 0, 0);
-		shark = new Shark(world, 10, 0, sharkSprites);
+		shark = new Shark(world, 10, 0, sharkSprites, null);
 		mazub = new Mazub(world, 10, 400, mazubSprites);
 
 		for(int i = 0; i < 20; i++ ) {
@@ -110,7 +110,7 @@ public class SharkTest {
 	@Test
 	public void touchesMazubTest() {
 		world = new World(5000, 5000, 10, new int[] {500, 500}, 0, 0);
-		shark = new Shark(world, 10, 0, sharkSprites);
+		shark = new Shark(world, 10, 0, sharkSprites, null);
 		mazub = new Mazub(world, 10, 0, mazubSprites);
 		world.addObject(shark);
 		world.addObject(mazub);
@@ -123,10 +123,10 @@ public class SharkTest {
 	@Test
 	public void touchesSlimeTest() {
 		world = new World(5000, 5000, 10, new int[] {500, 500}, 0, 0);
-		shark = new Shark(world, 10, 0, sharkSprites);
+		shark = new Shark(world, 10, 0, sharkSprites, null);
 		mazub = new Mazub(world, 10, 500, mazubSprites);
 		School school = new School();
-		Slime slime = new Slime(world, 10,0,slimeSprites, school);
+		Slime slime = new Slime(world, 10,0,slimeSprites, school, null);
 		world.addObject(shark);
 		world.addObject(mazub);
 		world.addObject(slime);
@@ -139,7 +139,7 @@ public class SharkTest {
 	@Test
 	public void canJumpTest() {
 		assertTrue(shark.canJump());
-		Shark shark2 = new Shark(world, 10, 200, sharkSprites);
+		Shark shark2 = new Shark(world, 10, 200, sharkSprites, null);
 		assertFalse(shark2.canJump());
 		world.setTerrainAt(3,20,TerrainType.WATER);
 		assertTrue(shark2.canJump());
@@ -165,7 +165,7 @@ public class SharkTest {
 				world.setTerrainAt(i,j,TerrainType.WATER);
 		assertEquals(0,shark.getYAcceleration(),1e-4);
 		
-		Shark shark2 = new Shark(world,10,200,sharkSprites);
+		Shark shark2 = new Shark(world,10,200,sharkSprites, null);
 		assertEquals(-1000,shark2.getYAcceleration(),1e-4);
 		
 		

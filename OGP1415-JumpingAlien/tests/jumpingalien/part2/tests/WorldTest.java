@@ -5,14 +5,14 @@ package jumpingalien.part2.tests;
 
 import static org.junit.Assert.*;
 import jumpingalien.common.sprites.JumpingAlienSprites;
-import jumpingalien.model.GameObject;
-import jumpingalien.model.GameObject.Direction;
-import jumpingalien.model.Mazub;
 import jumpingalien.model.School;
-import jumpingalien.model.Shark;
-import jumpingalien.model.Slime;
 import jumpingalien.model.World;
 import jumpingalien.model.World.TerrainType;
+import jumpingalien.model.elements.GameObject;
+import jumpingalien.model.elements.Mazub;
+import jumpingalien.model.elements.Shark;
+import jumpingalien.model.elements.Slime;
+import jumpingalien.model.elements.GameObject.Direction;
 import jumpingalien.part2.internal.Resources;
 import jumpingalien.util.Sprite;
 

@@ -6,6 +6,29 @@ package jumpingalien.model;
 import java.util.List;
 import java.util.Map;
 
+import jumpingalien.model.elements.GameElement;
+import jumpingalien.model.elements.GameObject;
+import jumpingalien.model.elements.GameTile;
+import jumpingalien.model.elements.Mazub;
+import jumpingalien.model.elements.Plant;
+import jumpingalien.model.elements.Shark;
+import jumpingalien.model.elements.Slime;
+import jumpingalien.model.statements.AssignmentStatement;
+import jumpingalien.model.statements.BreakStatement;
+import jumpingalien.model.statements.ForEachStatement;
+import jumpingalien.model.statements.IfStatement;
+import jumpingalien.model.statements.PrintStatement;
+import jumpingalien.model.statements.SequenceStatement;
+import jumpingalien.model.statements.SkipStatement;
+import jumpingalien.model.statements.StartDuckStatement;
+import jumpingalien.model.statements.StartJumpStatement;
+import jumpingalien.model.statements.StartRunStatement;
+import jumpingalien.model.statements.Statement;
+import jumpingalien.model.statements.StopDuckStatement;
+import jumpingalien.model.statements.StopJumpStatement;
+import jumpingalien.model.statements.StopRunStatement;
+import jumpingalien.model.statements.WaitStatement;
+import jumpingalien.model.statements.WhileStatement;
 import jumpingalien.part3.programs.IProgramFactory;
 import jumpingalien.part3.programs.SourceLocation;
 
@@ -54,13 +77,13 @@ public class ProgramFactory implements IProgramFactory<Expression, Statement, Ty
 
 	@Override
 	public Expression createNull(SourceLocation sourceLocation) {
-		return new Expression((Object[] a) -> a[0], new Object[] {null}, sourceLocation,Type.GAME_OBJECT);
+		return new Expression((Object[] a) -> a[0], new Object[] {null}, sourceLocation,Type.GAME_ELEMENT);
 	}
 
 	@Override
 	public Expression createSelf(SourceLocation sourceLocation) {
 		return new Expression((Object[] a) -> ((Program)a[0]).getGameObject(), new Object[] {getMyProgram()}, sourceLocation,
-				Type.GAME_OBJECT);
+				Type.GAME_ELEMENT);
 	}
 
 	@Override
@@ -208,35 +231,35 @@ public class ProgramFactory implements IProgramFactory<Expression, Statement, Ty
 
 	@Override
 	public Expression createGetX(Expression expr, SourceLocation sourceLocation) {
-		checkArguments(Type.GAME_OBJECT, expr);
+		checkArguments(Type.GAME_ELEMENT, expr);
 		return new Expression((Object[] a) -> ((GameElement)((Expression)a[0]).eval()).getX(), 
 										new Object[] {expr}, sourceLocation, Type.DOUBLE);		
 	}
 
 	@Override
 	public Expression createGetY(Expression expr, SourceLocation sourceLocation) {
-		checkArguments(Type.GAME_OBJECT, expr);
+		checkArguments(Type.GAME_ELEMENT, expr);
 		return new Expression((Object[] a) -> ((GameElement)((Expression)a[0]).eval()).getY(), 
 				new Object[] {expr}, sourceLocation, Type.DOUBLE);	
 	}
 
 	@Override
 	public Expression createGetWidth(Expression expr, SourceLocation sourceLocation) {
-		checkArguments(Type.GAME_OBJECT, expr);
+		checkArguments(Type.GAME_ELEMENT, expr);
 		return new Expression((Object[] a) -> new Double(((GameElement)((Expression)a[0]).eval()).getWidth()), 
 				new Object[] {expr}, sourceLocation, Type.DOUBLE);	
 	}
 
 	@Override
 	public Expression createGetHeight(Expression expr, SourceLocation sourceLocation) {
-		checkArguments(Type.GAME_OBJECT, expr);
+		checkArguments(Type.GAME_ELEMENT, expr);
 		return new Expression((Object[] a) -> new Double (((GameElement)((Expression)a[0]).eval()).getHeight()), 
 				new Object[] {expr}, sourceLocation, Type.DOUBLE);	
 	}
 
 	@Override
 	public Expression createGetHitPoints(Expression expr, SourceLocation sourceLocation) {
-		checkArguments(Type.GAME_OBJECT, expr);
+		checkArguments(Type.GAME_ELEMENT, expr);
 		return new Expression((Object[] a) -> new Double (((GameObject)((Expression)a[0]).eval()).getHitPoints()), 
 				new Object[] {expr}, sourceLocation, Type.DOUBLE);	
 	}
@@ -246,7 +269,7 @@ public class ProgramFactory implements IProgramFactory<Expression, Statement, Ty
 		checkArguments(Type.DOUBLE, x,y);
 		return new Expression((Object[] a) -> getMyProgram().getGameObject().getMyWorld().getTerrainObjectAt
 				(((Double)(((Expression)(a[0])).eval())).intValue(),(((Double)(((Expression)(a[1])).eval()))).intValue()), 
-				new Object[] {x,y}, sourceLocation, Type.GAME_OBJECT);		
+				new Object[] {x,y}, sourceLocation, Type.GAME_ELEMENT);		
 
 	}
 
@@ -261,12 +284,12 @@ public class ProgramFactory implements IProgramFactory<Expression, Statement, Ty
 								)
 								)
 								,
-				new Object[] {direction}, sourceLocation, Type.GAME_OBJECT);
+				new Object[] {direction}, sourceLocation, Type.GAME_ELEMENT);
 	}
 
 	@Override
 	public Expression createIsMazub(Expression expr, SourceLocation sourceLocation) {
-		checkArguments(Type.GAME_OBJECT, expr);
+		checkArguments(Type.GAME_ELEMENT, expr);
 		return new Expression(
 				(Object[] a) -> ((Expression)a[0]).eval() instanceof Mazub, 
 					new Object[] {expr}, sourceLocation, Type.BOOLEAN);
@@ -274,7 +297,7 @@ public class ProgramFactory implements IProgramFactory<Expression, Statement, Ty
 
 	@Override
 	public Expression createIsShark(Expression expr, SourceLocation sourceLocation) {
-		checkArguments(Type.GAME_OBJECT, expr);
+		checkArguments(Type.GAME_ELEMENT, expr);
 		return new Expression(
 				(Object[] a) -> ((Expression)a[0]).eval() instanceof Shark, 
 					new Object[] {expr}, sourceLocation, Type.BOOLEAN);
@@ -282,7 +305,7 @@ public class ProgramFactory implements IProgramFactory<Expression, Statement, Ty
 
 	@Override
 	public Expression createIsSlime(Expression expr, SourceLocation sourceLocation) {
-		checkArguments(Type.GAME_OBJECT, expr);
+		checkArguments(Type.GAME_ELEMENT, expr);
 		return new Expression(
 				(Object[] a) -> ((Expression)a[0]).eval() instanceof Slime, 
 					new Object[] {expr}, sourceLocation, Type.BOOLEAN);
@@ -290,7 +313,7 @@ public class ProgramFactory implements IProgramFactory<Expression, Statement, Ty
 
 	@Override
 	public Expression createIsPlant(Expression expr, SourceLocation sourceLocation) {
-		checkArguments(Type.GAME_OBJECT, expr);
+		checkArguments(Type.GAME_ELEMENT, expr);
 		return new Expression(
 				(Object[] a) -> ((Expression)a[0]).eval() instanceof Plant, 
 					new Object[] {expr}, sourceLocation, Type.BOOLEAN);
@@ -298,7 +321,7 @@ public class ProgramFactory implements IProgramFactory<Expression, Statement, Ty
 
 	@Override
 	public Expression createIsDead(Expression expr, SourceLocation sourceLocation) {
-		checkArguments(Type.GAME_OBJECT, expr);
+		checkArguments(Type.GAME_ELEMENT, expr);
 		return new Expression(
 				(Object[] a) -> ((GameObject)((Expression)a[0]).eval()).isTerminated(), 
 					new Object[] {expr}, sourceLocation, Type.BOOLEAN);
@@ -306,7 +329,7 @@ public class ProgramFactory implements IProgramFactory<Expression, Statement, Ty
 
 	@Override
 	public Expression createIsTerrain(Expression expr, SourceLocation sourceLocation) {
-		checkArguments(Type.GAME_OBJECT, expr);
+		checkArguments(Type.GAME_ELEMENT, expr);
 		return new Expression(
 				(Object[] a) -> ((Expression)a[0]).eval() instanceof World.TerrainType, 
 				new Object[] {expr}, sourceLocation, Type.BOOLEAN);
@@ -314,7 +337,7 @@ public class ProgramFactory implements IProgramFactory<Expression, Statement, Ty
 
 	@Override
 	public Expression createIsPassable(Expression expr, SourceLocation sourceLocation) {
-		checkArguments(Type.GAME_OBJECT, expr);
+		checkArguments(Type.GAME_ELEMENT, expr);
 		return new Expression(
 				(Object[] a) -> (((GameTile)(((Expression)a[0]).eval())).getTerrainType()).isPassable(), 
 				new Object[] {expr}, sourceLocation, Type.BOOLEAN);
@@ -322,7 +345,7 @@ public class ProgramFactory implements IProgramFactory<Expression, Statement, Ty
 
 	@Override
 	public Expression createIsWater(Expression expr, SourceLocation sourceLocation) {
-		checkArguments(Type.GAME_OBJECT, expr);
+		checkArguments(Type.GAME_ELEMENT, expr);
 		return new Expression(
 				(Object[] a) -> ((World.TerrainType)((Expression)a[0]).eval()) 
 										== World.TerrainType.WATER, 
@@ -331,7 +354,7 @@ public class ProgramFactory implements IProgramFactory<Expression, Statement, Ty
 
 	@Override
 	public Expression createIsMagma(Expression expr, SourceLocation sourceLocation) {
-		checkArguments(Type.GAME_OBJECT, expr);
+		checkArguments(Type.GAME_ELEMENT, expr);
 		return new Expression(
 				(Object[] a) -> ((World.TerrainType)((Expression)a[0]).eval()) 
 										== World.TerrainType.MAGMA, 
@@ -340,7 +363,7 @@ public class ProgramFactory implements IProgramFactory<Expression, Statement, Ty
 
 	@Override
 	public Expression createIsAir(Expression expr, SourceLocation sourceLocation) {
-		checkArguments(Type.GAME_OBJECT, expr);
+		checkArguments(Type.GAME_ELEMENT, expr);
 		return new Expression(
 				(Object[] a) -> ((World.TerrainType)((Expression)a[0]).eval()) 
 										== World.TerrainType.AIR, 
@@ -349,7 +372,7 @@ public class ProgramFactory implements IProgramFactory<Expression, Statement, Ty
 
 	@Override
 	public Expression createIsMoving(Expression expr, Expression direction, SourceLocation sourceLocation) {
-		checkArguments(Type.GAME_OBJECT, expr);
+		checkArguments(Type.GAME_ELEMENT, expr);
 		return new Expression((Object[] a) -> 
 									((GameObject)((Expression)a[0]).eval()).
 									isMoving((Direction)((Expression)(a[1])).
@@ -359,14 +382,14 @@ public class ProgramFactory implements IProgramFactory<Expression, Statement, Ty
 
 	@Override
 	public Expression createIsDucking(Expression expr, SourceLocation sourceLocation) {
-		checkArguments(Type.GAME_OBJECT, expr);
+		checkArguments(Type.GAME_ELEMENT, expr);
 		return new Expression((Object[] a) -> ((GameObject)((Expression)a[0]).eval()).isDucking(), 
 				new Object[] {expr}, sourceLocation, Type.BOOLEAN);	
 	}
 
 	@Override
 	public Expression createIsJumping(Expression expr, SourceLocation sourceLocation) {
-		checkArguments(Type.GAME_OBJECT, expr);
+		checkArguments(Type.GAME_ELEMENT, expr);
 		return new Expression((Object[] a) -> ((GameObject)((Expression)a[0]).eval()).isJumping(), 
 				new Object[] {expr}, sourceLocation, Type.BOOLEAN);	
 	}
@@ -473,7 +496,7 @@ public class ProgramFactory implements IProgramFactory<Expression, Statement, Ty
 
 	@Override
 	public Type getGameObjectType() {
-		return Type.GAME_OBJECT;
+		return Type.GAME_ELEMENT;
 	}
 
 	@Override
