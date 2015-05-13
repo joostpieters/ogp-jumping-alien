@@ -10,10 +10,10 @@ import jumpingalien.common.gui.AlienGUIUtils;
 import jumpingalien.common.gui.AlienGameScreen;
 import jumpingalien.common.gui.painters.AbstractAlienPainter;
 import jumpingalien.common.sprites.ImageSprite;
-import jumpingalien.model.Plant;
 import jumpingalien.model.School;
-import jumpingalien.model.Shark;
-import jumpingalien.model.Slime;
+import jumpingalien.model.elements.Plant;
+import jumpingalien.model.elements.Shark;
+import jumpingalien.model.elements.Slime;
 
 public final class GameObjectPainter extends
 		AbstractAlienPainter<AlienGameScreen<?, ?>> {

@@ -6,8 +6,8 @@ package jumpingalien.part1.facade;
 import jumpingalien.util.ModelException;
 import jumpingalien.util.Sprite;
 import jumpingalien.model.JumpingException;
-import jumpingalien.model.Mazub;
 import jumpingalien.model.World;
+import jumpingalien.model.elements.Mazub;
 
 /**
  * @author Andreas Schrvyers & Jonathan Oostvogels

@@ -5,8 +5,9 @@ package jumpingalien.model;
 
 import java.util.HashSet;
 import java.util.Set;
-
-import jumpingalien.part3.programs.IProgramFactory.Direction;
+import jumpingalien.model.elements.GameObject;
+import jumpingalien.model.elements.GameTile;
+import jumpingalien.model.elements.Mazub;
 import be.kuleuven.cs.som.annotate.*;
 
 /**
@@ -105,6 +106,7 @@ public class World {
 	 * 		   |    if(c.isInstance(obj))
 	 * 		   | 	   result.contains(obj)
 	 */
+	@SuppressWarnings("unchecked")
 	public <T> Set<T> getAllInstancesOf(Class<T> c) { 
 		Set<T> result = new HashSet<>();
 		for(GameObject obj : getGameObjects()) {

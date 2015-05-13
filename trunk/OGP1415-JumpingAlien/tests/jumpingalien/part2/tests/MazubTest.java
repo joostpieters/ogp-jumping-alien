@@ -3,13 +3,13 @@ package jumpingalien.part2.tests;
 
 import static org.junit.Assert.*;
 import jumpingalien.common.sprites.JumpingAlienSprites;
-import jumpingalien.model.Mazub;
-import jumpingalien.model.Plant;
 import jumpingalien.model.School;
-import jumpingalien.model.Shark;
-import jumpingalien.model.Slime;
 import jumpingalien.model.World;
 import jumpingalien.model.World.TerrainType;
+import jumpingalien.model.elements.Mazub;
+import jumpingalien.model.elements.Plant;
+import jumpingalien.model.elements.Shark;
+import jumpingalien.model.elements.Slime;
 import jumpingalien.part2.internal.Resources;
 import jumpingalien.util.Sprite;
 
@@ -73,7 +73,7 @@ public class MazubTest {
 	
 	@Test
 	public void touchesPlantTest(){
-		Plant plant = new Plant(world, mazub.getPosition()[0]+mazub.getWidth()+5, 0, plantSprites);
+		Plant plant = new Plant(world, mazub.getPosition()[0]+mazub.getWidth()+5, 0, plantSprites, null);
 		world.addObject(plant);
 		for(int i = 0; i < 3; i++)
 			world.advanceTime(0.1);
@@ -84,7 +84,7 @@ public class MazubTest {
 	
 	@Test
 	public void touchesSharkTest() {
-		Shark shark = new Shark(world, 0, 0, sharkSprites);
+		Shark shark = new Shark(world, 0, 0, sharkSprites, null);
 		world.addObject(shark);
 		world.advanceTime(0.1);
 		assertEquals(50,mazub.getHitPoints());
@@ -95,7 +95,7 @@ public class MazubTest {
 	@Test
 	public void touchesSlimeTest() {
 		School school = new School();
-		Slime slime = new Slime(world, 0, 0, sharkSprites, school);
+		Slime slime = new Slime(world, 0, 0, sharkSprites, school, null);
 		world.addObject(slime);
 		world.advanceTime(0.1);
 		assertEquals(50,mazub.getHitPoints());

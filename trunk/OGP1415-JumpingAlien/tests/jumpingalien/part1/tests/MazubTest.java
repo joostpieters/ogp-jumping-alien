@@ -7,8 +7,8 @@
 package jumpingalien.part1.tests;
 import jumpingalien.common.sprites.JumpingAlienSprites;
 import jumpingalien.model.JumpingException;
-import jumpingalien.model.Mazub;
 import jumpingalien.model.World;
+import jumpingalien.model.elements.Mazub;
 import jumpingalien.util.Sprite;
 import static org.junit.Assert.*;
 

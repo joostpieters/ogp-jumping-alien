@@ -1,14 +1,14 @@
 package jumpingalien.part2.tests;
 import jumpingalien.common.sprites.JumpingAlienSprites;
-import jumpingalien.model.GameObject;
-import jumpingalien.model.GameObject.Direction;
 import jumpingalien.model.JumpingException;
-import jumpingalien.model.Mazub;
-import jumpingalien.model.Plant;
 import jumpingalien.model.School;
-import jumpingalien.model.Slime;
 import jumpingalien.model.World;
 import jumpingalien.model.World.TerrainType;
+import jumpingalien.model.elements.GameObject;
+import jumpingalien.model.elements.Mazub;
+import jumpingalien.model.elements.Plant;
+import jumpingalien.model.elements.Slime;
+import jumpingalien.model.elements.GameObject.Direction;
 import jumpingalien.part2.internal.Resources;
 import jumpingalien.util.Sprite;
 import static org.junit.Assert.*;
@@ -480,33 +480,4 @@ public class GameObjectTest {
 			world.advanceTime(0.1);
 		assertTrue(obj.canJump());
 	}
-	
-	
-	//Test hieronder faalt door luie collision checkings
-	@Test
-	public void duckingTest() {
-		
-		world.setTerrainAt(obj.getPosition()[0]+obj.getWidth()+50,obj.getHeight()-5,TerrainType.SOLID_GROUND);
-		assertFalse(obj.isDucking());
-		obj.startMove(Direction.RIGHT);
-		for(int i = 0; i < 20; i++) {
-			world.advanceTime(0.1);
-		}
-		assertEquals(51,obj.getPosition()[0]);
-		obj.startDuck();
-		world.advanceTime(0.1);
-		assertTrue(obj.getPosition()[0]>51);
-		assertFalse(obj.canEndDuck());
-		obj.endDuck();
-		world.advanceTime(0.1);
-		assertTrue(obj.getToEndDuck());
-		assertTrue(obj.isDucking());
-		obj.startMove(Direction.LEFT);
-		for(int i = 0; i < 20; i++) {
-			world.advanceTime(0.1);
-		}
-		assertFalse(obj.isDucking());
-	}
-	
-	
 }

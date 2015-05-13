@@ -3,6 +3,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Stack;
 
+import jumpingalien.model.elements.GameElement;
+import jumpingalien.model.elements.GameObject;
+import jumpingalien.model.statements.Statement;
 import jumpingalien.part3.programs.IProgramFactory.Direction;
 import be.kuleuven.cs.som.annotate.*;
 
@@ -112,7 +115,7 @@ public class Program {
 	
 	public void initialiseVariables(Map<String, Type> globalVariables) {
 		for (String key : globalVariables.keySet()) {
-			if (globalVariables.get(key) == Type.GAME_OBJECT)
+			if (globalVariables.get(key) == Type.GAME_ELEMENT)
 				objMap.put(key, null);
 			else if (globalVariables.get(key) == Type.BOOLEAN)
 				boolMap.put(key, false);
@@ -160,7 +163,7 @@ public class Program {
 	}
 
 	public Object getVariableValue(String param, Type type) {
-		if (type == Type.GAME_OBJECT)
+		if (type == Type.GAME_ELEMENT)
 			return objMap.get(param);
 		if (type == Type.DIRECTION)
 			return dirMap.get(param);
@@ -172,7 +175,7 @@ public class Program {
 	}
 	
 	public void setVariableValue(String param, Type type, Object value) {
-		if (type == Type.GAME_OBJECT)
+		if (type == Type.GAME_ELEMENT)
 			objMap.put(param,(GameElement) value);
 		if (type == Type.DIRECTION)
 			dirMap.put(param,(Direction) value);
@@ -188,11 +191,11 @@ public class Program {
 		return loopStack;
 	}
 
-	protected void addLoop(Statement loop) {
+	public void addLoop(Statement loop) {
 		loopStack.push(loop);
 	}
 	
-	protected Statement popLoop() {
+	public Statement popLoop() {
 		if (loopStack.empty())
 			return null;
 		return getLoopStack().pop();

@@ -2,12 +2,12 @@ package jumpingalien.part2.tests;
 
 import static org.junit.Assert.*;
 import jumpingalien.common.sprites.JumpingAlienSprites;
-import jumpingalien.model.Mazub;
 import jumpingalien.model.School;
-import jumpingalien.model.Shark;
-import jumpingalien.model.Slime;
 import jumpingalien.model.World;
 import jumpingalien.model.World.TerrainType;
+import jumpingalien.model.elements.Mazub;
+import jumpingalien.model.elements.Shark;
+import jumpingalien.model.elements.Slime;
 import jumpingalien.part2.internal.Resources;
 import jumpingalien.util.Sprite;
 
@@ -53,11 +53,11 @@ public class SlimeTest {
 		school1 = new School();
 		school2 = new School();
 		mazub = new Mazub(world, 70, 1000, mazubSprites);
-		slime1 = new Slime(world, 70, 0, slimeSprites, school1);
+		slime1 = new Slime(world, 70, 0, slimeSprites, school1, null);
 		slime1.substractHitPoints(5, false);
-		slime2 = new Slime(world, 70, 200, slimeSprites, school2);
+		slime2 = new Slime(world, 70, 200, slimeSprites, school2, null);
 		slime2.substractHitPoints(5, false);
-		slime3 = new Slime(world, 70, 500, slimeSprites, school1);
+		slime3 = new Slime(world, 70, 500, slimeSprites, school1, null);
 		slime3.substractHitPoints(5, false);
 		for(int i = 0; i < 20; i++ ) {
 			world.setTerrainAt(0,i, TerrainType.SOLID_GROUND);
@@ -133,7 +133,7 @@ public class SlimeTest {
 		world.removeObject(slime1);
 		world.removeObject(slime2);
 		assertEquals(95, slime3.getHitPoints());
-		Shark shark = new Shark(world, 70, 0, sharkSprites);
+		Shark shark = new Shark(world, 70, 0, sharkSprites, null);
 		world.addObject(shark);
 		for(int i = 0; i < 7; i++)
 			world.advanceTime(0.19);

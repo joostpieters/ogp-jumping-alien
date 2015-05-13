@@ -8,5 +8,5 @@ package jumpingalien.model;
  *
  */
 public enum Type {
-	BOOLEAN, DOUBLE, GAME_OBJECT, DIRECTION;
+	BOOLEAN, DOUBLE, GAME_ELEMENT, DIRECTION;
 }

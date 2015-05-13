@@ -3,23 +3,18 @@ package jumpingalien.part3.facade;
 import java.util.Collection;
 import java.util.Optional;
 
-
-
-
-import org.antlr.v4.runtime.CharStream;
-
-import jumpingalien.model.Buzam;
 import jumpingalien.model.JumpingException;
-import jumpingalien.model.Mazub;
-import jumpingalien.model.Plant;
 import jumpingalien.model.Program;
 import jumpingalien.model.ProgramFactory;
 import jumpingalien.model.School;
-import jumpingalien.model.Shark;
-import jumpingalien.model.Slime;
 import jumpingalien.model.World;
 import jumpingalien.model.World.TerrainType;
-import jumpingalien.model.Statement;
+import jumpingalien.model.elements.Buzam;
+import jumpingalien.model.elements.Mazub;
+import jumpingalien.model.elements.Plant;
+import jumpingalien.model.elements.Shark;
+import jumpingalien.model.elements.Slime;
+import jumpingalien.model.statements.Statement;
 import jumpingalien.model.Type;
 import jumpingalien.model.Expression;
 import jumpingalien.part3.programs.IProgramFactory;
