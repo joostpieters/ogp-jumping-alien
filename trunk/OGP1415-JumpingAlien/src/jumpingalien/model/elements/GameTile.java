@@ -4,6 +4,8 @@ import jumpingalien.model.World;
 import jumpingalien.model.World.TerrainType;
 
 /** 
+ * A class of game tiles. This class has an association with the class World.
+ * 
  * @author 	Andreas Schryvers & Jonathan Oostvogels
  * 			2e Bachelor ingenieurswetenschappen
  * 			Subversion repository: https://code.google.com/p/ogp-jumping-alien/
@@ -54,6 +56,4 @@ public class GameTile implements GameElement {
 	private final double X;
 	private final double Y;
 	private TerrainType terrainType;
-	
-
 }

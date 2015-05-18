@@ -50,10 +50,12 @@ Initialize this new game object with the given parameters.
 	 * 		  The acceleration in the y directions for this new game object.
 	 * @param solid
 	 * 		  The solid state for this new game object.
+ 	 * @param program
+ 	 * 		  The program for this new Alien character.
 	 * 
 	 * @effect | super(world, x, y, initialHitPoints, maxHitPoints, sprites,
 	 *		   | xInitialVelocity, yInitialVelocity, xVelocityLimit,
-	 * 		   | duckedVelocityLimit, xAcceleration, yAcceleration, solid)
+	 * 		   | duckedVelocityLimit, xAcceleration, yAcceleration, solid, program)
 	 * @effect | startNewMovement()
 	 * @effect | setTimer(0)
 	 */

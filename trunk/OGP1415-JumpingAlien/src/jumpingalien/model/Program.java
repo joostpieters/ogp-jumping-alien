@@ -7,7 +7,6 @@ import jumpingalien.model.elements.GameElement;
 import jumpingalien.model.elements.GameObject;
 import jumpingalien.model.statements.Statement;
 import jumpingalien.part3.programs.IProgramFactory.Direction;
-import be.kuleuven.cs.som.annotate.*;
 
 /** 
  * @author 	Andreas Schryvers & Jonathan Oostvogels
@@ -16,8 +15,6 @@ import be.kuleuven.cs.som.annotate.*;
  */
 public class Program {
 	
-	
-
 	public Program() {
 		GAME_OBJECT = null;
 		MAIN_STATEMENT = null;
@@ -73,7 +70,6 @@ public class Program {
 	
 	private Statement currentStatement;
 	
-	@Basic
 	public double getWaitTime() {
 		return waitTime;
 	}
@@ -95,7 +91,6 @@ public class Program {
 	
 	private double waitTime;
 	
-	@Basic
 	public double getTimeRemaining() {
 		return timeRemaining;
 	}
@@ -116,7 +111,6 @@ public class Program {
 	}
 	
 	private double timeRemaining;
-	
 	
 	public void initialiseVariables(Map<String, Type> globalVariables) {
 		for (String key : globalVariables.keySet()) {

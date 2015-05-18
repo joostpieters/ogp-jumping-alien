@@ -3,7 +3,6 @@ import jumpingalien.model.elements.GameObject;
 import be.kuleuven.cs.som.annotate.*;
 
 /**
- * 
  * A class of exceptions signaling illegal jumping behavior.
  * 
  * @author 	Andreas Schryvers & Jonathan Oostvogels
@@ -28,23 +27,21 @@ public class JumpingException extends RuntimeException {
 	 */
 	public JumpingException(String message, GameObject gameObject) {
 	    super(message);
-	    this.character = gameObject;
+	    this.CHARACTER = gameObject;
 	}
 	
 	/**
 	 * Return the character of this JumpingException.
-	 * @return | result == this.character
 	 */
 	@Basic @Immutable
 	public GameObject getCharacter() {
-		return this.character;
+		return this.CHARACTER;
 	}
-	
 	
 	/**
 	 * Variable referencing the game object of this JumpingException.
 	 */
-	private final GameObject character;
+	private final GameObject CHARACTER;
 	
 	private static final long serialVersionUID = 1L;
 

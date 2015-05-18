@@ -10,6 +10,8 @@ import jumpingalien.model.World.TerrainType;
 import jumpingalien.util.Sprite;
 
 /** 
+ * A class of Aliens as special kinds of game objects.
+ * 
  * @author 	Andreas Schryvers & Jonathan Oostvogels
  * 			2e Bachelor ingenieurswetenschappen
  * 			Subversion repository: https://code.google.com/p/ogp-jumping-alien/
@@ -19,8 +21,6 @@ public abstract class Alien extends GameObject {
 	/**
 	 * Initialize this new Alien character with given x position, given y position, given
 	 * sprites, given world, given maxHitPoints and given program.
-	 * 
-	 * @effect	| super(world, x, y, maxHitPoints, 500 ,sprites, 100, 800, 300, 100, 90, 1000, true, program);
 	 * 	
 	 * @param 	x
 	 * 			The initial x position for this new Alien character.
@@ -34,6 +34,8 @@ public abstract class Alien extends GameObject {
  	 * 			The program for this new Alien character.
  	 * @param	maxHitPoints
  	 * 			The maximum number of hitpoints for this new Alien character.
+ 	 * 
+ 	 * @effect	| super(world, x, y, maxHitPoints, 500 ,sprites, 100, 800, 300, 100, 90, 1000, true, program);
 	 */
 	@Raw
 	public Alien(World world, double x, double y,int maxHitPoints, Sprite[] sprites, Program program) {
@@ -41,7 +43,6 @@ public abstract class Alien extends GameObject {
 				100, 800, 300, 100,
 								90, 1000, true, program);		
 	}
-	
 	
 	/**
 	 * Return the current sprite of this Alien character.
@@ -87,8 +88,9 @@ public abstract class Alien extends GameObject {
 	}
 	
 	/**
-	 * @return	The number of different images for the running motion.
-	 * 		  | result == (this.sprites.length-10)/2
+	 * Return the number of different images for the running motion.
+	 * 
+	 * @return	| result == (this.sprites.length-10)/2
 	 */
 	public int getM() {
 		return (this.getSprites().length-10)/2;
