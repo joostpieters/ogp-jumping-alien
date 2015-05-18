@@ -16,6 +16,5 @@ public interface ExpressionLambda {
 	//een object ervan.
 	
 	//Dit is m.a.w. een functionele interface (slechts 1 abstracte methode).
-	//Dit is dus syntactische suiker voor een anonieme klasse die een generische
-	//interface implementeert.
+	//Lambda's zijn synctionele suiker voor instanties van functionele interfaces.
 }
