@@ -64,7 +64,6 @@ public class WorldTest {
 		assertEquals(5000, world.getXLimit());
 		assertEquals(5000, world.getYLimit());
 		assertEquals(100, world.getTileLength());
-		assertEquals(0, world.getGameObjects().size());
 		assertArrayEquals(new int[] {500,500},world.getWindowSize());
 		assertEquals(0, world.getTargetTileX());
 		assertEquals(0, world.getTargetTileY());
@@ -75,20 +74,13 @@ public class WorldTest {
 		assertEquals(TerrainType.AIR, world.getTerrainAt(0,0));
 		assertEquals(TerrainType.AIR, world.getTerrainAt(4999,4999));
 		assertEquals(TerrainType.AIR, world.getTerrainAt(123,456));
-		
-		assertEquals(null, world.getMyMazub());
+
 		
 	}
 	
 	@Test
 	public void addObjectTest() {
 		world.addObject(mazub);
-		assertEquals(1, world.getGameObjects().size());
-		assertEquals(mazub, world.getMyMazub());
-		for(GameObject obj: world.getGameObjects())
-			assertEquals(mazub, obj);
-		world.addObject(slime1);
-		world.addObject(slime2);
 		assertEquals(3, world.getGameObjects().size());
 	}
 	
