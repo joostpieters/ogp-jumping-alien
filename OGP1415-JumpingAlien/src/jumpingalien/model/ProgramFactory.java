@@ -1,6 +1,3 @@
-/**
- * 
- */
 package jumpingalien.model;
 
 import java.util.List;
@@ -31,6 +28,7 @@ import jumpingalien.model.statements.WaitStatement;
 import jumpingalien.model.statements.WhileStatement;
 import jumpingalien.part3.programs.IProgramFactory;
 import jumpingalien.part3.programs.SourceLocation;
+
 
 /** 
  * @author 	Andreas Schryvers & Jonathan Oostvogels
@@ -413,7 +411,9 @@ public class ProgramFactory implements IProgramFactory<Expression, Statement, Ty
 			Expression sort,
 			jumpingalien.part3.programs.IProgramFactory.SortDirection sortDirection,
 			Statement body, SourceLocation sourceLocation) {
-		checkArguments(Type.BOOLEAN, where, sort);
+		checkArguments(Type.BOOLEAN, where);
+		checkArguments(Type.DOUBLE, sort);
+
 		return new ForEachStatement(getMyProgram(), sourceLocation, variableName, variableKind, where, sort, sortDirection, body);
 	}
 

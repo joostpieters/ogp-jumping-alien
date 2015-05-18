@@ -8,6 +8,8 @@ import jumpingalien.model.World;
 import jumpingalien.util.Sprite;
 
 /** 
+ * A class of Buzam characters as special kinds of aliens.
+ * 
  * @author 	Andreas Schryvers & Jonathan Oostvogels
  * 			2e Bachelor ingenieurswetenschappen
  * 			Subversion repository: https://code.google.com/p/ogp-jumping-alien/

@@ -1,5 +1,4 @@
 package jumpingalien.model.elements;
-
 import jumpingalien.model.Program;
 import jumpingalien.model.World;
 import jumpingalien.util.Sprite;
@@ -25,7 +24,9 @@ public class Plant extends AutomaticObject {
 	 * 		  The initial y position for this new plant. 
 	 * @param sprites
 	 * 		  The series of initial sprites for this new plant
-	 * @effect	| super(world, x, y, 1, 1, sprites, 50, 0, 50, 50, 1, 0, false)
+	 * @param program
+ 	 * 		  The program for this new plant.
+	 * @effect	| super(world, x, y, 1, 1, sprites, 50, 0, 50, 50, 1, 0, false, program)
 	 */
 	@Raw
 	public Plant(World world, double x, double y, Sprite[] sprites, Program program) {
@@ -34,8 +35,6 @@ public class Plant extends AutomaticObject {
 
 	//no documentation needed
 	public void advanceTime(double duration) {
-		
-
 		if (getProgram() != null) {
 			super.advanceTime(duration);
 			getProgram().advanceTime(duration);
@@ -92,7 +91,6 @@ public class Plant extends AutomaticObject {
 			return getSprites()[0];
 		return getSprites()[1];
 	}
-	
 
 	@Override
 	/**
@@ -103,5 +101,4 @@ public class Plant extends AutomaticObject {
 	public void terminate(boolean insta) {
 		super.terminate(true);		
 	}
-
 }

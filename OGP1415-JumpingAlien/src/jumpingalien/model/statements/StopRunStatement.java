@@ -1,6 +1,3 @@
-/**
- * 
- */
 package jumpingalien.model.statements;
 import jumpingalien.model.Expression;
 import jumpingalien.model.Program;
@@ -13,11 +10,7 @@ import jumpingalien.part3.programs.SourceLocation;
  * 			Subversion repository: https://code.google.com/p/ogp-jumping-alien/
  */
 public class StopRunStatement extends TrivialStatement {
-
-	/**
-	 * @param caller
-	 * @param location
-	 */
+	
 	public StopRunStatement(Program caller, SourceLocation location, Expression direction) {
 		super(caller, location);
 		DIRECTION = direction;
@@ -34,7 +27,6 @@ public class StopRunStatement extends TrivialStatement {
 			super.execute();
 			getCaller().getGameObject().endMove();
 		}
-		
 		else
 			throw new ClassCastException();
 	}

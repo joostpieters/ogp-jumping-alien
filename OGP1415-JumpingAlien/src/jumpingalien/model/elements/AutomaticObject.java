@@ -1,8 +1,4 @@
-/**
- * 
- */
 package jumpingalien.model.elements;
-
 import java.util.Random;
 
 import jumpingalien.model.Program;
@@ -145,5 +141,4 @@ Initialize this new game object with the given parameters.
 	 * Variable registering the goal of this automatic game object.
 	 */
 	private double goal;
-
 }

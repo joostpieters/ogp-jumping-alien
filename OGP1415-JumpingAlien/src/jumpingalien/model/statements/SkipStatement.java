@@ -14,5 +14,4 @@ public class SkipStatement extends TrivialStatement {
 		super(caller, location);
 		setContainsAction(true);
 	}
-
 }

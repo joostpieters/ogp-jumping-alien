@@ -14,15 +14,12 @@ import jumpingalien.part3.programs.SourceLocation;
  */
 public class PrintStatement extends TrivialStatement {
 
-	
 	public PrintStatement(Program caller, SourceLocation location, Expression expression) {
 		super(caller, location);
 		EXPRESSION = expression;
 	}
 
-	
 	private final Expression EXPRESSION;
-	
 	public Expression getExpression() {
 		return EXPRESSION;
 	}

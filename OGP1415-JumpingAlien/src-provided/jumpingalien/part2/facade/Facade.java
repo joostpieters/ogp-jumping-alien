@@ -1,8 +1,6 @@
 package jumpingalien.part2.facade;
 
 import java.util.Collection;
-
-import jumpingalien.model.JumpingException;
 import jumpingalien.model.School;
 import jumpingalien.model.World;
 import jumpingalien.model.World.TerrainType;
@@ -13,101 +11,8 @@ import jumpingalien.model.elements.Slime;
 import jumpingalien.util.ModelException;
 import jumpingalien.util.Sprite;
 
-public class Facade implements IFacadePart2 {
-
-	@Override
-	public Mazub createMazub(int pixelLeftX, int pixelBottomY, Sprite[] sprites) {
-		Mazub myMazub = new Mazub(null,(double) pixelLeftX, (double) pixelBottomY,sprites);
-		return myMazub;
-	}
-
-	@Override
-	public int[] getLocation(Mazub alien) {
-		return alien.getPosition();
-	}
-
-	@Override
-	public double[] getVelocity(Mazub alien) {
-		return new double[] {alien.getXVelocity()/100,alien.getYVelocity()/100};
-	}
-
-	@Override
-	public double[] getAcceleration(Mazub alien) {
-		return new double[] {alien.getXAcceleration()/100,alien.getYAcceleration()/100};
-	}
-
-	@Override
-	public int[] getSize(Mazub alien) {
-		return new int[] {alien.getWidth(),alien.getHeight()};
-	}
-
-	@Override
-	public Sprite getCurrentSprite(Mazub alien) {
-		return alien.getCurrentSprite();
-	}
-
-	@Override
-	public void startJump(Mazub alien) {
-		try {
-			alien.startJump();
-		}
-		catch (JumpingException exc) {
-			//throw new ModelException(exc); //Hide orange bar
-		}
-	}
-
-	@Override
-	public void endJump(Mazub alien) {
-		try {
-			alien.endJump();
-		}
-		catch (JumpingException exc) {
-			//throw new ModelException(exc); //Hide orange bar
-		}
-	}
-
-	@Override
-	public void startMoveLeft(Mazub alien) {
-		alien.startMove(Mazub.Direction.LEFT);
-	}
-
-	@Override
-	public void endMoveLeft(Mazub alien) {
-		if(alien.getXDirection() == Mazub.Direction.LEFT)
-			alien.endMove();
-	}
-
-	@Override
-	public void startMoveRight(Mazub alien) {
-		alien.startMove(Mazub.Direction.RIGHT);
-	}
-
-	@Override
-	public void endMoveRight(Mazub alien) {
-		if(alien.getXDirection() == Mazub.Direction.RIGHT)
-			alien.endMove();
-	}
-
-	@Override
-	public void startDuck(Mazub alien) {
-		try {
-			alien.startDuck();
-		}
-		catch(IllegalStateException exc) {
-			throw new ModelException("Already ducking!"); //Hide orange bar
-		}
-	}
-
-	@Override
-	public void endDuck(Mazub alien) {
-		try {
-			alien.endDuck();
-		}
-		catch(IllegalStateException exc) {
-			throw new ModelException("Not yet ducking!"); //Hide orange bar
-		}
-	}
-
+public class Facade extends jumpingalien.part1.facade.Facade implements IFacadePart2 {
+	
 	@Override
 	@Deprecated
 	public void advanceTime(Mazub alien, double dt) {
@@ -315,5 +220,4 @@ public class Facade implements IFacadePart2 {
 	public School getSchool(Slime slime) {
 		return slime.getSchool();
 	}
-
 }

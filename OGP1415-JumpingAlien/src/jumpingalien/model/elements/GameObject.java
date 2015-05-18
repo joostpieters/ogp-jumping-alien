@@ -1,8 +1,4 @@
-/**
- * 
- */
 package jumpingalien.model.elements;
-
 import static java.lang.Math.*;
 import jumpingalien.model.JumpingException;
 import jumpingalien.model.Program;
@@ -40,9 +36,9 @@ public abstract class GameObject implements GameElement{
 	 * @param world
 	 * 		  The world for this new game object.
 	 * @param x
-	 *		  The initial x position for this new game object. 
+	 *		  The initial x coordinate for this new game object. 
 	 * @param y
-	 * 		  The initial y position for this new game object. 
+	 * 		  The initial y coordinate for this new game object. 
 	 * @param initialHitPoints
 	 * 		  The initial number of hitpoints for this new game object.
 	 * @param maxHitPoints
@@ -119,6 +115,7 @@ public abstract class GameObject implements GameElement{
 		this.setXVelocity(0);
 		this.setYVelocity(0);
 		this.setDucking(false);
+		this.setJumping(false);
 		this.setTimeSinceLastMove(2); // > 1
 		this.setToEndDuck(false);
 		this.setStillMoving(false);
@@ -142,7 +139,7 @@ public abstract class GameObject implements GameElement{
 		
 	}
 	
-	//geen documentatie nodig
+	//no documentation needed
 	public abstract Sprite getCurrentSprite();
 	
 	/**
@@ -228,12 +225,10 @@ public abstract class GameObject implements GameElement{
 	 * 
 	 * @param myWorld
 	 * 		  The new world for this game object.
-	 * @pre	  |  getMyWorld() == null
 	 * @post  |  new.getMyWorld() == myWorld
 	 */
 	@Raw
 	public void setMyWorld(World myWorld) {
-		assert getMyWorld() == null;
 		this.myWorld = myWorld;
 	}
 	/**
@@ -273,11 +268,11 @@ public abstract class GameObject implements GameElement{
 	 * @param hitPoints
 	 * 		  The new number of hitpoints.
 	 * @post  | if (hitpoints < 0)
-	 * 		  |		new.getHitPoints == 0
+	 * 		  |		new.getHitPoints() == 0
 	 *		  |	else if (hitPoints > getMaxHitPoints())
-	 *		  |		new.getHitPoints = getMaxHitPoints();
+	 *		  |		new.getHitPoints() = getMaxHitPoints();
 	 *		  | else
-	 *		  |		new.getHitPoints = hitPoints;
+	 *		  |		new.getHitPoints() = hitPoints;
 	 */
 	@Raw
 	protected void setHitPoints(int hitPoints) {
@@ -319,9 +314,9 @@ public abstract class GameObject implements GameElement{
 	 * Check whether this game object can have the given position as its position.
 	 * 
 	 * @param x
-	 * 		  The x position to be checked.
+	 * 		  The x coordinate to be checked.
 	 * @param y
-	 * 		  The y position to be checked.
+	 * 		  The y coordinate to be checked.
 	 * @return 
 	 * 	 	  | if (! isSolid())
 	 * 		  |	 then result == true
@@ -368,7 +363,6 @@ public abstract class GameObject implements GameElement{
 					myWorld.getTerrainAt(x + width - 2, y + j).isPassable()))
 					return false;
 		}
-		
 		return true;
 	}
 	
@@ -419,13 +413,13 @@ public abstract class GameObject implements GameElement{
 	/**
 	 * 
 	 * @param x
-	 * 		  The x position of the point
+	 * 		  The x coordinate of the point
 	 * @param y
-	 * 	      The y position of the point
+	 * 	      The y coordinate of the point
 	 * @param RectX
-	 * 		  The x position of the rectangle
+	 * 		  The x coordinate of the rectangle
 	 * @param RectY
-	 * 	  	  The y position of the rectangle
+	 * 	  	  The y coordinate of the rectangle
 	 * @param width
 	 * 		  The width of the rectangle
 	 * @param height
@@ -443,7 +437,7 @@ public abstract class GameObject implements GameElement{
 	}
 	
 	/**
-	 * Return the x position of this game object.
+	 * Return the x coordinate of this game object.
 	 */
 	@Basic
 	public double getX() {
@@ -451,7 +445,7 @@ public abstract class GameObject implements GameElement{
 	}
 	
 	/**
-	 * Return the y position of this game object.
+	 * Return the y coordinate of this game object.
 	 */
 	@Basic
 	public double getY() {
@@ -462,9 +456,9 @@ public abstract class GameObject implements GameElement{
 	 * Set the position of this game object to the given x and the given y.
 	 * 
 	 * @param x
-	 * 		  The new x position of this game object.
+	 * 		  The new x coordinate of this game object.
 	 * @param y
-	 * 		  The new y position of this game object.
+	 * 		  The new y coordinate of this game object.
 	 * @post  | new.getX() == x && new.getY() == y
 	 */
 	@Raw
@@ -474,12 +468,12 @@ public abstract class GameObject implements GameElement{
 	}
 	
 	/**
-	 * Variable registering the x position of this game object.
+	 * Variable registering the x coordinate of this game object.
 	 */
 	private double x;
 	
 	/**
-	 * Variable registering the y position of this game object.
+	 * Variable registering the y coordinate of this game object.
 	 */
 	private double y;
 		
@@ -562,6 +556,7 @@ public abstract class GameObject implements GameElement{
 	 * 		  The new time since termination
 	 * @post  | new.getTimeSinceTermination() == timeSinceTermination
 	 */
+	@Raw
 	public void setTimeSinceTermination(double timeSinceTermination) {
 		this.timeSinceTermination = timeSinceTermination;
 	}
@@ -570,7 +565,6 @@ public abstract class GameObject implements GameElement{
 		if(duration > 0.2 || duration < 0) return;
 		//Bij het laden van het level loopt het zonder deze regel soms mis (veel te grote duration)
 
-		
 		handleInteraction(duration);
 		
 		double v_norm = sqrt(pow(getXVelocity(),2)+pow(getYVelocity(),2))/100;
@@ -616,7 +610,6 @@ public abstract class GameObject implements GameElement{
 		
 		setTimeToBeImmune(getTimeToBeImmune()-duration);
 		
-		
 	}
 		
 	/**
@@ -632,7 +625,7 @@ public abstract class GameObject implements GameElement{
 	 *         | else 
 	 *         |	result == null
 	 */
-	public GameObject touches(Class<?> className) {
+	public GameObject touches(Class<? extends GameObject> className) {
 		
 		for(GameObject obj : myWorld.getGameObjects()) {
 			if(obj != this && className.isInstance(obj)) {
@@ -733,12 +726,10 @@ public abstract class GameObject implements GameElement{
 	 * 
 	 * @param 	xDirection
 	 * 			The new xDirection for this game object.
-	 * @pre	  | (xDirection == Direction.LEFT) || (xDirection == Direction.RIGHT)
 	 * @post  | new.getXDirection() == xDirection
 	 */
 	@Raw
 	private void setXDirection(Direction xDirection) {
-		assert ((xDirection == Direction.LEFT) || (xDirection == Direction.RIGHT));
 		this.xDirection = xDirection;
 	}
 
@@ -946,6 +937,7 @@ public abstract class GameObject implements GameElement{
 	 * 			The direction in which the game object should move.
 	 * @pre	   | (direction == Direction.LEFT) || (direction == Direction.RIGHT)
 	 * @effect | setXDirection(direction)
+	 * @effect | setStillMoving(true)
 	 * @post   | abs(new.getXVelocity()) == getXInitialVelocity()
 	 */
 	public void startMove(Direction direction) {
@@ -963,7 +955,8 @@ public abstract class GameObject implements GameElement{
 	 * Its velocity in the x direction is set to 0.
 	 * Its sill moving state is set to false.2
 	 * 
-	 * @post | new.getXVelocity() == 0
+	 * @effect | setXVelocity(0)
+	 * @effect | setStillMoving(false)
 	 */
 	public void endMove() {
 		setStillMoving(false);
@@ -974,7 +967,7 @@ public abstract class GameObject implements GameElement{
 	 * The given game object starts jumping with initial velocity
 	 * Y_INITIAL_VELOCITY and with acceleration getYAcelleration().
 	 * 
-	 * @post	| new.getYVelocity() == Y_INITIAL_VELOCITY
+	 * @effect	| setYVelocity(Y_INITIAL_VELOCITY)
 	 * @throws 	JumpingException
 	 * 			| ! canJump()
 	 */
@@ -988,7 +981,7 @@ public abstract class GameObject implements GameElement{
 	 * Check whether this game object can jump.
 	 * 
 	 * @return | result == (getPosition()[1] == 0 ||
-			   |           ( !(canHaveAsPosition(getPosition()[0],getPosition()[1]-1))))
+	 *		   |           ( !(canHaveAsPosition(getPosition()[0],getPosition()[1]-1))))
 	 */
 	public boolean canJump() {
 		return (getPosition()[1] == 0 ||
@@ -998,10 +991,10 @@ public abstract class GameObject implements GameElement{
 	/**
 	 * The given game object stops jumping. Its velocity is set to 0 if it was greater than 0.
 	 * 
-	 * @post  | if (getYVelocity() > 0)
-	 * 		  |		new.getYVelocity() == 0
-	 * @throws 	JumpingException
-	 *		  | ! isJumping()
+	 * @effect | if (getYVelocity() > 0)
+	 * 		   |	setYVelocity(0)
+	 * @throws   JumpingException
+	 *		   | ! isJumping()
 	 */
 	public void endJump() throws JumpingException {
 		if (!isJumping())
@@ -1016,15 +1009,16 @@ public abstract class GameObject implements GameElement{
 	@Basic
 	public boolean isJumping() {
 		return isJumping;
-				
 	}
 	
 	/**
 	 * Set the jumping state of this game object to the given flag.
+	 * 
 	 * @param flag
 	 * 		  The new jumping state for this game object.
 	 * @post  | new.isJumping() == flag
 	 */
+	@Raw
 	private void setJumping(boolean flag) {
 		this.isJumping = flag;
 	}
@@ -1039,14 +1033,15 @@ public abstract class GameObject implements GameElement{
 	 * is set to the ducked velocity limit. Its new ducked state is equal to true. 
 	 * It's toEndDuck state is set to false.
 	 * 
-	 * @post  | new.getPreviousXVelocityLimit() == abs(this.getXVelocityLimit())
-	 * @post  | abs(new.getXVelocityLimit()) == getDuckedVelocityLimit()
-	 * @post  | if (abs(this.getXVelocity()) > abs(new.getXVelocityLimit()))
-	 * 		  |		new.getXVelocity() == (signum(this.getXVelocity())) * (new.getXVelocityLimit())
-	 * @post  | new.isDucking() == true
-	 * @post  | new.getToEndDuck() == false
-	 * @throws	IllegalStateExpcetion
-	 * 		  | isDucking()
+	 * @effect | if (getToEndDuck() == false)
+	 * 		   |	setPreviousXVelocityLimit(abs(this.getXVelocityLimit()))
+	 * 		   | 	setXVelocityLimit(getDuckedVelocityLimit())
+	 * @effect | if (abs(this.getXVelocity()) > abs(new.getXVelocityLimit()))
+	 * 		   |		setXVelocity((signum(this.getXVelocity())) * abs((new.getXVelocityLimit())))
+	 * @effect | setDucking(true)
+	 * @effect | setToEndDuck(false)
+	 * @throws	 IllegalStateExpcetion
+	 * 		   | isDucking()
 	 * 
 	 */
 	public void startDuck() throws IllegalStateException {
@@ -1066,14 +1061,14 @@ public abstract class GameObject implements GameElement{
 	 * The given game object stops ducking. Its velocity limit in the x direction
 	 * is reset to the previous xVelocityLimit. 
 	 * 
-	 * @post  | if canEndDuck()
-	 * 		  | 	new.getXVelocityLimit() == this.getPreviousXVelocityLimit()
-	 * 		  |		new.isDucking() == false
-	 * 		  |		new.getToEndDuck() == false
-	 * 		  | else
-	 * 		  |     new.getToEndDuck() == true
-	 * @throws	IllegalStateException
-	 * 		  | ! isDucking()
+	 * @effect | if canEndDuck()
+	 * 		   | 	setXVelocityLimit(this.getPreviousXVelocityLimit())
+	 * 		   |	setDucking(false)
+	 * 		   |	setToEndDuck(false)
+	 * 		   | else
+	 * 		   |     setToEndDuck(true)
+	 * @throws	 IllegalStateException
+	 * 		   | ! isDucking()
 	 */
 	public void endDuck() throws IllegalStateException {
 		if (! isDucking())
@@ -1108,6 +1103,7 @@ public abstract class GameObject implements GameElement{
 	 * 		  The new toEndDuck state of this game object.
 	 * @post  | new.getToEndDuck() == toEndDuck
 	 */
+	@Raw
 	private void setToEndDuck(boolean toEndDuck) {
 		this.toEndDuck = toEndDuck;
 	}
@@ -1184,7 +1180,6 @@ public abstract class GameObject implements GameElement{
 	 */
 	private boolean isDucking;
 
-
 	/**
 	 * Return the timeSinceLastMove of this game object.
 	 * The timeSinceLastMove of a game object expresses the time that has
@@ -1214,7 +1209,6 @@ public abstract class GameObject implements GameElement{
 	 */
 	private double timeSinceLastMove;
 
-
 	/**
 	 * Return the timeSinceLastRunningImage of this game object.
 	 */
@@ -1231,6 +1225,7 @@ public abstract class GameObject implements GameElement{
 	 * @pre	  | timeSinceLastRunningImage >= 0
 	 * @post  | new.getTimeSinceLastRunningImage() == timeSinceLastRunningImage	
 	 */
+	@Raw
 	private void setTimeSinceLastRunningImage(double timeSinceLastRunningImage) {
 		assert timeSinceLastRunningImage >= 0;
 		this.timeSinceLastRunningImage = timeSinceLastRunningImage;
@@ -1300,7 +1295,7 @@ public abstract class GameObject implements GameElement{
 	}
 	
 	/**
-	 * Varible registering whether this game object is still moving.
+	 * Variable registering whether this game object is still moving.
 	 */
 	private boolean isStillMoving;
 
@@ -1319,6 +1314,7 @@ public abstract class GameObject implements GameElement{
 	 * 		  The new isStillMoving value
 	 * @post  | new.isStillMoving() == isStillMoving
 	 */
+	@Raw
 	public void setStillMoving(boolean isStillMoving) {
 		this.isStillMoving = isStillMoving;
 	}
@@ -1372,10 +1368,11 @@ public abstract class GameObject implements GameElement{
 	 * @param timeToBeImmune
 	 * 		  The new timeToBeImmune
 	 * @post  | if (timeToBeImmune < 0)
-			  |		new.getTimeToBeImmune() == 0
-			  | else
-			  | 	new.getTimeToBeImmune() == timeToBeImmune
+	 *		  |		new.getTimeToBeImmune() == 0
+	 *		  | else
+	 *		  | 	new.getTimeToBeImmune() == timeToBeImmune
 	 */
+	@Raw
 	protected void setTimeToBeImmune(double timeToBeImmune) {
 		if (timeToBeImmune < 0)
 			this.timeToBeImmune = 0;
@@ -1398,9 +1395,10 @@ public abstract class GameObject implements GameElement{
 	}
 	
 	/**
-	 * Set the waterTimer of this game objecect to the given value.
+	 * Set the waterTimer of this game object to the given value.
+	 * 
 	 * @param waterTimer
-	 * 		  The new value for the watertimer
+	 * 		  The new value for the waterTimer
 	 * @post  | new.getWaterTimer() == waterTimer
 	 */
 	@Raw
@@ -1424,6 +1422,7 @@ public abstract class GameObject implements GameElement{
 	
 	/**
 	 * Set the magmaTimer of this game objecect to the given value.
+	 * 
 	 * @param magmaTimer
 	 * 		  The new value for the magmaTimer
 	 * @post  | new.getMagmaTimer() == magmaTimer
@@ -1462,19 +1461,23 @@ public abstract class GameObject implements GameElement{
 	/**
 	 * Return the acceleration in the y direction of this game object.
 	 */
-	@Basic
+	@Basic @Immutable
 	public double getY_ACCELERATION() {
 		return Y_ACCELERATION;
 	}
 	
 	/**
 	 * Check whether this game object has a proper world.
+	 * 
 	 * @return | result == (getMyWorld() != null)
 	 */
 	public boolean hasProperWorld() {
 		return (getMyWorld() != null);
 	}
 
+	/**
+	 * Return the first game element this objects sees in the given direction.
+	 */
 	public GameElement getSearchObject(jumpingalien.part3.programs.IProgramFactory.Direction direction) {
 		
 		GameElement result = null;
@@ -1577,6 +1580,7 @@ public abstract class GameObject implements GameElement{
 		return result;
 		
 	}
+
 
 	public static boolean linesOverlap(double begin1, double end1, double begin2, double end2) {
 	    return  ( (begin1 >= begin2 && begin1 <= end2) ||   
