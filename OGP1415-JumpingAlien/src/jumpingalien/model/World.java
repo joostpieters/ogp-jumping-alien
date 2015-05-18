@@ -185,9 +185,6 @@ public class World {
     //no documentation needed
     public void advanceTime(double duration) throws IllegalArgumentException {
 
-//            if ((duration < 0) || (duration >= 0.2))
-//  				throw new IllegalArgumentException("Illegal time duration!");
-
             getMyMazub().advanceTime(duration);            
             int[] new_pos1 = myMazub.getPosition();
             if ( !((new_pos1[0] <= getXLimit()) && (new_pos1[0] >= 0) ) ||
@@ -366,7 +363,7 @@ public class World {
 	/**
 	 * Variable registering the terrain objects that are associated with this world.
 	 */
-	//In principte overbodig, maar vergemakkelijkt de foreachstatement. Anders zou daar de terrainobjects set alsnog 
+	//In principe overbodig, maar vergemakkelijkt het foreach statement. Anders zou daar de terrainobjects set alsnog 
 	//gemaakt dienen te worden, wat trager is.
 	private Set<GameTile> terrainObjects;
 	
@@ -456,30 +453,30 @@ public class World {
 	/**
 	 * Adjust the window position to the position of Mazub.
 	 * 
-//	 * @effect	| if (getMyMazub() == null)
-//	 * 			|    return;
-//	 * 			| else
-//	 * 			|   int[] pos = getMyMazub().getPosition()
-//	 * 			| 	if ((pos[0] - getWindowPosition()[0]) < 200)
-//	 * 			|   	if (canHaveAsWindowPosition(pos[0]-200, getWindowPosition()[1]))
-//	 * 			| 			setWindowPosition(pos[0]-200, getWindowPosition()[1])
-//	 * 			|		else
-//	 * 			|			setWindowPosition(0,getWindowPosition()[1])
-//	 * 			|  else if (((getWindowPosition()[0] + getWindowSize()[0]) - pos[0]) < 200+getMyMazub().getWidth())
-//	 * 			|	   if (canHaveAsWindowPosition(pos[0]-getWindowSize()[0]+200+getMyMazub().getWidth(), getWindowPosition()[1]))
-//	 * 			|			setWindowPosition(pos[0]-getWindowSize()[0]+200+getMyMazub().getWidth(), getWindowPosition()[1])
-//	 * 			|		else
-//	 * 			|			setWindowPosition(getXLimit() - getWindowSize()[0], getWindowPosition()[1])
-//	 * 			|  if ((pos[1] - getWindowPosition()[1]) < 200)
-//	 * 			|	   if (canHaveAsWindowPosition(getWindowPosition()[0], pos[1]-200))
-//	 * 			|			setWindowPosition(getWindowPosition()[0], pos[1]-200)
-//	 * 			|	   else
-//	 * 			|	   		setWindowPosition(getWindowPosition()[0], 0)
-//	 * 			|  else if (((getWindowPosition()[1] + getWindowSize()[1]) - pos[1]) < 200+getMyMazub().getHeight())
-//	 * 			|	   if (canHaveAsWindowPosition(getWindowPosition()[0], pos[1]-getWindowSize()[1] + 200+getMyMazub().getHeight()))
-//	 * 			|			setWindowPosition(getWindowPosition()[0],  pos[1]-getWindowSize()[1] + 200+getMyMazub().getHeight())
-//	 * 			|	   else
-//	 * 			|			setWindowPosition(getWindowPosition()[0], getYLimit() - getWindowSize()[1])
+	 * @effect	| if (getMyMazub() == null)
+	 * 			|    return;
+	 * 			| else
+	 * 			|   int[] pos = getMyMazub().getPosition()
+	 * 			| 	if ((pos[0] - getWindowPosition()[0]) < 200)
+	 * 			|   	if (canHaveAsWindowPosition(pos[0]-200, getWindowPosition()[1]))
+	 * 			| 			setWindowPosition(pos[0]-200, getWindowPosition()[1])
+	 * 			|		else
+	 * 			|			setWindowPosition(0,getWindowPosition()[1])
+	 * 			|  else if (((getWindowPosition()[0] + getWindowSize()[0]) - pos[0]) < 200+getMyMazub().getWidth())
+	 * 			|	   if (canHaveAsWindowPosition(pos[0]-getWindowSize()[0]+200+getMyMazub().getWidth(), getWindowPosition()[1]))
+	 * 			|			setWindowPosition(pos[0]-getWindowSize()[0]+200+getMyMazub().getWidth(), getWindowPosition()[1])
+	 * 			|		else
+	 * 			|			setWindowPosition(getXLimit() - getWindowSize()[0], getWindowPosition()[1])
+	 * 			|  if ((pos[1] - getWindowPosition()[1]) < 200)
+	 * 			|	   if (canHaveAsWindowPosition(getWindowPosition()[0], pos[1]-200))
+	 * 			|			setWindowPosition(getWindowPosition()[0], pos[1]-200)
+	 * 			|	   else
+	 * 			|	   		setWindowPosition(getWindowPosition()[0], 0)
+	 * 			|  else if (((getWindowPosition()[1] + getWindowSize()[1]) - pos[1]) < 200+getMyMazub().getHeight())
+	 * 			|	   if (canHaveAsWindowPosition(getWindowPosition()[0], pos[1]-getWindowSize()[1] + 200+getMyMazub().getHeight()))
+	 * 			|			setWindowPosition(getWindowPosition()[0],  pos[1]-getWindowSize()[1] + 200+getMyMazub().getHeight())
+	 * 			|	   else
+	 * 			|			setWindowPosition(getWindowPosition()[0], getYLimit() - getWindowSize()[1])
 	 * 			| 
 	 */
 	public void adjustWindow() {

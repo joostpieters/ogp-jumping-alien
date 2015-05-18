@@ -137,6 +137,8 @@ public abstract class GameObject implements GameElement{
 		if(PROGRAM != null)
 			PROGRAM.setGameObject(this);
 		
+		LIVES_ON_LAND = true;
+		
 		
 	}
 	
@@ -563,8 +565,9 @@ public abstract class GameObject implements GameElement{
 	}
 	
 	public void advanceTime(double duration) {
-		if(duration > 0.2 || duration < 0) return;
+		//if(duration > 0.2 || duration < 0) return;
 		//Bij het laden van het level loopt het zonder deze regel soms mis (veel te grote duration)
+		//Lijkt opgelost
 
 		handleInteraction(duration);
 		
@@ -918,17 +921,29 @@ public abstract class GameObject implements GameElement{
 	/**
 	 * Return the acceleration in the y direction of this game object.
 	 * 
-	 * @return 	| if (isJumping())
-	 * 			| 	then result == -Y_ACCELERATION
-	 * 			| else
-	 * 			|	result == 0
+	 * @return 	| if getLivesOnLand() then
+	 * 			| 	if (isJumping())
+	 * 			| 		then result == -Y_ACCELERATION
+	 * 			|	 else
+	 * 			|		result == 0
+	 * 			| end if
 	 */
 	public double getYAcceleration() {
-		if (isJumping())
-			return -Y_ACCELERATION;
-		else
-			return 0;
+		if(getLivesOnLand()) {
+			if (isJumping())
+				return -getY_ACCELERATION();
+			else
+				return 0;
+		}
+		return 0;
 	}
+	
+	public boolean getLivesOnLand() {
+		return LIVES_ON_LAND;
+	}
+	
+	protected boolean LIVES_ON_LAND;
+	
 
 	/**
 	 * The given game object starts moving in the given x direction with initial velocity

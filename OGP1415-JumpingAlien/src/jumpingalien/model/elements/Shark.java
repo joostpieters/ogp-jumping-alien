@@ -39,6 +39,7 @@ public class Shark extends AutomaticObject {
 	public Shark(World world, double x, double y, Sprite[] sprites, Program program) {
 		super(world, x, y, 100, 100, sprites, 100, 200, 400, 400, 150, 1000, true, program);
 		setCounter(0);
+		LIVES_ON_LAND = false;
 	}
 	
 
@@ -214,7 +215,7 @@ public class Shark extends AutomaticObject {
 	 *		    | else
 	 *		    |   result == -getY_ACCELERATION()
 	 *
-	 * @note    Deze functie schendt het Liskov substitutieprincipe. Moet nog opgelost worden.
+	 * 
 	 */
 	@Override
 	public double getYAcceleration() {

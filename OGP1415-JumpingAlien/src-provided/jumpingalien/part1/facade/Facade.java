@@ -112,7 +112,7 @@ public class Facade implements IFacade {
 			alien.startJump();
 		}
 		catch (JumpingException exc) {
-			throw new ModelException(exc); //Hide orange bar
+			//throw new ModelException(exc); //Hide orange bar
 		}
 		
 	}
@@ -186,7 +186,7 @@ public class Facade implements IFacade {
 			alien.startDuck();
 		}
 		catch(IllegalStateException exc) {
-			throw new ModelException("Already ducking!"); //Hide orange bar
+			//throw new ModelException("Already ducking!"); //Hide orange bar
 		}
 	}
 
@@ -201,7 +201,7 @@ public class Facade implements IFacade {
 			alien.endDuck();
 		}
 		catch(IllegalStateException exc) {
-			throw new ModelException("Not yet ducking!"); //Hide orange bar
+			//throw new ModelException("Not yet ducking!"); //Hide orange bar
 		}
 	}
 
