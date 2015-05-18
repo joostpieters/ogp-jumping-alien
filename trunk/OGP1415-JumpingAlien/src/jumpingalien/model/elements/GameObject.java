@@ -137,6 +137,7 @@ public abstract class GameObject implements GameElement{
 		if(PROGRAM != null)
 			PROGRAM.setGameObject(this);
 		
+		
 	}
 	
 	//no documentation needed
