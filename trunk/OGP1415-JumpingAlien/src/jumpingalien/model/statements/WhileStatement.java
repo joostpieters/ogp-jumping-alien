@@ -1,5 +1,4 @@
 package jumpingalien.model.statements;
-
 import jumpingalien.model.Expression;
 import jumpingalien.model.Program;
 import jumpingalien.part3.programs.SourceLocation;
@@ -49,7 +48,6 @@ public class WhileStatement extends Statement {
 			setIterating(false);
 		}
 	}
-	
 	
 	private boolean isIterating;
 	

@@ -15,11 +15,7 @@ import jumpingalien.part3.programs.SourceLocation;
  * 			Subversion repository: https://code.google.com/p/ogp-jumping-alien/
  */
 public class StartRunStatement extends TrivialStatement {
-
-	/**
-	 * @param caller
-	 * @param location
-	 */
+	
 	public StartRunStatement(Program caller, SourceLocation location, Expression direction) {
 		super(caller, location);
 		DIRECTION = direction;
@@ -39,6 +35,5 @@ public class StartRunStatement extends TrivialStatement {
 			getCaller().getGameObject().startMove(GameObject.Direction.RIGHT);
 		else
 			throw new ClassCastException(); 
-
 	}
 }

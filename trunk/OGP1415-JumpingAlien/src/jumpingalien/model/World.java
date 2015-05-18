@@ -1,6 +1,3 @@
-/**
- * 
- */
 package jumpingalien.model;
 
 import java.util.HashSet;

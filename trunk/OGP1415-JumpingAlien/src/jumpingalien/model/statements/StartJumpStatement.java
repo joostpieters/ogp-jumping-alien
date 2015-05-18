@@ -13,8 +13,7 @@ import jumpingalien.part3.programs.SourceLocation;
  * 			Subversion repository: https://code.google.com/p/ogp-jumping-alien/
  */
 public class StartJumpStatement extends TrivialStatement {
-
-
+	
 	public StartJumpStatement(Program caller, SourceLocation location) {
 		super(caller, location);
 		setContainsAction(true);
@@ -30,5 +29,4 @@ public class StartJumpStatement extends TrivialStatement {
 		}
 		catch(JumpingException exc) {}
 	}
-
 }

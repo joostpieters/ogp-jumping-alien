@@ -1,6 +1,4 @@
-
 package jumpingalien.model.statements;
-
 import jumpingalien.model.JumpingException;
 import jumpingalien.model.Program;
 import jumpingalien.part3.programs.SourceLocation;
@@ -12,7 +10,6 @@ import jumpingalien.part3.programs.SourceLocation;
  */
 public class StopJumpStatement extends TrivialStatement {
 
-
 	public StopJumpStatement(Program caller, SourceLocation location) {
 		super(caller, location);
 		setContainsAction(true);
@@ -23,9 +20,7 @@ public class StopJumpStatement extends TrivialStatement {
 		super.execute();
 		try {
 			getCaller().getGameObject().endJump();
-		}
-		
+		}	
 		catch(JumpingException exc) {}
 	}
-
 }

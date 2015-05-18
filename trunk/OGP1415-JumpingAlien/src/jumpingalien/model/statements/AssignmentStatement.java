@@ -15,7 +15,6 @@ import jumpingalien.part3.programs.SourceLocation;
  */
 public class AssignmentStatement extends TrivialStatement {
 
-
 	public AssignmentStatement(Program caller, SourceLocation location, String stringName, Expression expression,
 			Type type) {
 		super(caller, location);
@@ -23,7 +22,6 @@ public class AssignmentStatement extends TrivialStatement {
 		EXPRESSION = expression;
 		TYPE = type;
 	}
-	
 	
 	private final String STRING_NAME;
 	public String getStringName() {
@@ -44,5 +42,4 @@ public class AssignmentStatement extends TrivialStatement {
 		super.execute();
 		getCaller().setVariableValue(getStringName(), getType(), getExpression().eval());
 	}
-
 }

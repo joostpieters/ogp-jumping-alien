@@ -1,8 +1,4 @@
-/**
- * 
- */
 package jumpingalien.model.statements;
-
 import jumpingalien.model.Program;
 import jumpingalien.part3.programs.SourceLocation;
 
@@ -13,16 +9,10 @@ import jumpingalien.part3.programs.SourceLocation;
  */
 public abstract class TrivialStatement extends Statement {
 
-	/**
-	 * @param caller
-	 * @param location
-	 */
 	public TrivialStatement(Program caller, SourceLocation location) {
 		super(caller, location);
 		setNextStatement(null);
 	}
-
-
 
 	// case distinction
 	@Override
@@ -30,8 +20,4 @@ public abstract class TrivialStatement extends Statement {
 		getCaller().substractTimeRemaining(0.001);
 		getCaller().setCurrentStatement(getNextStatement());
 	}
-
-	
-	
-	
 }

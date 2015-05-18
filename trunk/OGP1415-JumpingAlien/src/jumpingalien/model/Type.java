@@ -1,7 +1,8 @@
+package jumpingalien.model;
 /**
  * 
  */
-package jumpingalien.model;
+
 
 /** 
  * An enumeration that is used in the ProgramFactory.

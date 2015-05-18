@@ -122,6 +122,9 @@ public class ForEachStatement extends Statement {
 		return java.lang.Double.compare(eval1, eval2);
 	}
 	
+	/**
+	 * Bouwt de lijst van game elementen waarover de for each moet itereren.
+	 */
 	private void prepareForIterating() {
 		setIterating(true);
 		getCaller().substractTimeRemaining(0.001);
@@ -150,7 +153,7 @@ public class ForEachStatement extends Statement {
 		for(GameElement element: getMyObjects()) {
 			getCaller().setVariableValue(getVariableName(), Type.GAME_ELEMENT, element);
 
-			if((boolean)getWhere().eval() == true)
+			if(getWhere() == null || (boolean)getWhere().eval() == true)
 				filteredList.add(element);
 		}
 		
@@ -164,15 +167,17 @@ public class ForEachStatement extends Statement {
 	}
 	
 	@Override
+	/**
+	 * Voert de for each lus uit.
+	 */
 	public void execute() throws ClassCastException {
 		if (! isIterating()) {
 			prepareForIterating();
 			getCaller().addLoop(this);
 		}
 		
-		if (getIndex() < getNbObjects() -1) {
+		if (getIndex() < getNbObjects()) {
 			getCaller().setVariableValue(getVariableName(), Type.GAME_ELEMENT, getObjectAt(getIndex()));
-			//
 			getBody().setNextStatement(this);
 			getCaller().setCurrentStatement(getBody());
 			setIndex(getIndex()+1);
@@ -185,5 +190,4 @@ public class ForEachStatement extends Statement {
 			getCaller().popLoop();
 		}
 	}
-
 }

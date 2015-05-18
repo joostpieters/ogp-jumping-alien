@@ -11,8 +11,7 @@ import jumpingalien.part3.programs.SourceLocation;
  * 			Subversion repository: https://code.google.com/p/ogp-jumping-alien/
  */
 public class SequenceStatement extends Statement {
-
-
+	
 	public SequenceStatement(Program caller, SourceLocation location, List<Statement> statements) {
 		super(caller, location);
 		this.statements = statements;
@@ -27,7 +26,6 @@ public class SequenceStatement extends Statement {
 			this.setContainsAction(true);
 		if (getStatementAt(getNbStatements()-1).containsBreakOutsideLoop())
 			this.setContainsBreakOutsideLoop(true);
-		
 	}
 
 	private List<Statement> statements;
@@ -39,7 +37,6 @@ public class SequenceStatement extends Statement {
 	public int getNbStatements() {
 		return this.statements.size();
 	}
-	
 	
 	@Override
 	public void execute() throws ClassCastException {

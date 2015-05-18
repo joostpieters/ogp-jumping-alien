@@ -1,6 +1,4 @@
 package jumpingalien.model.elements;
-
-
 import jumpingalien.model.Program;
 import jumpingalien.model.School;
 import jumpingalien.model.World;
@@ -33,17 +31,19 @@ public class Slime extends AutomaticObject {
 	 * 		  The series of initial sprites for this new slime.
 	 * @param school
 	 * 		  The school this new slime belongs to.
-	 * 
-	 * @pre	   | school != null
-	 * @effect | super(world, x, y, 100, 100, sprites, 100, 0, 250, 250, 70, 1000, true)
+ 	 * @param program
+ 	 * 		  The program for this new slimes.
+ 	 * @pre	   | school != null
+	 * @effect | super(world, x, y, 100, 100, sprites, 100, 0, 250, 250, 70, 1000, true, program)
 	 * @effect | setSchool(school)
+	 * @effect | startNewMovement();
 	 */
 	@Raw
 	public Slime(World world, double x, double y, Sprite[] sprites, School school, Program program) {
 		super(world, x, y, 100, 100, sprites, 100, 0, 250, 250, 70, 1000, true, program);
 		assert school != null;
 		this.setSchool(school);
-		startNewMovement();
+		//startNewMovement();
 	}
 	
 	/**
@@ -228,8 +228,6 @@ public class Slime extends AutomaticObject {
 			this.setTimeToBeImmune(0.6);
 		}
 		
-		
-		
 		Shark object2 = (Shark) this.touches(Shark.class);
 		if (object2 != null && getTimeToBeImmune() == 0) {
 			this.substractHitPoints(50, true);
@@ -245,7 +243,6 @@ public class Slime extends AutomaticObject {
 				setWaterTimer(getWaterTimer() - 0.2);
 			}
 		}
-		
 		else
 			setWaterTimer(0);
 		
@@ -256,10 +253,7 @@ public class Slime extends AutomaticObject {
 				setMagmaTimer(getMagmaTimer() - 0.2);
 			}
 		}
-
 		else
 			setMagmaTimer(0.2);
-		
 	}
-
 }

@@ -1,5 +1,6 @@
 package jumpingalien.model;
 
+
 /** 
  * A functional interface that is used to evaluate functions of expressions.
  * 
@@ -10,9 +11,11 @@ package jumpingalien.model;
 public interface ExpressionLambda {
 	public Object f(Object[] parameterArray);
 	//Bij Expression moet niet staan "implements ExpressionLambda" aangezien
-	//Expression als attributiet een instantie heeft van ExpressionLambda.
+	//Expression als attribuut een instantie heeft van ExpressionLambda.
 	//Expression gebruikt geen methode van ExpressionLambda, maar eerder
 	//een object ervan.
 	
-	//Dit is maw een functionele interface (slechts 1 abstracte methode).
+	//Dit is m.a.w. een functionele interface (slechts 1 abstracte methode).
+	//Dit is dus syntactische suiker voor een anonieme klasse die een generische
+	//interface implementeert.
 }

@@ -20,7 +20,7 @@ public class Shark extends AutomaticObject {
 
 
 	/**
-	 * Inizialize this new shark with the given parameters.
+	 * Initialize this new shark with the given parameters.
 	 * 
 	 * @param world
 	 * 		  The world of this new shark.
@@ -30,8 +30,10 @@ public class Shark extends AutomaticObject {
 	 * 		  The initial y position for this new shark. 
 	 * @param sprites
 	 * 		  The series of initial sprites for this new shark.
+ 	 * @param program
+ 	 * 		  The program for this new shark.
 	 * 
-	 * @effect  | super(world, x, y, 100, 100, sprites, 100, 200, 400, 400, 150, 1000, true)
+	 * @effect  | super(world, x, y, 100, 100, sprites, 100, 200, 400, 400, 150, 1000, true, program)
 	 * @effect  | setCounter(0)
 	 */
 	public Shark(World world, double x, double y, Sprite[] sprites, Program program) {
@@ -155,8 +157,10 @@ public class Shark extends AutomaticObject {
 	 * Check whether this shark can jump.
 	 * 
 	 * @return | if for some bottom pixel (x,y) of this shark 
-	 * 		   |    getMyWorld().getTerrainAt(x,y) == TerrainType.WATER
+	 * 		   |    getMyWorld().getTerrainAt(x,y) == TerrainType.WATER && 
 	 * 		   |    	result == true
+	 * 		   | if super.canJump()
+	 * 		   | 	result == true
 	 * 		   | else
 	 * 		   |	result == false
 	 */
@@ -166,6 +170,7 @@ public class Shark extends AutomaticObject {
 		for(int i = 0; i < getWidth(); i++) {
 			if (getMyWorld().getTerrainAt(getPosition()[0] + i, getPosition()[1]) == TerrainType.WATER)
 				touchesWater = true;
+				//zorgt ervoor dat er ook kan gesprongen worden als er geen solid tile onder het object is
 		}
 		return ((super.canJump()) || touchesWater);		
 	}
@@ -222,7 +227,6 @@ public class Shark extends AutomaticObject {
 		if (isSubmerged())
 			return getDivingAcceleration();
 		return -getY_ACCELERATION();
-		
 	}
 
 	/**

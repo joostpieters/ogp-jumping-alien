@@ -1,8 +1,4 @@
-/**
- * 
- */
 package jumpingalien.model.statements;
-
 import jumpingalien.model.Program;
 import jumpingalien.part3.programs.SourceLocation;
 
@@ -44,7 +40,6 @@ public abstract class Statement {
 		this.nextStatement = nextStatement;
 	}
 	private Statement nextStatement;
-	
 	
 	private boolean containsAction;
 

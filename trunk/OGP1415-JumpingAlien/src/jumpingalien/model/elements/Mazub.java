@@ -3,7 +3,6 @@ import jumpingalien.model.World;
 import jumpingalien.util.Sprite;
 import be.kuleuven.cs.som.annotate.*;
 
-
 /**
  * A class of Mazub characters as special kinds of aliens.
  * 
@@ -17,7 +16,7 @@ public class Mazub extends Alien {
 	 * Initialize this new Mazub character with given x position, given y position, given
 	 * sprites and given world.
 	 * 
-	 * @effect	| super(world, x, y, 100, 500 ,sprites, 100, 800, 300, 100,	90, 1000, true);
+	 * @effect	| super(world, x, y, 100, sprites, null)
 	 * 
 	 * @param 	x
 	 * 			The initial x position for this new Mazub character.
