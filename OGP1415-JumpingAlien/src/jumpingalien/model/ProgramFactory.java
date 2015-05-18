@@ -45,7 +45,7 @@ public class ProgramFactory implements IProgramFactory<Expression, Statement, Ty
 		return MY_PROGRAM;
 	}
 	
-	public final Program MY_PROGRAM;
+	private final Program MY_PROGRAM;
 	
 	@Override
 	public Expression createReadVariable(String variableName, Type variableType,
