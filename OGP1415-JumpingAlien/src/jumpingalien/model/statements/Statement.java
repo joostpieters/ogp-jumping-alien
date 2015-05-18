@@ -13,9 +13,6 @@ import jumpingalien.part3.programs.SourceLocation;
  */
 public abstract class Statement {
 
-	/**
-	 * 
-	 */
 	public Statement(Program caller, SourceLocation location) {
 		LOCATION = location;
 		CALLER = caller;

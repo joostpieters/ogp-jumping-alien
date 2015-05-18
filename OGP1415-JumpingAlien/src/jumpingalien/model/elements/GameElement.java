@@ -3,7 +3,7 @@ package jumpingalien.model.elements;
 import jumpingalien.model.World;
 
 /** 
- * An interface of game elements involving several properties.
+ * An interface of game elements.
  * 
  * @author 	Andreas Schryvers & Jonathan Oostvogels
  * 			2e Bachelor ingenieurswetenschappen

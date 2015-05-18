@@ -16,10 +16,6 @@ import jumpingalien.part3.programs.SourceLocation;
 public class AssignmentStatement extends TrivialStatement {
 
 
-	/**
-	 * @param caller
-	 * @param location
-	 */
 	public AssignmentStatement(Program caller, SourceLocation location, String stringName, Expression expression,
 			Type type) {
 		super(caller, location);

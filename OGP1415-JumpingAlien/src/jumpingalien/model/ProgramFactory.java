@@ -38,8 +38,6 @@ import jumpingalien.part3.programs.SourceLocation;
  * 			Subversion repository: https://code.google.com/p/ogp-jumping-alien/
  */
 public class ProgramFactory implements IProgramFactory<Expression, Statement, Type, Program> {
-
-	
 	
 	public ProgramFactory() {
 		MY_PROGRAM = new Program();
@@ -50,8 +48,6 @@ public class ProgramFactory implements IProgramFactory<Expression, Statement, Ty
 	}
 	
 	public final Program MY_PROGRAM;
-	
-	
 	
 	@Override
 	public Expression createReadVariable(String variableName, Type variableType,
@@ -331,7 +327,7 @@ public class ProgramFactory implements IProgramFactory<Expression, Statement, Ty
 	public Expression createIsTerrain(Expression expr, SourceLocation sourceLocation) {
 		checkArguments(Type.GAME_ELEMENT, expr);
 		return new Expression(
-				(Object[] a) -> ((Expression)a[0]).eval() instanceof World.TerrainType, 
+				(Object[] a) -> ((Expression)a[0]).eval() instanceof GameTile, 
 				new Object[] {expr}, sourceLocation, Type.BOOLEAN);
 	}
 
@@ -347,7 +343,7 @@ public class ProgramFactory implements IProgramFactory<Expression, Statement, Ty
 	public Expression createIsWater(Expression expr, SourceLocation sourceLocation) {
 		checkArguments(Type.GAME_ELEMENT, expr);
 		return new Expression(
-				(Object[] a) -> ((World.TerrainType)((Expression)a[0]).eval()) 
+				(Object[] a) -> ((GameTile)((Expression)a[0]).eval()).getTerrainType() 
 										== World.TerrainType.WATER, 
 				new Object[] {expr}, sourceLocation, Type.BOOLEAN);
 	}
@@ -356,7 +352,7 @@ public class ProgramFactory implements IProgramFactory<Expression, Statement, Ty
 	public Expression createIsMagma(Expression expr, SourceLocation sourceLocation) {
 		checkArguments(Type.GAME_ELEMENT, expr);
 		return new Expression(
-				(Object[] a) -> ((World.TerrainType)((Expression)a[0]).eval()) 
+				(Object[] a) -> ((GameTile)((Expression)a[0]).eval()).getTerrainType()  
 										== World.TerrainType.MAGMA, 
 				new Object[] {expr}, sourceLocation, Type.BOOLEAN);
 	}
@@ -365,11 +361,13 @@ public class ProgramFactory implements IProgramFactory<Expression, Statement, Ty
 	public Expression createIsAir(Expression expr, SourceLocation sourceLocation) {
 		checkArguments(Type.GAME_ELEMENT, expr);
 		return new Expression(
-				(Object[] a) -> ((World.TerrainType)((Expression)a[0]).eval()) 
+				(Object[] a) -> ((GameTile)((Expression)a[0]).eval()).getTerrainType() 
 										== World.TerrainType.AIR, 
 				new Object[] {expr}, sourceLocation, Type.BOOLEAN);
 	}
 
+	//we veronderstellen dat in een script steeds getest zal worden of de gegeven expressie een game object is
+	//(in theorie kan het ook een game tile zijn wat resulteert in een runtime type error)
 	@Override
 	public Expression createIsMoving(Expression expr, Expression direction, SourceLocation sourceLocation) {
 		checkArguments(Type.GAME_ELEMENT, expr);
@@ -511,13 +509,16 @@ public class ProgramFactory implements IProgramFactory<Expression, Statement, Ty
 		return MY_PROGRAM;
 	}
 	
-	
+	/**
+	 * A function that checks whether the given arguments are of the given type. If the expression itself
+	 * is null, then nothing happens.
+	 */
 	public void checkArguments(Type t, Expression... e) {
-		for(Expression expr : e) {
+		for(Expression expr : e) {			
 			if(expr != null && expr.getType() != t) {
 				getMyProgram().setContainsError(true);
 				System.out.println("Type error, expression at " + expr.getSourceLocation() + " is not a " + t +".");
-			}
+			}			
 		}
 	}
 }

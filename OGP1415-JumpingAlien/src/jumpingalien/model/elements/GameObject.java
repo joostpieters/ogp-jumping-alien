@@ -101,6 +101,8 @@ public abstract class GameObject implements GameElement{
 		assert isValidXInitialVelocityAndXVelocityLimit(xInitialVelocity, xVelocityLimit);
 		
 		this.setMyWorld(world);
+		if (world != null)
+			world.addObject(this);
 		this.setPosition(x,y);
 		this.MAX_HITPOINTS = maxHitPoints;
 		this.setHitPoints(initialHitPoints);

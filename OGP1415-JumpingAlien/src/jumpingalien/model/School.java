@@ -86,7 +86,7 @@ public class School {
 	 * 
 	 * @param slime
 	 * 		  The slime to check.
-	 * @return	| result == (slime != null0
+	 * @return	| result == (slime != null)
 	 */
 	public boolean canHaveAsSlime(Slime slime) {
 		return slime != null;
@@ -96,6 +96,4 @@ public class School {
 	 * Variable registering the slimes of this school.
 	 */
 	private Set<Slime> slimes;
-
-
 }

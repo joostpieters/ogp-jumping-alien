@@ -12,7 +12,7 @@ import be.kuleuven.cs.som.annotate.*;
 
 /**
  * A class of worlds involving several properties. 
- * This class has an association with the class of game objects.
+ * This class has an association with the class of game objects and game tiles.
  * 
  * @author 	Andreas Schryvers & Jonathan Oostvogels
  * 			2e Bachelor ingenieurswetenschappen
@@ -24,17 +24,17 @@ public class World {
 	 * Initialize this new world with the given parameters.
 	 * 
 	 * @param xLimit
-	 * 		  The maximum pixel position in the x direction.
+	 * 		  The maximum pixel coordinate in the x direction.
 	 * @param yLimit
-	 * 		  The maximum pixel position in the y direction.
+	 * 		  The maximum pixel coordinate in the y direction.
 	 * @param tileLength
 	 * 		  The length of a square tile.
 	 * @param windowSize
 	 * 		  The size of the window the player can see.
 	 * @param targetTileX
-	 * 		  The x position of the target tile.
+	 * 		  The x coordinate of the target tile.
 	 * @param targetTileY
-	 * 		  The y position of the target tile.
+	 * 		  The y coordinate of the target tile.
 	 * 
 	 * @pre		| xLimit > 0;
 	 * @pre		| yLimit > 0;
@@ -65,14 +65,17 @@ public class World {
 		tiles = new GameTile[(xLimit+1)/tileLength][(yLimit+1)/tileLength];
 		TARGET_TILE_X = targetTileX;
 		TARGET_TILE_Y = targetTileY;
-		terrainObjectSet = new HashSet<>();
+		terrainObjects = new HashSet<GameTile>();
 		
 		for(int i = 0; i < (xLimit+1)/tileLength; i++) {
 			for(int j = 0; j < (yLimit+1)/tileLength; j++) {
-				tiles[i][j] = new GameTile((double)i*tileLength, (double) j*tileLength, this, TerrainType.AIR);
-				terrainObjectSet.add(tiles[i][j]);
+				//tiles[i][j] werkt met tegelcoordinaten; 
+				//echter worden wel de pixelcoordinaten van wereld opgeslagen in het object
+				tiles[i][j] = new GameTile((double) i*tileLength, (double) j*tileLength, this, TerrainType.AIR);
+				terrainObjects.add(tiles[i][j]);
 			}
 		}
+		
 		setWindowSize(windowSize[0],windowSize[1]);
 		setWindowPosition(0,0);
 		adjustWindow();
@@ -108,7 +111,7 @@ public class World {
 	 */
 	@SuppressWarnings("unchecked")
 	public <T> Set<T> getAllInstancesOf(Class<T> c) { 
-		Set<T> result = new HashSet<>();
+		Set<T> result = new HashSet<T>();
 		for(GameObject obj : getGameObjects()) {
 			if(c.isInstance(obj))
 				result.add((T) obj);
@@ -185,39 +188,35 @@ public class World {
     public void advanceTime(double duration) throws IllegalArgumentException {
 
 //            if ((duration < 0) || (duration >= 0.2))
-//                    throw new IllegalArgumentException("Illegal time duration!");
+//  				throw new IllegalArgumentException("Illegal time duration!");
 
-            getMyMazub().advanceTime(duration);
-//            GameElement a = getMyMazub().getSearchObject(Direction.RIGHT);
-//            if(a instanceof GameTile)
-//            	System.out.println(((GameTile) a).getTerrainType());
-//            else
-//            	System.out.println(a);
-            
+            getMyMazub().advanceTime(duration);            
             int[] new_pos1 = myMazub.getPosition();
             if ( !((new_pos1[0] <= getXLimit()) && (new_pos1[0] >= 0) ) ||
                             (! ((new_pos1[1] <= getYLimit()) && (new_pos1[1] >= 0))))
-                    myMazub.terminate(true);
+            	myMazub.terminate(true);
 
 
             if(GameObject.rectanglesCollide(new_pos1[0],new_pos1[1],getMyMazub().getWidth(),getMyMazub().getHeight(),
-                            getTargetTileX()*getTileLength(),getTargetTileY()*getTileLength(),(getTargetTileX() + 1)*getTileLength(),(getTargetTileY() + 1)*getTileLength())) {
-                    myMazub.terminate(true);
-                    setDidPlayerWin(true);
+                            getTargetTileX()*getTileLength(),getTargetTileY()*getTileLength(),(getTargetTileX() + 1)*getTileLength(),
+                            (getTargetTileY() + 1)*getTileLength())) {
+            	myMazub.terminate(true);
+            	setDidPlayerWin(true);
             }
                     
             adjustWindow();
 
+            //referentie kopie            
             Set<GameObject> copySet = new HashSet<>();
             copySet.addAll(getGameObjects());
             for(GameObject obj: copySet) {
-                                            if(! (obj instanceof Mazub))  {
-                                                    obj.advanceTime(duration);
-                                                    int[] new_pos2 = obj.getPosition();
-                                                    if ( new_pos2[0] < 0 || new_pos2[0] > getXLimit() ||
-                                                                    new_pos2[1] < 0 || new_pos2[1] > getYLimit() )
-                                                            obj.terminate(true);
-                                            }
+            	if(! (obj instanceof Mazub))  {
+            		obj.advanceTime(duration);
+            		int[] new_pos2 = obj.getPosition();
+            		if ( new_pos2[0] < 0 || new_pos2[0] > getXLimit() ||
+            				new_pos2[1] < 0 || new_pos2[1] > getYLimit() )
+            			obj.terminate(true);
+            	}
             }
     }
 	
@@ -234,9 +233,11 @@ public class World {
 	 * 
 	 * @param myMazub
 	 * 		  The new Mazub for this world.
+	 * @pre   | this.getMyMazub() == null
 	 * @post  | new.getMyMazub() == myMazub
 	 */
 	private void setMyMazub(Mazub myMazub) {
+		assert getMyMazub() == null;
 		this.myMazub = myMazub;
 	}
 
@@ -257,10 +258,11 @@ public class World {
 	 * Set the window size of this world to the given width and height.
 	 * 
 	 * @param width
-	 * 		  The new width for this world.
+	 * 		  The new window width for this world.
 	 * @param height
-	 * 		  The new height for this world.
-	 * @post  | new.getWindowSize() == {width,height}
+	 * 		  The new window height for this world.
+	 * @post  | new.getWindowSize()[0] == width
+	 * 		  | new.getWindowSize()[1] == height
 	 */
 	public void setWindowSize(int width, int height) {
 		this.windowSize[0] = width;
@@ -283,9 +285,9 @@ public class World {
 	 * Set the window position of this world to the given x and y.
 	 * 
 	 * @param x
-	 * 		  The new x position of the windows size for this world.
+	 * 		  The new x coordinate of the windows size for this world.
 	 * @param y
-	 * 		  The new y position of the windows size for this world
+	 * 		  The new y coordinate of the windows size for this world
 	 * @pre	  | canHaveAsWindowPosition(x, y)
 	 * @post  | new.getWindowPosition()[0] == x
 	 * 		  | new.getWindowPosition()[1] == y
@@ -307,9 +309,9 @@ public class World {
 	 * Check whether this world can have the given x and y as its window position.
 	 * 
 	 * @param x
-	 * 		  The x position to check
+	 * 		  The x coordinate to check
 	 * @param y
-	 * 		  The y position to check
+	 * 		  The y coordinate to check
 	 * @return  | result == ( x >= 0 && 
 	 *			| 			x <= (getXLimit() - getWindowSize()[0]) &&
 	 *			| 			y >= 0 &&
@@ -332,35 +334,51 @@ public class World {
 	 * @return  | if (! isInsideBoundaries(x,y))
 	 * 			|	 then result == TerrainType.AIR
 	 * 			| else
-	 * 			|    result == tiles.[getMatchingTile(x,y)[0]][getMatchingTile(x,y)[1]]
+	 * 			|    result == getTileAt(getMatchingTile(x,y)[0]],getMatchingTile(x,y)[1]).getTerrainType()
 	 */
 	public TerrainType getTerrainAt(int x, int y) {
 		if (! isInsideBoundaries(x,y))
 			return TerrainType.AIR;
 		int[] location = getMatchingTile(x,y);
-		return this.tiles[location[0]][location[1]].getTerrainType();
+		return getTileAt(location[0],location[1]).getTerrainType();
 	}
 	
+	/**
+	 * Return the game tile object that belongs to the given position (in world coordinates).
+	 * 
+	 * @param x
+	 * 		  The x coordinate of the position
+	 * @param y
+	 * 		  The y coordinate of the position
+	 * @return  | result == getTileAt(getMatchingTile(x,y)[0]],getMatchingTile(x,y)[1])
+	 */
 	public GameTile getTerrainObjectAt(int x, int y) {
-		//if (! isInsideBoundaries(x,y))
-			//return null;
 		int[] location = getMatchingTile(x,y);
-		return this.tiles[location[0]][location[1]];
+		return getTileAt(location[0],location[1]);
 	}
 	
+	/**
+	 * Return the set of terrain objects that is associated with this world.
+	 */
+	@Basic
 	public Set<GameTile> getTerrainObjects() {
-		return terrainObjectSet;
+		return terrainObjects;
 	}
 	
-	private Set<GameTile> terrainObjectSet;
+	/**
+	 * Variable registering the terrain objects that are associated with this world.
+	 */
+	//In principte overbodig, maar vergemakkelijkt de foreachstatement. Anders zou daar de terrainobjects set alsnog 
+	//gemaakt dienen te worden, wat trager is.
+	private Set<GameTile> terrainObjects;
 	
 	/**
 	 * Set the terrain at the given position to the given terrain type.
 	 * 
 	 * @param x
-	 * 		  The x position for the new terrain type
+	 * 		  The x coordinate for the new terrain type
 	 * @param y
-	 * 		  The y position for the new terrain type
+	 * 		  The y coordinate for the new terrain type
 	 * @param terrain
 	 * 		  The new terrain type for this position
 	 * @pre	  | isInsideBoundaries(x*getTileLength(),y*getTileLength())
@@ -368,16 +386,16 @@ public class World {
 	 */
 	public void setTerrainAt(int x, int y, TerrainType terrain) {
 		assert isInsideBoundaries(x*getTileLength(),y*getTileLength());
-		this.tiles[x][y].setTerrainType(terrain);
+		getTileAt(x,y).setTerrainType(terrain);
 	}
 	
 	/**
-	 * Get the tile that belongs to the given position.
+	 * Get the tile coordinates that belong to the given position.
 	 * 
 	 * @param x
-	 * 		  The x position from where to retrieve the tile
+	 * 		  The x world coordinate from where to retrieve the tile
 	 * @param y
-	 * 		  The y position from where to retrieve the tile
+	 * 		  The y world coordinate from where to retrieve the tile
 	 * @pre	   | isInsideBoundaries(x, y)
 	 * @return | result == {x/getTileLength(),y/getTileLength()}
 	 */
@@ -388,9 +406,22 @@ public class World {
 	}
 
 	/**
-	 * Variable registering the terrain type on tiles.
+	 * Variable registering the tiles that are associated with this world.
 	 */
 	private GameTile[][] tiles;
+	
+	/**
+	 * Return the game tile that belongs to the given position (in tile coordinates).
+	 * 
+	 * @param x
+	 * 		  The x tile coordinate
+	 * @param y
+	 * 		  The y tile coordinate
+	 */
+	@Basic
+	public GameTile getTileAt(int x, int y) {
+		return tiles[x][y];
+	}
 	
 	/**
 	 * An enumeration introducing different terrain types used to express the terrain of a tile.
@@ -423,14 +454,6 @@ public class World {
 		private final boolean passable;
 	}
 	
-	/**
-	 * End the game.
-	 * 
-	 * @effect  | setGameOver(true)
-	 */
-	public void endGame() {
-		setGameOver(true);
-	}
 
 	/**
 	 * Adjust the window position to the position of Mazub.
@@ -494,12 +517,12 @@ public class World {
 	}
 	
 	/**
-	 * Variable registering the x position of the target tile.
+	 * Variable registering the x coordinate of the target tile.
 	 */
 	private final int TARGET_TILE_X;
 	
 	/**
-	 * Return the x position of the target tile.
+	 * Return the x world coordinate of the target tile.
 	 */
 	@Basic @Immutable
 	public int getTargetTileX() {
@@ -507,12 +530,12 @@ public class World {
 	}
 
 	/**
-	 * Variable registering the x position of the target tile.
+	 * Variable registering the y coordinate of the target tile.
 	 */
 	private final int TARGET_TILE_Y;
 	
 	/**
-	 * Return the y position of the target tile.
+	 * Return the y world coordinate of the target tile.
 	 */
 	@Basic @Immutable
 	public int getTargetTileY() {
@@ -545,6 +568,15 @@ public class World {
 	}
 	
 	/**
+	 * End the game.
+	 * 
+	 * @effect  | setGameOver(true)
+	 */
+	public void endGame() {
+		setGameOver(true);
+	}
+	
+	/**
 	 * Variable registering whether the player won.
 	 */
 	private boolean didPlayerWin;
@@ -569,12 +601,12 @@ public class World {
 	}
 	
 	/**
-	 * Check whether the given x and y are inside the boundaries of the world.
+	 * Check whether the given x and y coordinates are inside the boundaries of the world.
 	 * 
 	 * @param x
-	 * 		  The x position to check
+	 * 		  The x coordinate to check
 	 * @param y
-	 * 		  The y position to check
+	 * 		  The y coordinate to check
 	 * 
 	 * @return  | result == ! ( (x > getXLimit()) || (x < 0) || (y > getYLimit()) || (y < 0) )
 	 */
