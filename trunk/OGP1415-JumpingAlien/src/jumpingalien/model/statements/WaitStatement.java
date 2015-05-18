@@ -23,6 +23,6 @@ public class WaitStatement extends TrivialStatement {
 	
 	public void execute() throws ClassCastException {
 		super.execute();
-		getCaller().addWaitTime((Double)(getExpression().eval()));
+		getCaller().addWaitTime((Double)(getExpression().eval())-0.001);
 	}
 }

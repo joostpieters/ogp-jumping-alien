@@ -150,7 +150,7 @@ public class Program {
 				 try {
 					 getCurrentStatement().execute();
 				 }
-				 catch (ClassCastException exc) {
+				 catch (ClassCastException | NullPointerException exc) {
 					 this.setContainsError(true);
 					 System.out.println("Runtime Type Error in program for");
 					 System.out.println(getGameObject());
